@@ -110,12 +110,26 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
-                if (nombre.isBlank() || precio.isBlank() || cantidad.isBlank()) {
-                    error = "Error: Todos los campos son obligatorios"
-                    mostrarResumen = false
-                } else {
-                    error = ""
-                    mostrarResumen = true
+                val p = precio.toDoubleOrNull()
+                val q = cantidad.toIntOrNull()
+
+                when {
+                    nombre.isBlank() || precio.isBlank() || cantidad.isBlank() -> {
+                        error = "Todos los campos son obligatorios"
+                        mostrarResumen = false
+                    }
+                    p == null || p <= 0 -> {
+                        error = "El precio debe ser un número válido mayor a 0"
+                        mostrarResumen = false
+                    }
+                    q == null || q <= 0 -> {
+                        error = "La cantidad debe ser un número entero mayor a 0"
+                        mostrarResumen = false
+                    }
+                    else -> {
+                        error = ""
+                        mostrarResumen = true
+                    }
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -141,11 +155,19 @@ fun PantallaRegistro(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(24.dp))
 
         if (error.isNotEmpty()) {
-            Text(
-                text = error,
-                color = Color.Red,
-                fontWeight = FontWeight.Bold
-            )
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "⚠ $error",
+                    color = MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
         }
 
         if (mostrarResumen) {
