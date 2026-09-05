@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.gonzalo.registrodeproducto"
-    compileSdk = 37
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.gonzalo.registrodeproducto"
         minSdk = 24
-        targetSdk = 37
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 

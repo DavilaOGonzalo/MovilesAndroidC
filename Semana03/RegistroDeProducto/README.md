@@ -10,13 +10,20 @@ La aplicación utiliza **Jetpack Compose** y **Material 3**, aplicando jerarquí
 ## Capturas de Pantalla
 
 ### 1. Pantalla Inicial (Vacía)
-![Pantalla Inicial](app/src/main/res/drawable/screenshot_empty.png)
+![img_1.png](img_1.png)
 
 ### 2. Producto Registrado
-![Resumen](app/src/main/res/drawable/screenshot_filled.png)
+![img.png](img.png)
 
 ## Pregunta: ¿Qué pasaría si declaras las variables de los campos SIN remember?
 
-Si se declaran las variables sin `remember` (por ejemplo: `var nombre = ""`), el estado no persistirá durante las **recomposiciones**. 
+Si se declaran las variables sin `remember` (por ejemplo: `var nombre = ""`), el estado no persistirá durante las **recomposiciones**. En cada redibujado de la pantalla, la variable volvería a su valor inicial y el usuario no podría escribir.
 
-En Jetpack Compose, cada vez que el valor de una variable de estado cambia (a través del `onValueChange`), la función composable se vuelve a ejecutar (recompone). Si no usamos `remember`, la variable se reiniciará a su valor inicial (`""`) en cada ejecución. Como resultado, **el usuario no podrá ver lo que escribe**, ya que el campo se limpiará instantáneamente al intentar actualizarse. `remember` permite que el valor se almacene en la memoria del árbol de composición y sobreviva a estos redibujados.
+## Diferencia: remember vs rememberSaveable
+
+En esta versión del código, hemos aplicado ambos para notar la diferencia:
+
+1.  **`remember`**: Almacena el valor en la memoria del árbol de composición. Sobrevive a recomposiciones (cuando cambias el texto), pero **se pierde al girar la pantalla** (cambio de configuración) porque la Activity se recrea.
+2.  **`rememberSaveable`**: Almacena el valor en un `Bundle`. Sobrevive tanto a recomposiciones como a **giros de pantalla**. Es la opción recomendada para formularios que no deben borrarse accidentalmente.
+
+*En el código actual, el campo "Nombre" usa `remember` (se borra al girar) y los campos "Precio" y "Cantidad" usan `rememberSaveable` (se mantienen al girar).*
