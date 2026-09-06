@@ -51,26 +51,23 @@ fun GradeRegistryScreen() {
     // Lógica de cálculo
     val weightedAverage = (note1 * 0.20f) + (note2 * 0.25f) + (note3 * 0.30f) + (note4 * 0.25f)
     
-    val finalAverageString = if (roundAverage) {
-        val rounded = Math.round(weightedAverage)
-        "$rounded (redondeado)"
-    } else {
-        String.format(Locale.US, "%.2f", weightedAverage)
-    }
+    // Separamos el valor del promedio del texto de redondeo para la UI
+    val rounded = Math.round(weightedAverage)
+    val finalAverageValue = if (roundAverage) rounded.toString() else String.format(Locale.US, "%.2f", weightedAverage)
+    val showRedondeadoLabel = roundAverage
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { 
                     Text(
                         "Registro de Notas", 
                         color = Color.White,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
                     ) 
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = PurplePrimary
                 )
             )
@@ -90,22 +87,23 @@ fun GradeRegistryScreen() {
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                    .padding(horizontal = 24.dp, vertical = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.height(8.dp))
+                
                 Text(
                     text = "Notas del ciclo",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.ExtraBold,
-                    color = PurplePrimary,
-                    modifier = Modifier.padding(bottom = 2.dp)
+                    color = PurplePrimary
                 )
 
                 Text(
                     text = "Desliza para asignar una nota (0 a 20)",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray,
-                    modifier = Modifier.padding(bottom = 12.dp)
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
 
                 CourseGradeSlider("Fundamentos de Programación (20%)", note1, PurplePrimary) { note1 = it }
@@ -113,7 +111,7 @@ fun GradeRegistryScreen() {
                 CourseGradeSlider("Programación en Móviles (30%)", note3, PurplePrimary) { note3 = it }
                 CourseGradeSlider("Base de Datos (25%)", note4, PurplePrimary) { note4 = it }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -122,7 +120,8 @@ fun GradeRegistryScreen() {
                     Text(
                         text = "Redondear promedio final", 
                         modifier = Modifier.weight(1f),
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
                     )
                     Switch(
                         checked = roundAverage, 
@@ -153,13 +152,13 @@ fun GradeRegistryScreen() {
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Button(
                     onClick = { showResults = true },
                     enabled = confirmed,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(24.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = PurplePrimary,
                         disabledContainerColor = Color.LightGray
@@ -177,7 +176,16 @@ fun GradeRegistryScreen() {
                         style = MaterialTheme.typography.bodySmall
                     )
                 } else {
-                    ResultsCard(weightedAverage, finalAverageString, PurplePrimary)
+                    ResultsCard(weightedAverage, finalAverageValue, showRedondeadoLabel, PurplePrimary)
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Text(
+                        text = "✓ Promedio calculado correctamente",
+                        color = Color(0xFF4CAF50),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -186,7 +194,7 @@ fun GradeRegistryScreen() {
                     text = "Desarrollado por: Gonzalo Davila Ochochoque",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.Gray,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
             }
         }
@@ -195,7 +203,7 @@ fun GradeRegistryScreen() {
 
 @Composable
 fun CourseGradeSlider(courseName: String, value: Float, color: Color, onValueChange: (Float) -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -225,7 +233,7 @@ fun CourseGradeSlider(courseName: String, value: Float, color: Color, onValueCha
             onValueChange = onValueChange,
             valueRange = 0f..20f,
             steps = 19,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(32.dp),
             colors = SliderDefaults.colors(
                 thumbColor = color,
                 activeTrackColor = color,
@@ -236,7 +244,7 @@ fun CourseGradeSlider(courseName: String, value: Float, color: Color, onValueCha
 }
 
 @Composable
-fun ResultsCard(weightedAverage: Float, finalAverage: String, purpleColor: Color) {
+fun ResultsCard(weightedAverage: Float, finalAverage: String, isRounded: Boolean, purpleColor: Color) {
     val observation: String
     val observationColor: Color
     val observationBg: Color
@@ -244,22 +252,22 @@ fun ResultsCard(weightedAverage: Float, finalAverage: String, purpleColor: Color
     when {
         weightedAverage >= 17 -> {
             observation = "EXCELENTE"
-            observationColor = Color(0xFF1B5E20) // Verde oscuro
+            observationColor = Color(0xFF1B5E20)
             observationBg = Color(0xFFC8E6C9)
         }
         weightedAverage >= 13 -> {
             observation = "APROBADO"
-            observationColor = Color(0xFF2E7D32) // Verde
+            observationColor = Color(0xFF2E7D32)
             observationBg = Color(0xFFE8F5E9)
         }
         weightedAverage >= 10 -> {
             observation = "EN RECUPERACIÓN"
-            observationColor = Color(0xFFE65100) // Ámbar/Naranja
+            observationColor = Color(0xFFE65100)
             observationBg = Color(0xFFFFF3E0)
         }
         else -> {
             observation = "DESAPROBADO"
-            observationColor = Color(0xFFB71C1C) // Rojo
+            observationColor = Color(0xFFB71C1C)
             observationBg = Color(0xFFFFEBEE)
         }
     }
@@ -268,54 +276,85 @@ fun ResultsCard(weightedAverage: Float, finalAverage: String, purpleColor: Color
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "✓ Promedio calculado correctamente",
-                color = Color(0xFF4CAF50),
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
+                // Sección Izquierda: Promedio Ponderado
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Promedio ponderado:",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.Gray,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = String.format(Locale.US, "%.2f", weightedAverage),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Black,
+                        color = Color.DarkGray
+                    )
+                }
+
+                // Sección Derecha: Promedio Final
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Promedio final:",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.Gray,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = finalAverage,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = purpleColor,
+                        fontWeight = FontWeight.Black
+                    )
+                    if (isRounded) {
+                        Text(
+                            text = "(redondeado)",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.Gray,
+                            modifier = Modifier.offset(y = (-2).dp),
+                            fontSize = 10.sp
+                        )
+                    }
+                }
+            }
             
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Text(
-                text = "Promedio ponderado: ${String.format(Locale.US, "%.2f", weightedAverage)}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            
-            Spacer(modifier = Modifier.height(4.dp))
-            
-            Text("PROMEDIO FINAL", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
-            Text(
-                text = finalAverage, 
-                style = MaterialTheme.typography.headlineLarge, 
-                color = purpleColor, 
-                fontWeight = FontWeight.Black
-            )
-            
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             
             Surface(
                 color = observationBg,
-                shape = RoundedCornerShape(16.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, observationColor)
+                shape = RoundedCornerShape(20.dp),
+                border = androidx.compose.foundation.BorderStroke(1.5.dp, observationColor)
             ) {
                 Text(
                     text = observation,
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 6.dp),
+                    modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp),
                     color = observationColor,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
+                    fontSize = 15.sp
                 )
             }
         }
     }
 }
+
 
 
 
