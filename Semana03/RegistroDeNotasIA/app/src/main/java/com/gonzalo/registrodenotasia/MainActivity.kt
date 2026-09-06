@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gonzalo.registrodenotasia.ui.theme.RegistroDeNotasIATheme
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +47,16 @@ fun GradeRegistryScreen() {
     // Colores personalizados para el prototipo morado
     val PurplePrimary = Color(0xFF673AB7)
     val LightLavender = Color(0xFFF3E5F5)
+
+    // Lógica de cálculo
+    val weightedAverage = (note1 * 0.20f) + (note2 * 0.25f) + (note3 * 0.30f) + (note4 * 0.25f)
+    
+    val finalAverageString = if (roundAverage) {
+        val rounded = Math.round(weightedAverage)
+        "$rounded (redondeado)"
+    } else {
+        String.format(Locale.US, "%.2f", weightedAverage)
+    }
 
     Scaffold(
         topBar = {
@@ -79,7 +90,7 @@ fun GradeRegistryScreen() {
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(20.dp),
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -87,14 +98,14 @@ fun GradeRegistryScreen() {
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.ExtraBold,
                     color = PurplePrimary,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = 2.dp)
                 )
 
                 Text(
                     text = "Desliza para asignar una nota (0 a 20)",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = 12.dp)
                 )
 
                 CourseGradeSlider("Fundamentos de Programación (20%)", note1, PurplePrimary) { note1 = it }
@@ -102,7 +113,7 @@ fun GradeRegistryScreen() {
                 CourseGradeSlider("Programación en Móviles (30%)", note3, PurplePrimary) { note3 = it }
                 CourseGradeSlider("Base de Datos (25%)", note4, PurplePrimary) { note4 = it }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -142,7 +153,7 @@ fun GradeRegistryScreen() {
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Button(
                     onClick = { showResults = true },
@@ -166,11 +177,10 @@ fun GradeRegistryScreen() {
                         style = MaterialTheme.typography.bodySmall
                     )
                 } else {
-                    // Simulación de tarjeta de resultados para diseño visual
-                    ResultsCard(PurplePrimary)
+                    ResultsCard(weightedAverage, finalAverageString, PurplePrimary)
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(24.dp))
                 
                 Text(
                     text = "Desarrollado por: Gonzalo Davila Ochochoque",
@@ -185,7 +195,7 @@ fun GradeRegistryScreen() {
 
 @Composable
 fun CourseGradeSlider(courseName: String, value: Float, color: Color, onValueChange: (Float) -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -226,7 +236,34 @@ fun CourseGradeSlider(courseName: String, value: Float, color: Color, onValueCha
 }
 
 @Composable
-fun ResultsCard(purpleColor: Color) {
+fun ResultsCard(weightedAverage: Float, finalAverage: String, purpleColor: Color) {
+    val observation: String
+    val observationColor: Color
+    val observationBg: Color
+
+    when {
+        weightedAverage >= 17 -> {
+            observation = "EXCELENTE"
+            observationColor = Color(0xFF1B5E20) // Verde oscuro
+            observationBg = Color(0xFFC8E6C9)
+        }
+        weightedAverage >= 13 -> {
+            observation = "APROBADO"
+            observationColor = Color(0xFF2E7D32) // Verde
+            observationBg = Color(0xFFE8F5E9)
+        }
+        weightedAverage >= 10 -> {
+            observation = "EN RECUPERACIÓN"
+            observationColor = Color(0xFFE65100) // Ámbar/Naranja
+            observationBg = Color(0xFFFFF3E0)
+        }
+        else -> {
+            observation = "DESAPROBADO"
+            observationColor = Color(0xFFB71C1C) // Rojo
+            observationBg = Color(0xFFFFEBEE)
+        }
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -244,30 +281,42 @@ fun ResultsCard(purpleColor: Color) {
                 fontWeight = FontWeight.Bold
             )
             
-            // Espacios para futuros resultados (Figura 2)
             Spacer(modifier = Modifier.height(8.dp))
-            Text("PROMEDIO FINAL", style = MaterialTheme.typography.labelMedium)
-            Text("00.00", style = MaterialTheme.typography.headlineLarge, color = purpleColor, fontWeight = FontWeight.Black)
+            
+            Text(
+                text = "Promedio ponderado: ${String.format(Locale.US, "%.2f", weightedAverage)}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            
+            Spacer(modifier = Modifier.height(4.dp))
+            
+            Text("PROMEDIO FINAL", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+            Text(
+                text = finalAverage, 
+                style = MaterialTheme.typography.headlineLarge, 
+                color = purpleColor, 
+                fontWeight = FontWeight.Black
+            )
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            // Simulación de Chip de observación
             Surface(
-                color = Color(0xFFFFC107).copy(alpha = 0.2f),
+                color = observationBg,
                 shape = RoundedCornerShape(16.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFC107))
+                border = androidx.compose.foundation.BorderStroke(1.dp, observationColor)
             ) {
                 Text(
-                    text = "OBSERVACIÓN",
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                    color = Color(0xFFBF8F00),
+                    text = observation,
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 6.dp),
+                    color = observationColor,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp
+                    fontSize = 14.sp
                 )
             }
         }
     }
 }
+
 
 
 @Preview(showBackground = true)
