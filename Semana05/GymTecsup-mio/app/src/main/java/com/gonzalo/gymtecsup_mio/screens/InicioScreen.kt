@@ -258,6 +258,15 @@ private fun FitnessClassCard(fitnessClass: FitnessClass) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "Horario: ${fitnessClass.schedule}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
             }
         }
 
@@ -269,7 +278,6 @@ private fun FitnessClassCard(fitnessClass: FitnessClass) {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             ClassInfoChip(text = fitnessClass.duration)
-            ClassInfoChip(text = fitnessClass.schedule)
             IntensityBadge(intensity = fitnessClass.intensity)
         }
     }
