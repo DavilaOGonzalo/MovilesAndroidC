@@ -13,18 +13,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,10 +39,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gonzalo.gymtecsup_mio.data.ClassCatalog
 import com.gonzalo.gymtecsup_mio.data.FitnessClass
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InicioScreen() {
+    var selectedFilter by remember { mutableStateOf(ClassFilter.TODAY) }
+
+    val filteredClasses = remember(selectedFilter) {
+        when (selectedFilter) {
+            ClassFilter.TODAY -> ClassCatalog.classes.filter { it.days.contains(todayName()) }
+            ClassFilter.THIS_WEEK -> ClassCatalog.classes
+        }
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -89,9 +105,54 @@ fun InicioScreen() {
                 )
             }
 
-            items(ClassCatalog.classes, key = { it.id }) { fitnessClass ->
+            item {
+                ClassFilterRow(
+                    selectedFilter = selectedFilter,
+                    onFilterSelected = { selectedFilter = it },
+                )
+            }
+
+            items(filteredClasses, key = { it.id }) { fitnessClass ->
                 FitnessClassCard(fitnessClass = fitnessClass)
             }
+        }
+    }
+}
+
+private enum class ClassFilter(val label: String) {
+    TODAY("Hoy"),
+    THIS_WEEK("Esta semana"),
+}
+
+private fun todayName(): String = when (Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+    Calendar.MONDAY -> "Lunes"
+    Calendar.TUESDAY -> "Martes"
+    Calendar.WEDNESDAY -> "Miércoles"
+    Calendar.THURSDAY -> "Jueves"
+    Calendar.FRIDAY -> "Viernes"
+    Calendar.SATURDAY -> "Sábado"
+    else -> "Domingo"
+}
+
+@Composable
+private fun ClassFilterRow(
+    selectedFilter: ClassFilter,
+    onFilterSelected: (ClassFilter) -> Unit,
+) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(ClassFilter.entries) { filter ->
+            FilterChip(
+                selected = selectedFilter == filter,
+                onClick = { onFilterSelected(filter) },
+                label = {
+                    Text(
+                        text = filter.label,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                },
+            )
         }
     }
 }

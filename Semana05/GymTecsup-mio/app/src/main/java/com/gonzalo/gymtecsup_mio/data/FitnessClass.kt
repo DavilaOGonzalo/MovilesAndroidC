@@ -9,6 +9,7 @@ data class FitnessClass(
     val intensity: String,
     val schedule: String,
     val description: String,
+    val days: List<String>,
 )
 
 object ClassCatalog {
@@ -22,6 +23,7 @@ object ClassCatalog {
             intensity = "Baja",
             schedule = "Lun · Mié · 7:00 a.m.",
             description = "Sesión enfocada en movilidad, respiración y equilibrio para empezar el día con energía.",
+            days = listOf("Lunes", "Miércoles"),
         ),
         FitnessClass(
             id = 2,
@@ -32,6 +34,7 @@ object ClassCatalog {
             intensity = "Alta",
             schedule = "Mar · Jue · 6:30 a.m.",
             description = "Entrenamiento funcional de alta intensidad con circuitos de peso corporal y ejercicios por estaciones.",
+            days = listOf("Martes", "Jueves"),
         ),
         FitnessClass(
             id = 3,
@@ -42,6 +45,7 @@ object ClassCatalog {
             intensity = "Media",
             schedule = "Lun · Vie · 8:00 p.m.",
             description = "Ruta cardiovascular sobre bicicleta estática con cambios de ritmo y resistencia guiados por el coach.",
+            days = listOf("Lunes", "Viernes"),
         ),
         FitnessClass(
             id = 4,
@@ -52,6 +56,7 @@ object ClassCatalog {
             intensity = "Media",
             schedule = "Mié · Vie · 6:00 p.m.",
             description = "Clase de baile con ritmos latinos para quemar calorías mientras te diviertes en grupo.",
+            days = listOf("Miércoles", "Viernes"),
         ),
     )
 }
