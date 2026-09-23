@@ -28,13 +28,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.gonzalo.hospitaltecsup_ia.data.DoctorCatalog
 import com.gonzalo.hospitaltecsup_ia.navigation.Screen
 
 // Perfil del médico: recibe los datos por navegación y permite agendar la cita.
@@ -47,6 +50,10 @@ fun DoctorProfileScreen(
     specialty: String,
     rating: Float,
 ) {
+    val description = remember(doctorId) {
+        DoctorCatalog.findById(doctorId)?.description.orEmpty()
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -84,8 +91,10 @@ fun DoctorProfileScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             ) {
                 Column(
                     modifier = Modifier
@@ -138,8 +147,9 @@ fun DoctorProfileScreen(
 
                     Surface(
                         shape = RoundedCornerShape(50),
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        shadowElevation = 1.dp,
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -158,6 +168,24 @@ fun DoctorProfileScreen(
                             )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Text(
+                        text = "Acerca de",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                    )
                 }
             }
 

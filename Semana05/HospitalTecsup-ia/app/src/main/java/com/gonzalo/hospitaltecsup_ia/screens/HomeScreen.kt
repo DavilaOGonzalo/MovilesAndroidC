@@ -24,10 +24,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.Surface
@@ -61,9 +58,13 @@ import kotlinx.coroutines.launch
 fun HomeScreen(navController: NavController) {
     val doctors = DoctorCatalog.doctors
     val specialties = remember {
-        doctors.map { it.specialty }.distinct()
+        listOf("Cardiología", "Pediatría")
     }
     var selectedSpecialty by remember { mutableStateOf<String?>(null) }
+
+    val filteredDoctors = remember(doctors, selectedSpecialty) {
+        if (selectedSpecialty == null) doctors else doctors.filter { it.specialty == selectedSpecialty }
+    }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -71,53 +72,23 @@ fun HomeScreen(navController: NavController) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
-    val drawerDestinations = remember {
-        listOf(
-            DrawerDestination("Inicio", Screen.Home.route),
-            DrawerDestination("Mis citas", Screen.MisCitas.route),
-            DrawerDestination("Historial médico", Screen.HistorialMedico.route),
-        )
-    }
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet(
-                modifier = Modifier.width(300.dp),
-                drawerShape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp),
-                drawerContainerColor = MaterialTheme.colorScheme.surface,
-            ) {
-                DrawerHeader()
-
-                drawerDestinations.forEach { destination ->
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = destination.label,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Medium,
-                            )
-                        },
-                        selected = currentRoute == destination.route,
-                        onClick = {
-                            scope.launch { drawerState.close() }
-                            navController.navigate(destination.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        colors = NavigationDrawerItemDefaults.colors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primary,
-                            selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                            unselectedContainerColor = MaterialTheme.colorScheme.surface,
-                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        ),
-                    )
-                }
-            }
+            AppDrawerContent(
+                drawerState = drawerState,
+                currentRoute = currentRoute,
+                onNavigateTo = { route ->
+                    scope.launch { drawerState.close() }
+                    navController.navigate(route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+            )
         },
     ) {
         Scaffold(
@@ -205,7 +176,7 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
 
-                items(doctors, key = { it.id }) { doctor ->
+                items(filteredDoctors, key = { it.id }) { doctor ->
                     DoctorCard(
                         doctor = doctor,
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
@@ -222,43 +193,6 @@ fun HomeScreen(navController: NavController) {
                     )
                 }
             }
-        }
-    }
-}
-
-private data class DrawerDestination(
-    val label: String,
-    val route: String,
-)
-
-@Composable
-private fun DrawerHeader() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                brush = androidx.compose.ui.graphics.Brush.verticalGradient(
-                    listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary,
-                    ),
-                ),
-            )
-            .padding(horizontal = 24.dp, vertical = 36.dp),
-    ) {
-        Column {
-            Text(
-                text = "Clínica Salud+",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Menú principal",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.85f),
-            )
         }
     }
 }
@@ -303,8 +237,10 @@ private fun DoctorCard(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Row(
             modifier = Modifier
@@ -346,8 +282,9 @@ private fun DoctorCard(
             Column(horizontalAlignment = Alignment.End) {
                 Surface(
                     shape = RoundedCornerShape(50),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    shadowElevation = 1.dp,
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,

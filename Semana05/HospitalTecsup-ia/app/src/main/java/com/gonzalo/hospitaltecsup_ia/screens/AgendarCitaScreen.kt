@@ -48,7 +48,7 @@ import com.gonzalo.hospitaltecsup_ia.navigation.Screen
 
 // Fechas y horas disponibles (datos estáticos).
 private val availableDates = listOf("Lun 12", "Mar 13", "Mié 14")
-private val availableTimes = listOf("9:00", "10:30", "12:00", "15:30")
+private val availableTimes = listOf("9:00", "10:30", "12:00")
 
 // Pantalla para agendar la cita: selección de fecha y hora.
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,8 +95,10 @@ fun AgendarCitaScreen(navController: NavController, doctorId: Int) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                 ) {
                     Row(
                         modifier = Modifier

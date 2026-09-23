@@ -87,8 +87,10 @@ fun ConfirmationScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(28.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             ) {
                 Column(
                     modifier = Modifier
@@ -102,8 +104,8 @@ fun ConfirmationScreen(
                             .background(
                                 brush = androidx.compose.ui.graphics.Brush.linearGradient(
                                     listOf(
-                                        MaterialTheme.colorScheme.primary,
-                                        MaterialTheme.colorScheme.secondary,
+                                        Color(0xFF43A047),
+                                        Color(0xFF66BB6A),
                                     ),
                                 ),
                                 shape = CircleShape,
@@ -142,8 +144,10 @@ fun ConfirmationScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             ) {
                 Column(modifier = Modifier.padding(22.dp)) {
                     Text(
