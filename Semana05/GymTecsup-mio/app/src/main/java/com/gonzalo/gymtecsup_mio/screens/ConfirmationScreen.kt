@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gonzalo.gymtecsup_mio.data.ClassCatalog
 import com.gonzalo.gymtecsup_mio.data.FitnessClass
+import com.gonzalo.gymtecsup_mio.data.ReservaCatalog
 import com.gonzalo.gymtecsup_mio.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,6 +48,10 @@ fun ConfirmationScreen(
     classId: Int,
 ) {
     val fitnessClass = remember(classId) { ClassCatalog.classes.find { it.id == classId } }
+
+    LaunchedEffect(classId, fitnessClass) {
+        fitnessClass?.let { ReservaCatalog.add(it) }
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -171,7 +177,7 @@ fun ConfirmationScreen(
 
             Button(
                 onClick = {
-                    navController.navigate(Screen.HOME) {
+                    navController.navigate(Screen.RESERVAS) {
                         popUpTo(Screen.HOME) { inclusive = true }
                         launchSingleTop = true
                     }
@@ -185,7 +191,7 @@ fun ConfirmationScreen(
                 ),
             ) {
                 Text(
-                    text = "Volver al inicio",
+                    text = "Ver mis reservas",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(vertical = 6.dp),
                 )

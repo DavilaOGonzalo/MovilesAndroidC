@@ -11,6 +11,7 @@ import com.gonzalo.gymtecsup_mio.data.ClassCatalog
 import com.gonzalo.gymtecsup_mio.screens.ClassDetailScreen
 import com.gonzalo.gymtecsup_mio.screens.ConfirmationScreen
 import com.gonzalo.gymtecsup_mio.screens.InicioScreen
+import com.gonzalo.gymtecsup_mio.screens.MisReservasScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController = rememberNavController()) {
@@ -49,6 +50,12 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
             ConfirmationScreen(
                 navController = navController,
                 classId = classId,
+            )
+        }
+
+        composable(Screen.RESERVAS) {
+            MisReservasScreen(
+                navController = navController,
             )
         }
     }
