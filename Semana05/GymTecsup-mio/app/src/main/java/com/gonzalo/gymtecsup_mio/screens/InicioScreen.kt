@@ -36,7 +36,7 @@ import com.gonzalo.gymtecsup_mio.data.FitnessClass
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClasesScreen() {
+fun InicioScreen() {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -62,6 +62,25 @@ fun ClasesScreen() {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item {
+                Column {
+                    Text(
+                        text = "Bienvenido a tu gimnasio",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Encuentra la clase perfecta para ti y mejora tu entrenamiento.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            item { StatsRow() }
+
+            item {
                 Text(
                     text = "Clases disponibles",
                     style = MaterialTheme.typography.titleLarge,
@@ -70,19 +89,63 @@ fun ClasesScreen() {
                 )
             }
 
-            item {
-                Text(
-                    text = "Elige la clase que mejor se adapte a tu rutina.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-
-            item { Spacer(modifier = Modifier.height(4.dp)) }
-
             items(ClassCatalog.classes, key = { it.id }) { fitnessClass ->
                 FitnessClassCard(fitnessClass = fitnessClass)
             }
+        }
+    }
+}
+
+@Composable
+private fun StatsRow() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        StatCard(
+            value = "${ClassCatalog.classes.size}",
+            label = "Clases",
+            modifier = Modifier.weight(1f),
+        )
+        StatCard(
+            value = "${ClassCatalog.classes.map { it.instructor }.distinct().size}",
+            label = "Instructores",
+            modifier = Modifier.weight(1f),
+        )
+        StatCard(
+            value = "${ClassCatalog.classes.map { it.category }.distinct().size}",
+            label = "Categorías",
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+@Composable
+private fun StatCard(value: String, label: String, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
         }
     }
 }
@@ -130,7 +193,7 @@ private fun FitnessClassCard(fitnessClass: FitnessClass) {
                 Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
-                    text = fitnessClass.instructor,
+                    text = "${fitnessClass.instructor} · ${fitnessClass.category}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

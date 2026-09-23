@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.gonzalo.gymtecsup_mio.screens.ClasesScreen
+import com.gonzalo.gymtecsup_mio.screens.InicioScreen
 import com.gonzalo.gymtecsup_mio.ui.theme.GymTecsupmioTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GymTecsupmioTheme {
-                ClasesScreen()
+                InicioScreen()
             }
         }
     }
