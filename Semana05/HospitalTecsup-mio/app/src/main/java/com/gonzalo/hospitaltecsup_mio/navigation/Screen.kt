@@ -1,14 +1,21 @@
 package com.gonzalo.hospitaltecsup_mio.navigation
 
+import android.net.Uri
+
 // Contrato central de navegación de Clínica Salud+.
 sealed class Screen(val route: String) {
 
     // Pantalla de inicio
     object Home : Screen("home")
 
-    // Perfil del médico seleccionado
-    object DoctorProfile : Screen("doctor/{doctorId}") {
-        fun createRoute(doctorId: Int): String = "doctor/$doctorId"
+    // Perfil del médico seleccionado — recibe los datos del médico por navegación.
+    object DoctorProfile : Screen("doctor/{doctorId}/{name}/{specialty}/{rating}") {
+        fun createRoute(
+            doctorId: Int,
+            name: String,
+            specialty: String,
+            rating: Float,
+        ): String = "doctor/$doctorId/${Uri.encode(name)}/${Uri.encode(specialty)}/$rating"
     }
 
     // Agenda de la cita

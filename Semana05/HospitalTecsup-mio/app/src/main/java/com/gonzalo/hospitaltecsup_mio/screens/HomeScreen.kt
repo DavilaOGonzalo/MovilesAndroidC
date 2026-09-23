@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gonzalo.hospitaltecsup_mio.data.Doctor
 import com.gonzalo.hospitaltecsup_mio.data.DoctorCatalog
+import com.gonzalo.hospitaltecsup_mio.navigation.Screen
 
 // Pantalla de inicio: lista de especialidades y médicos disponibles.
 @Composable
@@ -117,7 +118,16 @@ fun HomeScreen(navController: NavController) {
                 DoctorCard(
                     doctor = doctor,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
-                    onClick = { },
+                    onClick = {
+                        navController.navigate(
+                            Screen.DoctorProfile.createRoute(
+                                doctorId = doctor.id,
+                                name = doctor.name,
+                                specialty = doctor.specialty,
+                                rating = doctor.rating.toFloat(),
+                            ),
+                        )
+                    },
                 )
             }
         }
