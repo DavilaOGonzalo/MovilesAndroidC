@@ -117,6 +117,7 @@ fun HomeScreen(navController: NavController) {
                 DoctorCard(
                     doctor = doctor,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp),
+                    onClick = { },
                 )
             }
         }
@@ -155,9 +156,11 @@ private fun SpecialtyChip(
 @Composable
 private fun DoctorCard(
     doctor: Doctor,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -206,6 +209,12 @@ private fun DoctorCard(
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFFEDA90D),
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = ">",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
