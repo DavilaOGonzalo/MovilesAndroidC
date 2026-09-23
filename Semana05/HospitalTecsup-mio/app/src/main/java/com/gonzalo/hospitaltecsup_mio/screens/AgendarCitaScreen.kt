@@ -231,7 +231,7 @@ private fun SelectionChip(
         },
     ) {
         Text(
-            text = label,
+            text = if (selected) "✓ $label" else label,
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.padding(horizontal = 18.dp, vertical = 12.dp),
