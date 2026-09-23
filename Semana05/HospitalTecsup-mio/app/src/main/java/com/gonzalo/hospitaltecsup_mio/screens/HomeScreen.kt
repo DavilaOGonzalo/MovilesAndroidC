@@ -25,7 +25,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +46,7 @@ fun HomeScreen(navController: NavController) {
     val specialties = remember {
         doctors.map { it.specialty }.distinct()
     }
+    var selectedSpecialty by remember { mutableStateOf<String?>(null) }
 
     Scaffold(containerColor = MaterialTheme.colorScheme.background) { innerPadding ->
         LazyColumn(
@@ -82,7 +86,17 @@ fun HomeScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(specialties) { specialty ->
-                        SpecialtyChip(specialty)
+                        SpecialtyChip(
+                            specialty = specialty,
+                            selected = specialty == selectedSpecialty,
+                            onClick = {
+                                selectedSpecialty = if (selectedSpecialty == specialty) {
+                                    null
+                                } else {
+                                    specialty
+                                }
+                            },
+                        )
                     }
                 }
             }
@@ -110,15 +124,28 @@ fun HomeScreen(navController: NavController) {
 }
 
 @Composable
-private fun SpecialtyChip(specialty: String) {
+private fun SpecialtyChip(
+    specialty: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
     Surface(
-        color = MaterialTheme.colorScheme.primaryContainer,
+        onClick = onClick,
         shape = RoundedCornerShape(50),
+        color = if (selected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        },
+        contentColor = if (selected) {
+            MaterialTheme.colorScheme.onPrimary
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
     ) {
         Text(
             text = specialty,
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
         )
