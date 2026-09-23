@@ -26,6 +26,6 @@ sealed class Screen(val route: String) {
     // Confirmación final de la cita
     object Confirmation : Screen("confirmation/{doctorId}/{date}/{time}") {
         fun createRoute(doctorId: Int, date: String, time: String): String =
-            "confirmation/$doctorId/$date/$time"
+            "confirmation/$doctorId/${Uri.encode(date)}/${Uri.encode(time)}"
     }
 }

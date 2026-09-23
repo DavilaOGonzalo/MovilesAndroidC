@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gonzalo.hospitaltecsup_mio.data.DoctorCatalog
+import com.gonzalo.hospitaltecsup_mio.navigation.Screen
 
 // Fechas y horas disponibles (datos estáticos).
 private val availableDates = listOf("Lun 12", "Mar 13", "Mié 14")
@@ -190,7 +191,15 @@ fun AgendarCitaScreen(navController: NavController, doctorId: Int) {
             Spacer(modifier = Modifier.height(36.dp))
 
             Button(
-                onClick = { },
+                onClick = {
+                    navController.navigate(
+                        Screen.Confirmation.createRoute(
+                            doctorId = doctorId,
+                            date = selectedDate.orEmpty(),
+                            time = selectedTime.orEmpty(),
+                        ),
+                    )
+                },
                 enabled = selectedDate != null && selectedTime != null,
                 modifier = Modifier
                     .fillMaxWidth()

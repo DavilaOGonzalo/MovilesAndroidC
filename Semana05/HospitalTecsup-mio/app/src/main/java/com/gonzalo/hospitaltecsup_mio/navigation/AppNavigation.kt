@@ -81,8 +81,14 @@ fun AppNavigation() {
             ),
         ) { backStackEntry ->
             val doctorId = backStackEntry.arguments?.getInt("doctorId") ?: 0
-            val date = backStackEntry.arguments?.getString("date") ?: ""
-            val time = backStackEntry.arguments?.getString("time") ?: ""
+            val date = backStackEntry.arguments
+                ?.getString("date")
+                ?.let { Uri.decode(it) }
+                .orEmpty()
+            val time = backStackEntry.arguments
+                ?.getString("time")
+                ?.let { Uri.decode(it) }
+                .orEmpty()
             ConfirmationScreen(navController, doctorId, date, time)
         }
     }
