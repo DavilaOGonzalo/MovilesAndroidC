@@ -7,10 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.gonzalo.hospitaltecsup_mio.screens.AgendarCitaScreen
 import com.gonzalo.hospitaltecsup_mio.screens.ConfirmationScreen
 import com.gonzalo.hospitaltecsup_mio.screens.DoctorProfileScreen
 import com.gonzalo.hospitaltecsup_mio.screens.HomeScreen
-import com.gonzalo.hospitaltecsup_mio.screens.ScheduleAppointmentScreen
 
 @Composable
 fun AppNavigation() {
@@ -63,7 +63,7 @@ fun AppNavigation() {
             ),
         ) { backStackEntry ->
             val doctorId = backStackEntry.arguments?.getInt("doctorId") ?: 0
-            ScheduleAppointmentScreen(navController, doctorId)
+            AgendarCitaScreen(navController, doctorId)
         }
 
         composable(
