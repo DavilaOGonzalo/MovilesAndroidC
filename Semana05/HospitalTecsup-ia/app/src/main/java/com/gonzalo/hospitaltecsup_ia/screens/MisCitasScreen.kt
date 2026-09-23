@@ -1,7 +1,6 @@
 package com.gonzalo.hospitaltecsup_ia.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -99,9 +98,9 @@ fun MisCitasScreen(navController: NavController) {
 private fun CitaCard(cita: Cita) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
     ) {
         Row(
             modifier = Modifier
@@ -180,8 +179,8 @@ private fun EstadoBadge(estado: EstadoCita) {
 
         EstadoCita.COMPLETADA -> Triple(
             "Completada",
-            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
-            MaterialTheme.colorScheme.onSurfaceVariant,
+            MaterialTheme.colorScheme.secondaryContainer,
+            MaterialTheme.colorScheme.onSecondaryContainer,
         )
     }
 
@@ -189,18 +188,24 @@ private fun EstadoBadge(estado: EstadoCita) {
         shape = RoundedCornerShape(50),
         color = bgColor,
         contentColor = fgColor,
-        modifier = Modifier.border(
-            width = if (estado == EstadoCita.COMPLETADA) 1.dp else 0.dp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-            shape = RoundedCornerShape(50),
-        ),
+        shadowElevation = 1.dp,
     ) {
-        Text(
-            text = "✓ $label",
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.SemiBold,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-        )
+        ) {
+            Text(
+                text = "✓",
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
     }
 }
 

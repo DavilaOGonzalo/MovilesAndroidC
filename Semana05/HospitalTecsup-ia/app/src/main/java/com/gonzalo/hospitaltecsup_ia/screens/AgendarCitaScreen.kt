@@ -96,7 +96,7 @@ fun AgendarCitaScreen(navController: NavController, doctorId: Int) {
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                 ) {
                     Row(
                         modifier = Modifier
@@ -108,7 +108,14 @@ fun AgendarCitaScreen(navController: NavController, doctorId: Int) {
                             modifier = Modifier
                                 .size(48.dp)
                                 .clip(CircleShape)
-                                .background(colorForDoctor(doctorId)),
+                                .background(
+                                    brush = androidx.compose.ui.graphics.Brush.linearGradient(
+                                        listOf(
+                                            MaterialTheme.colorScheme.primary,
+                                            MaterialTheme.colorScheme.secondary,
+                                        ),
+                                    ),
+                                ),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
@@ -131,7 +138,7 @@ fun AgendarCitaScreen(navController: NavController, doctorId: Int) {
                             Text(
                                 text = it.specialty,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }
@@ -144,6 +151,7 @@ fun AgendarCitaScreen(navController: NavController, doctorId: Int) {
                 text = "Selecciona la fecha",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -169,6 +177,7 @@ fun AgendarCitaScreen(navController: NavController, doctorId: Int) {
                 text = "Selecciona la hora",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -203,11 +212,12 @@ fun AgendarCitaScreen(navController: NavController, doctorId: Int) {
                 enabled = selectedDate != null && selectedTime != null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(14.dp),
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                 ),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
             ) {
                 Text(
                     text = "Confirmar cita",
@@ -227,7 +237,7 @@ private fun SelectionChip(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(16.dp),
         color = if (selected) {
             MaterialTheme.colorScheme.primary
         } else {
@@ -238,12 +248,13 @@ private fun SelectionChip(
         } else {
             MaterialTheme.colorScheme.onSurfaceVariant
         },
+        shadowElevation = if (selected) 3.dp else 0.dp,
     ) {
         Text(
             text = if (selected) "✓ $label" else label,
             style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(horizontal = 18.dp, vertical = 12.dp),
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
         )
     }
 }

@@ -110,8 +110,9 @@ fun HomeScreen(navController: NavController) {
                             }
                         },
                         colors = NavigationDrawerItemDefaults.colors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                            unselectedContainerColor = MaterialTheme.colorScheme.surface,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         ),
                     )
@@ -125,7 +126,7 @@ fun HomeScreen(navController: NavController) {
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Inicio",
+                            text = "Clínica Salud+",
                             fontWeight = FontWeight.SemiBold,
                         )
                     },
@@ -134,13 +135,13 @@ fun HomeScreen(navController: NavController) {
                             Text(
                                 text = "☰",
                                 style = MaterialTheme.typography.titleLarge,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = MaterialTheme.colorScheme.onPrimary,
                             )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        titleContentColor = MaterialTheme.colorScheme.onSurface,
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
                     ),
                 )
             },
@@ -155,22 +156,16 @@ fun HomeScreen(navController: NavController) {
                     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Clínica Salud+",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
                             text = "Encuentra la especialidad y el médico para tu cita.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         Text(
                             text = "Especialidades",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                     }
@@ -204,6 +199,7 @@ fun HomeScreen(navController: NavController) {
                             text = "Médicos disponibles",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                     }
@@ -240,7 +236,14 @@ private fun DrawerHeader() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primary)
+            .background(
+                brush = androidx.compose.ui.graphics.Brush.verticalGradient(
+                    listOf(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary,
+                    ),
+                ),
+            )
             .padding(horizontal = 24.dp, vertical = 36.dp),
     ) {
         Column {
@@ -248,13 +251,13 @@ private fun DrawerHeader() {
                 text = "Clínica Salud+",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = Color.White,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Menú principal",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+                color = Color.White.copy(alpha = 0.85f),
             )
         }
     }
@@ -279,12 +282,13 @@ private fun SpecialtyChip(
         } else {
             MaterialTheme.colorScheme.onSurfaceVariant
         },
+        shadowElevation = if (selected) 2.dp else 0.dp,
     ) {
         Text(
             text = specialty,
             style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
         )
     }
 }
@@ -298,9 +302,9 @@ private fun DoctorCard(
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
     ) {
         Row(
             modifier = Modifier
@@ -310,7 +314,7 @@ private fun DoctorCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(52.dp)
+                    .size(54.dp)
                     .clip(CircleShape)
                     .background(colorForDoctor(doctor.id)),
                 contentAlignment = Alignment.Center,
@@ -339,18 +343,34 @@ private fun DoctorCard(
                 )
             }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = "★ ${doctor.rating}",
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFFEDA90D),
-                )
-                Spacer(modifier = Modifier.width(10.dp))
+            Column(horizontalAlignment = Alignment.End) {
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                    ) {
+                        Text(
+                            text = "★",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color(0xFF996E00),
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = doctor.rating.toString(),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = ">",
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
         }

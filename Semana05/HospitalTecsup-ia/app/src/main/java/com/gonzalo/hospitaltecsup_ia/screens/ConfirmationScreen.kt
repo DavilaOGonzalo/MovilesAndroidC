@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -85,34 +86,39 @@ fun ConfirmationScreen(
         ) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(28.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(28.dp),
+                        .padding(32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(72.dp)
+                            .size(88.dp)
                             .background(
-                                MaterialTheme.colorScheme.primaryContainer,
-                                CircleShape,
+                                brush = androidx.compose.ui.graphics.Brush.linearGradient(
+                                    listOf(
+                                        MaterialTheme.colorScheme.primary,
+                                        MaterialTheme.colorScheme.secondary,
+                                    ),
+                                ),
+                                shape = CircleShape,
                             ),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
                             text = "✓",
-                            style = MaterialTheme.typography.headlineMedium,
+                            style = MaterialTheme.typography.displaySmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = Color.White,
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
                         text = "¡Cita agendada!",
@@ -135,11 +141,11 @@ fun ConfirmationScreen(
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             ) {
-                Column(modifier = Modifier.padding(20.dp)) {
+                Column(modifier = Modifier.padding(22.dp)) {
                     Text(
                         text = "Resumen de tu cita",
                         style = MaterialTheme.typography.titleMedium,
@@ -151,7 +157,7 @@ fun ConfirmationScreen(
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
 
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
 
                     SummaryRow(
                         label = "Médico",
@@ -179,11 +185,12 @@ fun ConfirmationScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(14.dp),
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                 ),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
             ) {
                 Text(
                     text = "Volver al inicio",
