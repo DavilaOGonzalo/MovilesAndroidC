@@ -1,9 +1,11 @@
 package com.gonzalo.gymtecsup_mio.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,19 +15,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FitnessCenter
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,16 +33,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gonzalo.gymtecsup_mio.data.ClassCatalog
 import com.gonzalo.gymtecsup_mio.data.FitnessClass
 import com.gonzalo.gymtecsup_mio.navigation.Screen
+import com.gonzalo.gymtecsup_mio.ui.theme.DarkGreen
+import com.gonzalo.gymtecsup_mio.ui.theme.InkDark
+import com.gonzalo.gymtecsup_mio.ui.theme.InkGray
+import com.gonzalo.gymtecsup_mio.ui.theme.LightGray
+import com.gonzalo.gymtecsup_mio.ui.theme.LightGreen
 import java.util.Calendar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InicioScreen(navController: NavController) {
     var selectedFilter by remember { mutableStateOf(ClassFilter.TODAY) }
@@ -55,47 +57,20 @@ fun InicioScreen(navController: NavController) {
         }
     }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "TECSUP Fit",
-                        fontWeight = FontWeight.Bold,
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                ),
-            )
-        },
-    ) { innerPadding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+    ) {
+        HomeHeader()
+
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
+                .fillMaxWidth()
+                .weight(1f),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            item {
-                Column {
-                    Text(
-                        text = "Bienvenido a tu gimnasio",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Encuentra la clase perfecta para ti y mejora tu entrenamiento.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-
             item { StatsRow() }
 
             item {
@@ -103,7 +78,7 @@ fun InicioScreen(navController: NavController) {
                     text = "Clases disponibles",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = InkDark,
                 )
             }
 
@@ -123,6 +98,33 @@ fun InicioScreen(navController: NavController) {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun HomeHeader() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = DarkGreen,
+                shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
+            )
+            .padding(horizontal = 24.dp)
+            .padding(top = 20.dp, bottom = 22.dp),
+    ) {
+        Text(
+            text = "TECSUP Fit",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = "Hola, Diego",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
     }
 }
 
@@ -146,20 +148,23 @@ private fun ClassFilterRow(
     selectedFilter: ClassFilter,
     onFilterSelected: (ClassFilter) -> Unit,
 ) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(ClassFilter.entries) { filter ->
-            FilterChip(
-                selected = selectedFilter == filter,
-                onClick = { onFilterSelected(filter) },
-                label = {
-                    Text(
-                        text = filter.label,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                },
-            )
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        ClassFilter.entries.forEach { filter ->
+            val selected = selectedFilter == filter
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(if (selected) DarkGreen else LightGray)
+                    .clickable { onFilterSelected(filter) }
+                    .padding(horizontal = 18.dp, vertical = 9.dp),
+            ) {
+                Text(
+                    text = filter.label,
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                    color = if (selected) MaterialTheme.colorScheme.onPrimary else InkGray,
+                )
+            }
         }
     }
 }
@@ -168,7 +173,7 @@ private fun ClassFilterRow(
 private fun StatsRow() {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         StatCard(
             value = "${ClassCatalog.classes.size}",
@@ -193,9 +198,8 @@ private fun StatCard(value: String, label: String, modifier: Modifier = Modifier
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-        ),
+        colors = CardDefaults.cardColors(containerColor = LightGray),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
             modifier = Modifier
@@ -207,12 +211,12 @@ private fun StatCard(value: String, label: String, modifier: Modifier = Modifier
                 text = value,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = InkDark,
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = InkGray,
             )
         }
     }
@@ -224,13 +228,13 @@ private fun FitnessClassCard(
     onClick: () -> Unit,
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = LightGray),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Row(
             modifier = Modifier
@@ -240,100 +244,44 @@ private fun FitnessClassCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(56.dp)
+                    .size(48.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
+                    .background(LightGreen),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    text = fitnessClass.category.take(1),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                Icon(
+                    imageVector = Icons.Outlined.FitnessCenter,
+                    contentDescription = null,
+                    tint = DarkGreen,
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(14.dp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = fitnessClass.name,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                )
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                Text(
-                    text = "${fitnessClass.instructor} · ${fitnessClass.category}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Bold,
+                    color = InkDark,
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = "Horario: ${fitnessClass.schedule}",
+                    text = fitnessClass.schedule,
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = InkGray,
+                )
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                Text(
+                    text = fitnessClass.room,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = InkGray,
                 )
             }
         }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            ClassInfoChip(text = fitnessClass.duration)
-            IntensityBadge(intensity = fitnessClass.intensity)
-        }
-    }
-}
-
-@Composable
-private fun ClassInfoChip(text: String) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(50))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
-}
-
-@Composable
-private fun IntensityBadge(intensity: String) {
-    val background = when (intensity) {
-        "Alta" -> Color(0xFFFFEBEE)
-        "Media" -> Color(0xFFE8F5E9)
-        else -> Color(0xFFE0F2F1)
-    }
-    val content = when (intensity) {
-        "Alta" -> Color(0xFFC62828)
-        "Media" -> Color(0xFF2E7D32)
-        else -> Color(0xFF00695C)
-    }
-
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(50))
-            .background(background)
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-    ) {
-        Text(
-            text = "Intensidad $intensity",
-            style = MaterialTheme.typography.labelMedium,
-            color = content,
-            fontWeight = FontWeight.Medium,
-        )
     }
 }

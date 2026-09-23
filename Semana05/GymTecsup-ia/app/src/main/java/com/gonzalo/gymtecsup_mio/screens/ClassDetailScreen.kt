@@ -13,14 +13,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.FitnessCenter
+import androidx.compose.material.icons.outlined.Place
+import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,6 +38,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gonzalo.gymtecsup_mio.data.FitnessClass
+import com.gonzalo.gymtecsup_mio.ui.theme.DarkGreen
+import com.gonzalo.gymtecsup_mio.ui.theme.InkDark
+import com.gonzalo.gymtecsup_mio.ui.theme.InkGray
+import com.gonzalo.gymtecsup_mio.ui.theme.LightGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,21 +57,23 @@ fun ClassDetailScreen(
                 title = {
                     Text(
                         text = "Detalle de clase",
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.SemiBold,
+                        color = InkDark,
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Text(
-                            text = "←",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = InkDark,
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    titleContentColor = InkDark,
                 ),
             )
         },
@@ -71,90 +81,117 @@ fun ClassDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp),
+                .padding(innerPadding),
         ) {
-            Box(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .size(width = 96.dp, height = 96.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-                contentAlignment = Alignment.Center,
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 8.dp, bottom = 16.dp),
             ) {
-                Text(
-                    text = fitnessClass.category.take(1),
-                    style = MaterialTheme.typography.displaySmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = fitnessClass.name,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = "${fitnessClass.instructor} · ${fitnessClass.category}",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
-            ) {
-                Column(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                        .height(220.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(LightGreen),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    DetailRow(label = "Horario", value = fitnessClass.schedule)
-                    DetailRow(label = "Duración", value = fitnessClass.duration)
-                    DetailRow(label = "Intensidad", value = fitnessClass.intensity)
+                    Icon(
+                        imageVector = Icons.Outlined.FitnessCenter,
+                        contentDescription = null,
+                        modifier = Modifier.size(64.dp),
+                        tint = DarkGreen,
+                    )
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = fitnessClass.name,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = InkDark,
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "${fitnessClass.instructor} · ${fitnessClass.intensity}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = InkGray,
+                )
+
+                Spacer(modifier = Modifier.height(22.dp))
+
+                DetailInfoRow(
+                    icon = Icons.Outlined.Schedule,
+                    text = fitnessClass.schedule,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                DetailInfoRow(
+                    icon = Icons.Outlined.Place,
+                    text = fitnessClass.room,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                DetailInfoRow(
+                    icon = Icons.Outlined.Timer,
+                    text = "${fitnessClass.duration} · ${fitnessClass.intensity}",
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .background(LightGreen)
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                ) {
+                    Text(
+                        text = "${fitnessClass.spots} cupos disponibles",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = DarkGreen,
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = "Descripción",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = InkDark,
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    text = fitnessClass.description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = InkGray,
+                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                )
             }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text(
-                text = fitnessClass.description,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
 
             Button(
                 onClick = { onReserve() },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 20.dp)
                     .height(56.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
+                    containerColor = DarkGreen,
                 ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 2.dp,
-                ),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
             ) {
                 Text(
                     text = "Reservar cupo",
                     style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
                 )
             }
         }
@@ -162,22 +199,22 @@ fun ClassDetailScreen(
 }
 
 @Composable
-private fun DetailRow(label: String, value: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.weight(1f),
+private fun DetailInfoRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    text: String,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp),
+            tint = InkGray,
         )
+        Spacer(modifier = Modifier.width(10.dp))
         Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            text = text,
+            style = MaterialTheme.typography.bodyLarge,
+            color = InkGray,
         )
     }
 }

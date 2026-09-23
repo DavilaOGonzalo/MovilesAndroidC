@@ -26,22 +26,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.gonzalo.gymtecsup_mio.data.EstadoReserva
-import com.gonzalo.gymtecsup_mio.data.ReservaCatalog
+import com.gonzalo.gymtecsup_mio.ui.theme.DarkGreen
+import com.gonzalo.gymtecsup_mio.ui.theme.InkDark
+import com.gonzalo.gymtecsup_mio.ui.theme.InkGray
+import com.gonzalo.gymtecsup_mio.ui.theme.LightGray
+import com.gonzalo.gymtecsup_mio.ui.theme.LightGreen
+import com.gonzalo.gymtecsup_mio.ui.theme.WhiteSurface
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PerfilScreen() {
-    val completadas = remember {
-        ReservaCatalog.reservas.count { it.estado == EstadoReserva.COMPLETADA }
-    }
-
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -49,12 +48,13 @@ fun PerfilScreen() {
                 title = {
                     Text(
                         text = "Perfil",
-                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor = DarkGreen,
+                    titleContentColor = WhiteSurface,
                 ),
             )
         },
@@ -63,85 +63,45 @@ fun PerfilScreen() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 24.dp, bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             item {
-                Card(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                    ),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Column(
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                            .size(92.dp)
+                            .background(LightGreen, CircleShape),
+                        contentAlignment = Alignment.Center,
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(88.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    shape = CircleShape,
-                                ),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                text = "G",
-                                style = MaterialTheme.typography.headlineLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
                         Text(
-                            text = "Gonzalo Torres",
-                            style = MaterialTheme.typography.titleLarge,
+                            text = "DR",
+                            style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            color = DarkGreen,
                         )
-
-                        Spacer(modifier = Modifier.height(4.dp))
-
-                        Text(
-                            text = "gonzalo.torres@tecsup.edu.pe",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    color = MaterialTheme.colorScheme.primaryContainer,
-                                    shape = RoundedCornerShape(50),
-                                )
-                                .padding(horizontal = 14.dp, vertical = 6.dp),
-                        ) {
-                            Text(
-                                text = "Plan Gold",
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            )
-                        }
                     }
-                }
-            }
 
-            item {
-                Text(
-                    text = "Estadísticas",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Text(
+                        text = "Diego Ramos",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = InkDark,
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = "Plan Premium",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = InkGray,
+                    )
+                }
             }
 
             item {
@@ -150,13 +110,13 @@ fun PerfilScreen() {
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     ProfileStatCard(
-                        value = "$completadas",
-                        label = "Clases tomadas",
+                        value = "14",
+                        label = "Clases",
                         modifier = Modifier.weight(1f),
                     )
                     ProfileStatCard(
-                        value = "5",
-                        label = "Racha de asistencia",
+                        value = "3",
+                        label = "Rachas",
                         modifier = Modifier.weight(1f),
                     )
                 }
@@ -165,25 +125,23 @@ fun PerfilScreen() {
             item {
                 Text(
                     text = "Información",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = InkDark,
                 )
             }
 
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                    ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = LightGray),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                 ) {
-                    Column(modifier = Modifier.padding(20.dp)) {
+                    Column(modifier = Modifier.padding(16.dp)) {
                         ProfileInfoRow(label = "Sede", value = "TECSUP Lima")
                         HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
-                        ProfileInfoRow(label = "Membresía", value = "Mensual")
+                        ProfileInfoRow(label = "Membresía", value = "Premium")
                         HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
                         ProfileInfoRow(label = "Miembro desde", value = "Marzo 2026")
                     }
@@ -202,26 +160,26 @@ private fun ProfileStatCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-        ),
+        colors = CardDefaults.cardColors(containerColor = LightGray),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .padding(vertical = 18.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = value,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = InkDark,
             )
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = InkGray,
                 textAlign = TextAlign.Center,
             )
         }
@@ -242,7 +200,7 @@ private fun ProfileInfoRow(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = InkGray,
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(

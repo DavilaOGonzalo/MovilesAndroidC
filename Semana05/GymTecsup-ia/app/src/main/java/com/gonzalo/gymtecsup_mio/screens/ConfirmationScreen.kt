@@ -1,32 +1,24 @@
 package com.gonzalo.gymtecsup_mio.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -37,11 +29,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gonzalo.gymtecsup_mio.data.ClassCatalog
-import com.gonzalo.gymtecsup_mio.data.FitnessClass
 import com.gonzalo.gymtecsup_mio.data.ReservaCatalog
 import com.gonzalo.gymtecsup_mio.navigation.Screen
+import com.gonzalo.gymtecsup_mio.ui.theme.DarkGreen
+import com.gonzalo.gymtecsup_mio.ui.theme.InkDark
+import com.gonzalo.gymtecsup_mio.ui.theme.InkGray
+import com.gonzalo.gymtecsup_mio.ui.theme.LightGray
+import com.gonzalo.gymtecsup_mio.ui.theme.LightGreen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfirmationScreen(
     navController: NavController,
@@ -53,176 +48,99 @@ fun ConfirmationScreen(
         fitnessClass?.let { ReservaCatalog.add(it) }
     }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Confirmación",
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Text(
-                            text = "←",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                ),
-            )
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(28.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(72.dp)
-                            .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = "✓",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "¡Cupo reservado!",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Tu cupo en la clase fue reservado correctamente.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Text(
-                        text = "Resumen de tu reserva",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    SummaryRow(
-                        label = "Clase",
-                        value = fitnessClass?.name.orEmpty(),
-                    )
-                    SummaryRow(
-                        label = "Horario",
-                        value = fitnessClass?.schedule.orEmpty(),
-                    )
-                    SummaryRow(
-                        label = "Instructor",
-                        value = fitnessClass?.instructor.orEmpty(),
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(36.dp))
-
-            Button(
-                onClick = {
-                    navController.navigate(Screen.RESERVAS) {
-                        popUpTo(Screen.HOME) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                ),
-            ) {
-                Text(
-                    text = "Ver mis reservas",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(vertical = 6.dp),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun SummaryRow(
-    label: String,
-    value: String,
-) {
-    Row(
+    Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = 28.dp, vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
+        Box(
+            modifier = Modifier
+                .size(92.dp)
+                .background(LightGreen, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Check,
+                contentDescription = null,
+                modifier = Modifier.size(52.dp),
+                tint = DarkGreen,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(28.dp))
+
         Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            text = "¡Cupo reservado!",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = InkDark,
+            textAlign = TextAlign.Center,
         )
-        Spacer(modifier = Modifier.width(16.dp))
+
+        Spacer(modifier = Modifier.height(10.dp))
+
         Text(
-            text = value,
+            text = "Tu cupo fue reservado con éxito.",
             style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
-            textAlign = TextAlign.End,
-            modifier = Modifier.weight(1f),
+            color = InkGray,
+            textAlign = TextAlign.Center,
         )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = fitnessClass?.name.orEmpty(),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = InkDark,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = fitnessClass?.schedule.orEmpty(),
+            style = MaterialTheme.typography.bodyMedium,
+            color = InkGray,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            text = fitnessClass?.room.orEmpty(),
+            style = MaterialTheme.typography.bodyMedium,
+            color = InkGray,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(modifier = Modifier.height(44.dp))
+
+        Button(
+            onClick = {
+                navController.navigate(Screen.RESERVAS) {
+                    popUpTo(Screen.HOME) { inclusive = true }
+                    launchSingleTop = true
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(54.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = LightGray,
+            ),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
+        ) {
+            Text(
+                text = "Ver mis reservas",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = InkDark,
+            )
+        }
     }
 }

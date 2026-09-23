@@ -4,18 +4,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,6 +35,11 @@ import androidx.compose.ui.unit.dp
 import com.gonzalo.gymtecsup_mio.data.EstadoReserva
 import com.gonzalo.gymtecsup_mio.data.Reserva
 import com.gonzalo.gymtecsup_mio.data.ReservaCatalog
+import com.gonzalo.gymtecsup_mio.ui.theme.DarkGreen
+import com.gonzalo.gymtecsup_mio.ui.theme.InkDark
+import com.gonzalo.gymtecsup_mio.ui.theme.InkGray
+import com.gonzalo.gymtecsup_mio.ui.theme.LightGray
+import com.gonzalo.gymtecsup_mio.ui.theme.LightGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,12 +51,13 @@ fun MisReservasScreen() {
                 title = {
                     Text(
                         text = "Mis reservas",
-                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor = DarkGreen,
+                    titleContentColor = Color.White,
                 ),
             )
         },
@@ -67,7 +73,7 @@ fun MisReservasScreen() {
                 Text(
                     text = "Aún no tienes reservas.",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = InkGray,
                 )
             }
         } else {
@@ -75,7 +81,7 @@ fun MisReservasScreen() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 items(ReservaCatalog.reservas, key = { it.id }) { reserva ->
@@ -88,61 +94,57 @@ fun MisReservasScreen() {
 
 @Composable
 private fun ReservaCard(reserva: Reserva) {
+    val confirmada = reserva.estado == EstadoReserva.CONFIRMADA
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = LightGray),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .height(IntrinsicSize.Min),
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center,
+                    .width(4.dp)
+                    .fillMaxHeight()
+                    .background(if (confirmada) DarkGreen else Color.Transparent),
+            )
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp)
+                    .padding(vertical = 14.dp),
             ) {
-                Text(
-                    text = reserva.className.take(1),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = reserva.className,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Bold,
+                    color = InkDark,
                 )
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Horario: ${reserva.schedule}",
+                    text = reserva.schedule,
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = InkGray,
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = reserva.instructor,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = InkGray,
                 )
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
-
-            EstadoBadge(estado = reserva.estado)
+            Column(
+                horizontalAlignment = Alignment.End,
+            ) {
+                EstadoBadge(estado = reserva.estado)
+            }
         }
     }
 }
@@ -150,23 +152,16 @@ private fun ReservaCard(reserva: Reserva) {
 @Composable
 private fun EstadoBadge(estado: EstadoReserva) {
     val (background, content, label) = when (estado) {
-        EstadoReserva.CONFIRMADA -> Triple(
-            Color(0xFFE8F5E9),
-            Color(0xFF2E7D32),
-            "✓ Confirmada",
-        )
-        EstadoReserva.COMPLETADA -> Triple(
-            Color(0xFFE3F2FD),
-            Color(0xFF1565C0),
-            "Completada",
-        )
+        EstadoReserva.CONFIRMADA -> Triple(LightGreen, DarkGreen, "Confirmada")
+        EstadoReserva.COMPLETADA -> Triple(Color(0xFFE6E8EA), InkGray, "Completada")
     }
 
     Box(
         modifier = Modifier
+            .padding(top = 14.dp, end = 14.dp)
             .clip(RoundedCornerShape(50))
             .background(background)
-            .padding(horizontal = 10.dp, vertical = 6.dp),
+            .padding(horizontal = 12.dp, vertical = 6.dp),
     ) {
         Text(
             text = label,
