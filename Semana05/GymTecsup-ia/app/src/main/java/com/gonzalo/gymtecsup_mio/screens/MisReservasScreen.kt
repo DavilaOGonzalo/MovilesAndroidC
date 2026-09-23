@@ -29,8 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.gonzalo.gymtecsup_mio.data.EstadoReserva
 import com.gonzalo.gymtecsup_mio.data.Reserva
 import com.gonzalo.gymtecsup_mio.data.ReservaCatalog
 
@@ -117,7 +119,7 @@ private fun ReservaCard(reserva: Reserva) {
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = reserva.className,
                     style = MaterialTheme.typography.titleMedium,
@@ -137,6 +139,40 @@ private fun ReservaCard(reserva: Reserva) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            EstadoBadge(estado = reserva.estado)
         }
+    }
+}
+
+@Composable
+private fun EstadoBadge(estado: EstadoReserva) {
+    val (background, content, label) = when (estado) {
+        EstadoReserva.CONFIRMADA -> Triple(
+            Color(0xFFE8F5E9),
+            Color(0xFF2E7D32),
+            "✓ Confirmada",
+        )
+        EstadoReserva.COMPLETADA -> Triple(
+            Color(0xFFE3F2FD),
+            Color(0xFF1565C0),
+            "Completada",
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(50))
+            .background(background)
+            .padding(horizontal = 10.dp, vertical = 6.dp),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = content,
+            fontWeight = FontWeight.Medium,
+        )
     }
 }
