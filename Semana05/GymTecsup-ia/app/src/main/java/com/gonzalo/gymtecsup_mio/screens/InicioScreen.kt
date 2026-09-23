@@ -314,13 +314,13 @@ private fun ClassInfoChip(text: String) {
 private fun IntensityBadge(intensity: String) {
     val background = when (intensity) {
         "Alta" -> Color(0xFFFFEBEE)
-        "Media" -> Color(0xFFFFF3E0)
-        else -> Color(0xFFE8F5E9)
+        "Media" -> Color(0xFFE8F5E9)
+        else -> Color(0xFFE0F2F1)
     }
     val content = when (intensity) {
         "Alta" -> Color(0xFFC62828)
-        "Media" -> Color(0xFFE65100)
-        else -> Color(0xFF2E7D32)
+        "Media" -> Color(0xFF2E7D32)
+        else -> Color(0xFF00695C)
     }
 
     Box(
