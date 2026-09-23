@@ -1,0 +1,57 @@
+package com.gonzalo.gymtecsup_mio.data
+
+data class FitnessClass(
+    val id: Int,
+    val name: String,
+    val category: String,
+    val instructor: String,
+    val duration: String,
+    val intensity: String,
+    val schedule: String,
+    val description: String,
+)
+
+object ClassCatalog {
+    val classes: List<FitnessClass> = listOf(
+        FitnessClass(
+            id = 1,
+            name = "Yoga & Estiramiento",
+            category = "Relajación",
+            instructor = "Prof. Karen Rivera",
+            duration = "45 min",
+            intensity = "Baja",
+            schedule = "Lun · Mié · 7:00 a.m.",
+            description = "Sesión enfocada en movilidad, respiración y equilibrio para empezar el día con energía.",
+        ),
+        FitnessClass(
+            id = 2,
+            name = "CrossFit",
+            category = "Fuerza",
+            instructor = "Coach Marco Díaz",
+            duration = "60 min",
+            intensity = "Alta",
+            schedule = "Mar · Jue · 6:30 a.m.",
+            description = "Entrenamiento funcional de alta intensidad con circuitos de peso corporal y ejercicios por estaciones.",
+        ),
+        FitnessClass(
+            id = 3,
+            name = "Spinning",
+            category = "Cardio",
+            instructor = "Coach Laura Méndez",
+            duration = "50 min",
+            intensity = "Media",
+            schedule = "Lun · Vie · 8:00 p.m.",
+            description = "Ruta cardiovascular sobre bicicleta estática con cambios de ritmo y resistencia guiados por el coach.",
+        ),
+        FitnessClass(
+            id = 4,
+            name = "Zumba",
+            category = "Baile",
+            instructor = "Prof. Sofía Quispe",
+            duration = "45 min",
+            intensity = "Media",
+            schedule = "Mié · Vie · 6:00 p.m.",
+            description = "Clase de baile con ritmos latinos para quemar calorías mientras te diviertes en grupo.",
+        ),
+    )
+}
