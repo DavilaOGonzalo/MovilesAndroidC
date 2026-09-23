@@ -40,6 +40,7 @@ import com.gonzalo.gymtecsup_mio.data.FitnessClass
 fun ClassDetailScreen(
     fitnessClass: FitnessClass,
     onBack: () -> Unit,
+    onReserve: () -> Unit,
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -139,7 +140,7 @@ fun ClassDetailScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { /* Reservar cupo */ },
+                onClick = { onReserve() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

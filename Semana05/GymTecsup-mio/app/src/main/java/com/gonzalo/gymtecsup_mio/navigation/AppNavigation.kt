@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.gonzalo.gymtecsup_mio.data.ClassCatalog
 import com.gonzalo.gymtecsup_mio.screens.ClassDetailScreen
+import com.gonzalo.gymtecsup_mio.screens.ConfirmationScreen
 import com.gonzalo.gymtecsup_mio.screens.InicioScreen
 
 @Composable
@@ -33,8 +34,22 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                 ClassDetailScreen(
                     fitnessClass = fitnessClass,
                     onBack = { navController.popBackStack() },
+                    onReserve = {
+                        navController.navigate(Screen.confirmation(classId))
+                    },
                 )
             }
+        }
+
+        composable(
+            route = Screen.CONFIRMATION,
+            arguments = listOf(navArgument("classId") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            val classId = backStackEntry.arguments?.getInt("classId") ?: 0
+            ConfirmationScreen(
+                navController = navController,
+                classId = classId,
+            )
         }
     }
 }
