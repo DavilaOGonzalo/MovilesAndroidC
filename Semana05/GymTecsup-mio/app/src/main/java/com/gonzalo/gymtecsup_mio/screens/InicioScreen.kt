@@ -37,13 +37,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.gonzalo.gymtecsup_mio.data.ClassCatalog
 import com.gonzalo.gymtecsup_mio.data.FitnessClass
+import com.gonzalo.gymtecsup_mio.navigation.Screen
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InicioScreen() {
+fun InicioScreen(navController: NavController) {
     var selectedFilter by remember { mutableStateOf(ClassFilter.TODAY) }
 
     val filteredClasses = remember(selectedFilter) {
@@ -113,7 +115,12 @@ fun InicioScreen() {
             }
 
             items(filteredClasses, key = { it.id }) { fitnessClass ->
-                FitnessClassCard(fitnessClass = fitnessClass)
+                FitnessClassCard(
+                    fitnessClass = fitnessClass,
+                    onClick = {
+                        navController.navigate(Screen.classDetail(fitnessClass.id))
+                    },
+                )
             }
         }
     }
@@ -212,7 +219,10 @@ private fun StatCard(value: String, label: String, modifier: Modifier = Modifier
 }
 
 @Composable
-private fun FitnessClassCard(fitnessClass: FitnessClass) {
+private fun FitnessClassCard(
+    fitnessClass: FitnessClass,
+    onClick: () -> Unit,
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
@@ -220,6 +230,7 @@ private fun FitnessClassCard(fitnessClass: FitnessClass) {
             containerColor = MaterialTheme.colorScheme.surface,
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        onClick = onClick,
     ) {
         Row(
             modifier = Modifier
