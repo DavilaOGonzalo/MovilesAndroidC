@@ -51,6 +51,10 @@ fun ListScreen(navController: NavController) {
 
     val scope = rememberCoroutineScope()
 
+    // Ruta actual
+    val currentRoute =
+        navController.currentBackStackEntry?.destination?.route
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -68,49 +72,73 @@ fun ListScreen(navController: NavController) {
 
                 // INICIO
                 NavigationDrawerItem(
-                    label = { Text("Inicio") },
-                    selected = false,
+                    label = {
+                        Text("Inicio")
+                    },
+                    selected = currentRoute == Screen.Home.route,
                     onClick = {
                         scope.launch {
                             drawerState.close()
                         }
                         navController.navigate(Screen.Home.route)
-                    }
+                    },
+                    modifier = Modifier.padding(
+                        horizontal = 8.dp,
+                        vertical = 4.dp
+                    )
                 )
 
                 // MIS PEDIDOS
                 NavigationDrawerItem(
-                    label = { Text("Mis pedidos") },
-                    selected = false,
+                    label = {
+                        Text("Mis pedidos")
+                    },
+                    selected = currentRoute == Screen.List.route,
                     onClick = {
                         scope.launch {
                             drawerState.close()
                         }
                         navController.navigate(Screen.List.route)
-                    }
+                    },
+                    modifier = Modifier.padding(
+                        horizontal = 8.dp,
+                        vertical = 4.dp
+                    )
                 )
 
                 // FAVORITOS
                 NavigationDrawerItem(
-                    label = { Text("Favoritos") },
+                    label = {
+                        Text("Favoritos")
+                    },
                     selected = false,
                     onClick = {
                         scope.launch {
                             drawerState.close()
                         }
-                    }
+                    },
+                    modifier = Modifier.padding(
+                        horizontal = 8.dp,
+                        vertical = 4.dp
+                    )
                 )
 
                 // PERFIL
                 NavigationDrawerItem(
-                    label = { Text("Perfil") },
-                    selected = false,
+                    label = {
+                        Text("Perfil")
+                    },
+                    selected = currentRoute == Screen.Profile.route,
                     onClick = {
                         scope.launch {
                             drawerState.close()
                         }
                         navController.navigate(Screen.Profile.route)
-                    }
+                    },
+                    modifier = Modifier.padding(
+                        horizontal = 8.dp,
+                        vertical = 4.dp
+                    )
                 )
             }
         }
