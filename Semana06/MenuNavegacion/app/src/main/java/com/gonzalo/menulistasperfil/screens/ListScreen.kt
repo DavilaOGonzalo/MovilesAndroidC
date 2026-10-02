@@ -1,9 +1,13 @@
 package com.gonzalo.menulistasperfil.screens
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -13,28 +17,33 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import com.gonzalo.menulistasperfil.navigation.Screen
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import com.gonzalo.menulistasperfil.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(navController: NavController) {
-    val items = (1..8).map { "Elemento número $it" }
-    var expanded by remember { mutableStateOf(false) }
+
+    val items = (1..8).map {
+        "Elemento número $it"
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Lista") },
+                title = {
+                    Text("Lista")
+                },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.popBackStack() }
+                        onClick = {
+                            navController.popBackStack()
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -45,8 +54,17 @@ fun ListScreen(navController: NavController) {
             )
         }
     ) { padding ->
-        LazyColumn(contentPadding = padding) {
+
+        LazyColumn(
+            contentPadding = padding
+        ) {
+
             items(items.size) { index ->
+
+                var expanded by remember {
+                    mutableStateOf(false)
+                }
+
                 ListItem(
                     headlineContent = {
                         Text(items[index])
@@ -55,15 +73,54 @@ fun ListScreen(navController: NavController) {
                         Text("Toca para ver el detalle")
                     },
                     trailingContent = {
-                        IconButton(
-                            onClick = {
-                                expanded = !expanded
+
+                        Box {
+
+                            IconButton(
+                                onClick = {
+                                    expanded = !expanded
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = "Opciones"
+                                )
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = "Opciones"
-                            )
+
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = {
+                                    expanded = false
+                                }
+                            ) {
+
+                                DropdownMenuItem(
+                                    text = {
+                                        Text("Favoritos")
+                                    },
+                                    onClick = {
+                                        expanded = false
+                                    }
+                                )
+
+                                DropdownMenuItem(
+                                    text = {
+                                        Text("Compartir")
+                                    },
+                                    onClick = {
+                                        expanded = false
+                                    }
+                                )
+
+                                DropdownMenuItem(
+                                    text = {
+                                        Text("Reportar")
+                                    },
+                                    onClick = {
+                                        expanded = false
+                                    }
+                                )
+                            }
                         }
                     },
                     modifier = Modifier.clickable {
@@ -72,6 +129,7 @@ fun ListScreen(navController: NavController) {
                         )
                     }
                 )
+
                 HorizontalDivider()
             }
         }
