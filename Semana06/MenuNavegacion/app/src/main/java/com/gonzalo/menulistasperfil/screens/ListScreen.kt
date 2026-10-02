@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -98,23 +101,45 @@ fun ListScreen(navController: NavController) {
                                     text = {
                                         Text("Favoritos")
                                     },
-                                    onClick = {
-                                        expanded = false
-                                    }
-                                )
-
-                                DropdownMenuItem(
-                                    text = {
-                                        Text("Compartir")
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Star,
+                                            contentDescription = "Favoritos"
+                                        )
                                     },
                                     onClick = {
                                         expanded = false
                                     }
                                 )
 
+                                HorizontalDivider()
+
+                                DropdownMenuItem(
+                                    text = {
+                                        Text("Compartir")
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Share,
+                                            contentDescription = "Compartir"
+                                        )
+                                    },
+                                    onClick = {
+                                        expanded = false
+                                    }
+                                )
+
+                                HorizontalDivider()
+
                                 DropdownMenuItem(
                                     text = {
                                         Text("Reportar")
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Flag,
+                                            contentDescription = "Reportar"
+                                        )
                                     },
                                     onClick = {
                                         expanded = false
