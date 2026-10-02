@@ -5,13 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,13 +23,14 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -42,9 +41,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun ListScreen(navController: NavController) {
 
-    val items = (1..8).map {
-        "Elemento número $it"
-    }
+    val items = (1..8).map { "Elemento número $it" }
+
+    var expanded by remember { mutableStateOf(false) }
 
     val drawerState = rememberDrawerState(
         initialValue = DrawerValue.Closed
@@ -53,9 +52,7 @@ fun ListScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(
-
         drawerState = drawerState,
-
         drawerContent = {
 
             ModalDrawerSheet {
@@ -68,10 +65,34 @@ fun ListScreen(navController: NavController) {
                         bottom = 16.dp
                     )
                 )
+
+                // INICIO
                 NavigationDrawerItem(
-                    label = {
-                        Text("Inicio")
-                    },
+                    label = { Text("Inicio") },
+                    selected = false,
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                        navController.navigate(Screen.Home.route)
+                    }
+                )
+
+                // MIS PEDIDOS
+                NavigationDrawerItem(
+                    label = { Text("Mis pedidos") },
+                    selected = false,
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                        navController.navigate(Screen.List.route)
+                    }
+                )
+
+                // FAVORITOS
+                NavigationDrawerItem(
+                    label = { Text("Favoritos") },
                     selected = false,
                     onClick = {
                         scope.launch {
@@ -80,58 +101,28 @@ fun ListScreen(navController: NavController) {
                     }
                 )
 
+                // PERFIL
                 NavigationDrawerItem(
-                    label = {
-                        Text("Mis pedidos")
-                    },
+                    label = { Text("Perfil") },
                     selected = false,
                     onClick = {
                         scope.launch {
                             drawerState.close()
                         }
-                    }
-                )
-
-                NavigationDrawerItem(
-                    label = {
-                        Text("Favoritos")
-                    },
-                    selected = false,
-                    onClick = {
-                        scope.launch {
-                            drawerState.close()
-                        }
-                    }
-                )
-
-                NavigationDrawerItem(
-                    label = {
-                        Text("Perfil")
-                    },
-                    selected = false,
-                    onClick = {
-                        scope.launch {
-                            drawerState.close()
-                        }
+                        navController.navigate(Screen.Profile.route)
                     }
                 )
             }
         }
-
     ) {
 
         Scaffold(
-
             topBar = {
-
                 TopAppBar(
-
                     title = {
                         Text("Lista")
                     },
-
                     navigationIcon = {
-
                         IconButton(
                             onClick = {
                                 scope.launch {
@@ -147,7 +138,6 @@ fun ListScreen(navController: NavController) {
                     }
                 )
             }
-
         ) { padding ->
 
             LazyColumn(
@@ -156,12 +146,7 @@ fun ListScreen(navController: NavController) {
 
                 items(items.size) { index ->
 
-                    var expanded by remember {
-                        mutableStateOf(false)
-                    }
-
                     ListItem(
-
                         headlineContent = {
                             Text(items[index])
                         },
@@ -179,10 +164,9 @@ fun ListScreen(navController: NavController) {
                                         expanded = !expanded
                                     }
                                 ) {
-
                                     Icon(
                                         imageVector = Icons.Default.MoreVert,
-                                        contentDescription = "Opciones"
+                                        contentDescription = "Más opciones"
                                     )
                                 }
 
@@ -197,14 +181,14 @@ fun ListScreen(navController: NavController) {
                                         text = {
                                             Text("Favoritos")
                                         },
-                                        leadingIcon = {
-                                            Icon(
-                                                imageVector = Icons.Default.Star,
-                                                contentDescription = "Favoritos"
-                                            )
-                                        },
                                         onClick = {
                                             expanded = false
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.Star,
+                                                contentDescription = null
+                                            )
                                         }
                                     )
 
@@ -214,14 +198,14 @@ fun ListScreen(navController: NavController) {
                                         text = {
                                             Text("Compartir")
                                         },
-                                        leadingIcon = {
-                                            Icon(
-                                                imageVector = Icons.Default.Share,
-                                                contentDescription = "Compartir"
-                                            )
-                                        },
                                         onClick = {
                                             expanded = false
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.Share,
+                                                contentDescription = null
+                                            )
                                         }
                                     )
 
@@ -231,14 +215,14 @@ fun ListScreen(navController: NavController) {
                                         text = {
                                             Text("Reportar")
                                         },
-                                        leadingIcon = {
-                                            Icon(
-                                                imageVector = Icons.Default.Flag,
-                                                contentDescription = "Reportar"
-                                            )
-                                        },
                                         onClick = {
                                             expanded = false
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.Flag,
+                                                contentDescription = null
+                                            )
                                         }
                                     )
                                 }
@@ -246,7 +230,6 @@ fun ListScreen(navController: NavController) {
                         },
 
                         modifier = Modifier.clickable {
-
                             navController.navigate(
                                 Screen.Detail.createRoute(index + 1)
                             )
