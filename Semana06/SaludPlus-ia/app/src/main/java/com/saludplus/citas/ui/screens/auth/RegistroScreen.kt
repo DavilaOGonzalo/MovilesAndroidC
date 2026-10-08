@@ -4,11 +4,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -19,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
 import com.saludplus.citas.ui.components.BotonPrincipal
@@ -44,13 +52,20 @@ fun RegistroScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(horizontal = 24.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Crear cuenta",
             style = MaterialTheme.typography.headlineSmall
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = "Regístrate para empezar a agendar citas",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -58,7 +73,8 @@ fun RegistroScreen(
             valor = nombre,
             onValorChange = { nombre = it; errorNombre = null; mensajeGeneral = null },
             etiqueta = "Nombre completo",
-            error = errorNombre
+            error = errorNombre,
+            icono = Icons.Filled.Person
         )
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -67,7 +83,8 @@ fun RegistroScreen(
             onValorChange = { email = it; errorEmail = null; mensajeGeneral = null },
             etiqueta = "Email",
             tipoTeclado = KeyboardType.Email,
-            error = errorEmail
+            error = errorEmail,
+            icono = Icons.Filled.Email
         )
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -76,7 +93,8 @@ fun RegistroScreen(
             onValorChange = { password = it; errorPassword = null; mensajeGeneral = null },
             etiqueta = "Contraseña",
             esPassword = true,
-            error = errorPassword
+            error = errorPassword,
+            icono = Icons.Filled.Lock
         )
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -85,7 +103,8 @@ fun RegistroScreen(
             onValorChange = { confirmarPassword = it; errorConfirmar = null; mensajeGeneral = null },
             etiqueta = "Confirmar contraseña",
             esPassword = true,
-            error = errorConfirmar
+            error = errorConfirmar,
+            icono = Icons.Filled.Lock
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -94,14 +113,22 @@ fun RegistroScreen(
         }
 
         mensajeGeneral?.let {
-            Text(
-                text = it,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.errorContainer
+            ) {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                )
+            }
         }
 
+        Spacer(modifier = Modifier.height(12.dp))
         BotonPrincipal(
             texto = "Registrarme",
             onClick = {

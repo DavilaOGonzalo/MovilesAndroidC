@@ -4,9 +4,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -37,22 +48,43 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp, vertical = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(24.dp))
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.size(72.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Favorite,
+                contentDescription = null,
+                modifier = Modifier.padding(18.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Iniciar sesión",
+            text = "Bienvenido",
             style = MaterialTheme.typography.headlineSmall
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = "Ingresa para agendar tu cita médica",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(28.dp))
 
         CampoTexto(
             valor = email,
             onValorChange = { email = it; errorEmail = null; mensajeGeneral = null },
             etiqueta = "Email",
             tipoTeclado = KeyboardType.Email,
-            error = errorEmail
+            error = errorEmail,
+            icono = Icons.Filled.Email
         )
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -61,19 +93,27 @@ fun LoginScreen(
             onValorChange = { password = it; errorPassword = null; mensajeGeneral = null },
             etiqueta = "Contraseña",
             esPassword = true,
-            error = errorPassword
+            error = errorPassword,
+            icono = Icons.Filled.Lock
         )
 
         mensajeGeneral?.let {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = it,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.errorContainer
+            ) {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         BotonPrincipal(
             texto = "Ingresar",

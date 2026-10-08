@@ -158,3 +158,66 @@ diseño profesional y que no se rompiera nada de la Fase 1. Compilar y corregir
   pantallas de 360dp de ancho; se agregó `horizontalScroll` a la fila.
 - Se extendió el test de formato con aserciones de `nombreMesYAnio`
   ("Setiembre de 2026" / "Octubre de 2026").
+
+---
+
+## Prompt: Mejora general de diseño visual de SaludPlus
+
+Mejorar completamente el diseño visual y la estructura de la aplicación para que
+se vea como una app profesional de citas médicas: revisar todas las pantallas
+(Splash, Login, Registro, Home, Especialidades, Médicos, FechaHora, ConfirmarCita,
+CitaExitosa, MisCitas, Perfil), componentes reutilizables, tema, colores,
+tipografía, espaciados, estados y navegación. Paleta de salud y tecnología,
+identidad visual consistente, jerarquía clara, sin librerías innecesarias, sin
+romper lógica de negocio ni navegación. Conservar el calendario dinámico y el
+bloqueo de horarios en FechaHoraScreen y la fecha en español en ConfirmarCitaScreen.
+
+## Resumen de lo realizado (diseño general)
+
+- Tema propio (se desactivó el color dinámico para identidad consistente):
+  `Color.kt` con paleta médica teal/azul (claro y oscuro), `Type.kt` con escala
+  tipográfica completa y `Theme.kt` con ambos esquemas.
+- Componentes reutilizables mejorados/creados en `ui/components`:
+  - `BotonPrincipal`: esquinas de 16 dp, alto 52 dp, estilo labelLarge.
+  - `BotonSecundario` (nuevo): outlined, con variante de error para
+    "Cerrar sesión".
+  - `CampoTexto`: esquinas de 14 dp, icono leading opcional (email, candado,
+    persona, búsqueda).
+  - `EncabezadoConVolver`: botón de volver en círculo surfaceVariant, título
+    titleLarge.
+  - `TarjetaSeccion`: card de 18 dp con icono circular opcional y chevron de
+    navegación opcional (parámetros `icono` y `flecha`).
+  - `TarjetaEspecialidad`: avatar circular con inicial, clickable, 210 dp.
+  - `TarjetaMedico`: avatar con icono persona, especialidad, estrella ámbar de
+    calificación, experiencia y chevron.
+  - `EstadoVacio` (nuevo, compartido): usado en FechaHora, Especialidades,
+    Médicos y Mis Citas (se eliminó el duplicado privado de FechaHoraScreen).
+- Pantallas rediseñadas manteniendo toda la lógica:
+  - Splash: fondo primary, logo de corazón, nombre y subtítulo.
+  - Login/Registro: encabezado de marca, iconos en campos, mensajes de error en
+    pastilla errorContainer, mismas validaciones.
+  - Términos: encabezado con volver, texto en card, botón "Entendido".
+  - Home: saludo + avatar, card CTA "Agendar cita" que navega a especialidades,
+    destacadas con tarjetas nuevas, accesos rápidos con iconos y chevrones.
+  - Especialidades/Médicos: buscador con icono, estados vacíos, tarjetas
+    modernas; en Médicos, chip con el nombre de la especialidad.
+  - ConfirmarCita: encabezado con volver, card de detalles con filas
+    etiqueta/valor y divisores, fecha larga en español conservada, botón
+    "Confirmar cita" con la misma lógica.
+  - CitaExitosa: check grande en círculo primaryContainer, texto de apoyo.
+  - MisCitas: encabezado, estado vacío, tarjetas con fecha larga + hora.
+  - Perfil: avatar, nombre/email, datos en tarjetas, cerrar sesión outlined en
+    color error.
+  - Resultados: placeholder con icono y mensaje.
+- Navegación, rutas, modelos y Repositorio sin cambios.
+
+## Correcciones realizadas (diseño general)
+
+- Error de compilación: faltaba el import de `dp` en `CampoTexto.kt`.
+- Error de compilación: faltaba el import de `Surface` en `TarjetaSeccion.kt`
+  (y se simplificó el contenedor del icono).
+- Warning deprecado por `Icons.Filled.List` en HomeScreen: migrado a
+  `Icons.AutoMirrored.Filled.List`.
+- Se eliminó un import sin uso en `EspecialidadesScreen`.
+- Build limpio final: `clean assembleDebug testDebugUnitTest` → BUILD SUCCESSFUL,
+  APK generado, 4/4 tests verdes.
