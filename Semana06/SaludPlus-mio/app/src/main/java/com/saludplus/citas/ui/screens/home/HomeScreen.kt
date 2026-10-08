@@ -20,7 +20,7 @@ import com.saludplus.citas.ui.components.TarjetaEspecialidad
 import com.saludplus.citas.ui.components.TarjetaSeccion
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onIrEspecialidades: () -> Unit) {
     val usuario = Repositorio.usuarioActual
     val destacadas = Repositorio.especialidadesDestacadas()
 
@@ -59,7 +59,8 @@ fun HomeScreen() {
         Spacer(modifier = Modifier.height(8.dp))
         TarjetaSeccion(
             titulo = "Especialidades",
-            descripcion = "Explora todas las especialidades disponibles"
+            descripcion = "Explora todas las especialidades disponibles",
+            onClick = onIrEspecialidades
         )
         Spacer(modifier = Modifier.height(12.dp))
         TarjetaSeccion(

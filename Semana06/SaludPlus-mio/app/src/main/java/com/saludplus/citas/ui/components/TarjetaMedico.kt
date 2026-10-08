@@ -1,6 +1,5 @@
 package com.saludplus.citas.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,28 +11,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.saludplus.citas.data.model.Medico
 
 @Composable
-fun TarjetaSeccion(
-    titulo: String,
-    descripcion: String,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+fun TarjetaMedico(
+    medico: Medico,
+    modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(16.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = titulo,
+                text = medico.nombre,
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = descripcion,
+                text = "Calificación: ${medico.calificacion}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = "Experiencia: ${medico.experiencia} años",
                 style = MaterialTheme.typography.bodySmall
             )
         }

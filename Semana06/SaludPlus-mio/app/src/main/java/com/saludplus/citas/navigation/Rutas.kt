@@ -9,4 +9,8 @@ object Rutas {
     const val CITAS = "citas"
     const val RESULTADOS = "resultados"
     const val PERFIL = "perfil"
+    const val ESPECIALIDADES = "especialidades"
+    const val MEDICOS = "medicos/{especialidadId}"
+
+    fun medicos(especialidadId: Int): String = "medicos/$especialidadId"
 }

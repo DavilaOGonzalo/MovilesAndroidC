@@ -5,11 +5,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.saludplus.citas.ui.components.BarraNavegacionInferior
+import com.saludplus.citas.ui.screens.agendamiento.EspecialidadesScreen
+import com.saludplus.citas.ui.screens.agendamiento.MedicosScreen
 import com.saludplus.citas.ui.screens.auth.LoginScreen
 import com.saludplus.citas.ui.screens.auth.RegistroScreen
 import com.saludplus.citas.ui.screens.auth.SplashScreen
@@ -82,7 +86,23 @@ fun AppNavigation() {
                 TerminosScreen(onVolver = { navController.popBackStack() })
             }
             composable(Rutas.HOME) {
-                HomeScreen()
+                HomeScreen(
+                    onIrEspecialidades = { navController.navigate(Rutas.ESPECIALIDADES) }
+                )
+            }
+            composable(Rutas.ESPECIALIDADES) {
+                EspecialidadesScreen(
+                    onSeleccionar = { especialidadId ->
+                        navController.navigate(Rutas.medicos(especialidadId))
+                    }
+                )
+            }
+            composable(
+                route = Rutas.MEDICOS,
+                arguments = listOf(navArgument("especialidadId") { type = NavType.IntType })
+            ) { entry ->
+                val especialidadId = entry.arguments?.getInt("especialidadId") ?: 0
+                MedicosScreen(especialidadId = especialidadId)
             }
             composable(Rutas.CITAS) {
                 MisCitasScreen()
