@@ -46,3 +46,43 @@ Debe cumplir:
   se cambió a `Locale.of("es")`.
 - El test unitario usaba la lista fija `fechasDisponibles` (eliminada): se cambió
   a `formatearFecha(LocalDate.now())`.
+
+---
+
+## Prompt: Mejora de diseño de la Pantalla 6 (Fecha y hora)
+
+Mejorar completamente el diseño visual de la Pantalla 6 (Fecha y hora) sobre el
+calendario dinámico existente, con un diseño moderno, profesional y atractivo,
+como una aplicación real de citas médicas: encabezado, título, mes/año, flechas,
+selector de días, estados seleccionados/deshabilitados, horarios disponibles y
+ocupados, botón continuar, espaciado, tipografía, cards, bordes y formas.
+Mantener la identidad visual de SaludPlus, sin librerías innecesarias y sin romper
+la funcionalidad del calendario dinámico ni la navegación.
+
+## Resumen de lo realizado (diseño)
+
+- La pantalla pasó de dos `LazyVerticalGrid` con opciones simples a un diseño con
+  scroll vertical y secciones diferenciadas:
+  - Encabezado con subtítulo "Elige el día y la hora de tu cita".
+  - Card elevada con bordes redondeados (24 dp) que contiene la navegación del
+    mes: flechas < y > en botones circulares con borde, mes/año centrado en
+    `titleLarge` semibold y rango de fechas de la semana ("Del 13 al 17").
+  - Selector de días con tarjetas de 64x92 dp: abreviatura del día, número
+    grande, indicador "Hoy" para el día actual, fondo `primary` animado con
+    `animateColorAsState` al seleccionar y borde sutil cuando no está seleccionada.
+  - Sección de horarios con título semibold y chip con la fecha seleccionada;
+    horarios como chips redondeados: disponibles con borde `primary`, seleccionado
+    relleno `primary`, ocupados en `surfaceVariant` deshabilitados y con texto
+    tachado (`TextDecoration.LineThrough`) para mostrar visualmente la ocupación.
+  - Estados vacíos como cards suaves con icono y mensaje.
+  - Resumen "Cita: Lun 13/10 · 09:00" en `primaryContainer` antes de continuar.
+  - Botón continuar reutilizando `BotonPrincipal`.
+- Composables privados en la misma pantalla: `TarjetaDia`, `ChipHora`, `EstadoVacio`.
+- Toda la lógica del calendario dinámico se mantuvo igual (cambio de semana,
+  selección de día, recálculo de horarios, reinicio de hora, bloqueo de
+  reservados, botón volver y navegación a ConfirmarCitaScreen).
+
+## Correcciones realizadas (diseño)
+
+- Ninguna de compilación: `compileDebugKotlin` y `testDebugUnitTest` pasaron a la
+  primera (BUILD SUCCESSFUL, 3/3 tests).

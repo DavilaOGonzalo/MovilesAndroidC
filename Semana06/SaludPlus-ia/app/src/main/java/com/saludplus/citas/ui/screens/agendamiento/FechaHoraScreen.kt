@@ -1,23 +1,35 @@
 package com.saludplus.citas.ui.screens.agendamiento
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,14 +38,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
 import com.saludplus.citas.ui.components.BotonPrincipal
 import com.saludplus.citas.ui.components.EncabezadoConVolver
-import com.saludplus.citas.ui.components.OpcionSeleccionable
 import java.time.LocalDate
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FechaHoraScreen(
     medicoId: Int,
@@ -45,10 +60,11 @@ fun FechaHoraScreen(
     var horaSeleccionada by remember { mutableStateOf<String?>(null) }
 
     val dias = Repositorio.diasHabilesDeLaSemana(semanaBase)
-    val horarios = fechaSeleccionada
+    val horariosDisponibles = fechaSeleccionada
         ?.let { Repositorio.horariosDisponibles(medicoId, it) }
         ?: emptyList()
     val puedeRetroceder = semanaBase.isAfter(Repositorio.semanaActual())
+    val hoy = LocalDate.now()
 
     fun irASemana(nueva: LocalDate) {
         semanaBase = nueva
@@ -60,90 +76,187 @@ fun FechaHoraScreen(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 16.dp)
+    ) {
         EncabezadoConVolver(titulo = "Fecha y hora", onVolver = onVolver)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = "Elige el día y la hora de tu cita",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(20.dp))
 
-        Row(
+        ElevatedCard(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
         ) {
-            IconButton(
-                onClick = { irASemana(semanaBase.minusWeeks(1)) },
-                enabled = puedeRetroceder
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = "Semana anterior"
-                )
-            }
-            Text(
-                text = Repositorio.nombreMesYAnio(semanaBase),
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.weight(1f)
-            )
-            IconButton(onClick = { irASemana(semanaBase.plusWeeks(1)) }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "Semana siguiente"
-                )
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    IconButton(
+                        onClick = { irASemana(semanaBase.minusWeeks(1)) },
+                        enabled = puedeRetroceder
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "Semana anterior"
+                        )
+                    }
+                }
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = Repositorio.nombreMesYAnio(semanaBase),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    if (dias.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Del ${dias.first().dayOfMonth} al ${dias.last().dayOfMonth}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    IconButton(onClick = { irASemana(semanaBase.plusWeeks(1)) }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "Semana siguiente"
+                        )
+                    }
+                }
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        Text(text = "Fecha", style = MaterialTheme.typography.titleMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.heightIn(max = 160.dp)
-        ) {
-            items(dias) { fecha ->
-                val etiqueta = Repositorio.formatearFecha(fecha)
-                OpcionSeleccionable(
-                    texto = etiqueta,
-                    seleccionada = etiqueta == fechaSeleccionada,
+        Text(
+            text = "Selecciona un día",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            dias.forEach { fecha ->
+                val partes = Repositorio.formatearFecha(fecha).split(" ")
+                TarjetaDia(
+                    diaSemana = partes.getOrElse(0) { "" },
+                    numeroDia = partes.getOrElse(1) { "" }.substringBefore("/"),
+                    esHoy = fecha == hoy,
+                    seleccionada = Repositorio.formatearFecha(fecha) == fechaSeleccionada,
                     onClick = {
-                        fechaSeleccionada = etiqueta
+                        fechaSeleccionada = Repositorio.formatearFecha(fecha)
                         horaSeleccionada = null
                     }
                 )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        Text(text = "Horarios disponibles", style = MaterialTheme.typography.titleMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-        if (fechaSeleccionada == null) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "Selecciona una fecha para ver los horarios",
-                style = MaterialTheme.typography.bodyMedium
+                text = "Horarios disponibles",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f)
             )
-        } else if (horarios.isEmpty()) {
-            Text(
-                text = "No hay horarios disponibles para esta fecha",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.heightIn(max = 200.dp)
-            ) {
-                items(horarios) { hora ->
-                    OpcionSeleccionable(
-                        texto = hora,
-                        seleccionada = hora == horaSeleccionada,
-                        onClick = { horaSeleccionada = hora }
+            if (fechaSeleccionada != null) {
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ) {
+                    Text(
+                        text = fechaSeleccionada.orEmpty(),
+                        style = MaterialTheme.typography.labelMedium,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                     )
                 }
             }
         }
+        Spacer(modifier = Modifier.height(12.dp))
 
-        Spacer(modifier = Modifier.weight(1f))
+        when {
+            fechaSeleccionada == null -> {
+                EstadoVacio(
+                    icono = Icons.Filled.DateRange,
+                    texto = "Selecciona un día para ver los horarios disponibles"
+                )
+            }
+
+            horariosDisponibles.isEmpty() -> {
+                EstadoVacio(
+                    icono = Icons.Filled.DateRange,
+                    texto = "No hay horarios disponibles para esta fecha"
+                )
+            }
+
+            else -> {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Repositorio.horarios.forEach { hora ->
+                        val ocupada = hora !in horariosDisponibles
+                        ChipHora(
+                            hora = hora,
+                            seleccionada = hora == horaSeleccionada,
+                            ocupada = ocupada,
+                            onClick = { horaSeleccionada = hora }
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        if (fechaSeleccionada != null && horaSeleccionada != null) {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                color = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ) {
+                Text(
+                    text = "Cita: $fechaSeleccionada · $horaSeleccionada",
+                    style = MaterialTheme.typography.labelLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+        }
 
         BotonPrincipal(
             texto = "Continuar",
@@ -156,5 +269,149 @@ fun FechaHoraScreen(
                 }
             }
         )
+    }
+}
+
+@Composable
+private fun TarjetaDia(
+    diaSemana: String,
+    numeroDia: String,
+    esHoy: Boolean,
+    seleccionada: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val fondo by animateColorAsState(
+        targetValue = if (seleccionada) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        },
+        label = "fondoDia"
+    )
+    val contenido = if (seleccionada) {
+        MaterialTheme.colorScheme.onPrimary
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
+    Card(
+        modifier = modifier
+            .width(64.dp)
+            .height(92.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = fondo),
+        border = if (seleccionada) {
+            null
+        } else {
+            BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        }
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = diaSemana.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Medium,
+                color = contenido.copy(alpha = if (seleccionada) 0.85f else 0.7f)
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = numeroDia,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = contenido
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            if (esHoy) {
+                Text(
+                    text = "Hoy",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = if (seleccionada) {
+                        contenido.copy(alpha = 0.85f)
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChipHora(
+    hora: String,
+    seleccionada: Boolean,
+    ocupada: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val fondo = when {
+        seleccionada -> MaterialTheme.colorScheme.primary
+        ocupada -> MaterialTheme.colorScheme.surfaceVariant
+        else -> MaterialTheme.colorScheme.surface
+    }
+    val contenido = when {
+        seleccionada -> MaterialTheme.colorScheme.onPrimary
+        ocupada -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+        else -> MaterialTheme.colorScheme.primary
+    }
+    val borde = when {
+        seleccionada -> null
+        ocupada -> BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        else -> BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.45f))
+    }
+
+    Surface(
+        modifier = modifier.then(
+            if (ocupada) Modifier else Modifier.clickable(onClick = onClick)
+        ),
+        shape = RoundedCornerShape(14.dp),
+        color = fondo,
+        contentColor = contenido,
+        border = borde
+    ) {
+        Text(
+            text = hora,
+            style = MaterialTheme.typography.labelLarge,
+            textDecoration = if (ocupada) TextDecoration.LineThrough else null,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 11.dp)
+        )
+    }
+}
+
+@Composable
+private fun EstadoVacio(
+    icono: androidx.compose.ui.graphics.vector.ImageVector,
+    texto: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 22.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icono,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                modifier = Modifier.size(22.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = texto,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
