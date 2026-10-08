@@ -63,5 +63,13 @@ class ExampleUnitTest {
             "Miércoles 16 de setiembre 2026",
             Repositorio.fechaLarga(LocalDate.of(2026, 9, 16))
         )
+        assertEquals(
+            "Setiembre de 2026",
+            Repositorio.nombreMesYAnio(LocalDate.of(2026, 9, 16))
+        )
+        assertEquals(
+            "Octubre de 2026",
+            Repositorio.nombreMesYAnio(LocalDate.of(2026, 10, 13))
+        )
     }
 }

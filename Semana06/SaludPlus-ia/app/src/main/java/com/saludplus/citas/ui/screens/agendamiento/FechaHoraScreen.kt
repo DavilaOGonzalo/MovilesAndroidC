@@ -3,6 +3,7 @@ package com.saludplus.citas.ui.screens.agendamiento
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -42,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
 import com.saludplus.citas.ui.components.BotonPrincipal
@@ -162,7 +164,10 @@ fun FechaHoraScreen(
             fontWeight = FontWeight.SemiBold
         )
         Spacer(modifier = Modifier.height(12.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(
+            modifier = Modifier.horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             dias.forEach { fecha ->
                 val partes = Repositorio.formatearFecha(fecha).split(" ")
                 TarjetaDia(
@@ -387,7 +392,7 @@ private fun ChipHora(
 
 @Composable
 private fun EstadoVacio(
-    icono: androidx.compose.ui.graphics.vector.ImageVector,
+    icono: ImageVector,
     texto: String,
     modifier: Modifier = Modifier
 ) {

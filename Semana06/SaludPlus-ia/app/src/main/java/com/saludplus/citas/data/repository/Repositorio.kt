@@ -6,9 +6,7 @@ import com.saludplus.citas.data.model.Medico
 import com.saludplus.citas.data.model.Usuario
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
-import java.util.Locale
 
 object Repositorio {
 
@@ -70,10 +68,24 @@ object Repositorio {
         return "$dia ${fecha.dayOfMonth}/${fecha.monthValue}"
     }
 
+    private fun mesEnEspanol(mes: Int): String = when (mes) {
+        1 -> "enero"
+        2 -> "febrero"
+        3 -> "marzo"
+        4 -> "abril"
+        5 -> "mayo"
+        6 -> "junio"
+        7 -> "julio"
+        8 -> "agosto"
+        9 -> "setiembre"
+        10 -> "octubre"
+        11 -> "noviembre"
+        else -> "diciembre"
+    }
+
     fun nombreMesYAnio(fecha: LocalDate): String {
-        val formatter = DateTimeFormatter.ofPattern("MMMM 'de' yyyy", Locale.of("es"))
-        val mes = formatter.format(fecha).replaceFirstChar { it.uppercase() }
-        return mes
+        return mesEnEspanol(fecha.monthValue).replaceFirstChar { it.uppercase() } +
+                " de ${fecha.year}"
     }
 
     fun fechaLarga(fecha: LocalDate): String {
@@ -86,21 +98,7 @@ object Repositorio {
             DayOfWeek.SATURDAY -> "Sábado"
             DayOfWeek.SUNDAY -> "Domingo"
         }
-        val mes = when (fecha.monthValue) {
-            1 -> "enero"
-            2 -> "febrero"
-            3 -> "marzo"
-            4 -> "abril"
-            5 -> "mayo"
-            6 -> "junio"
-            7 -> "julio"
-            8 -> "agosto"
-            9 -> "setiembre"
-            10 -> "octubre"
-            11 -> "noviembre"
-            else -> "diciembre"
-        }
-        return "$dia ${fecha.dayOfMonth} de $mes ${fecha.year}"
+        return "$dia ${fecha.dayOfMonth} de ${mesEnEspanol(fecha.monthValue)} ${fecha.year}"
     }
 
     fun horariosDisponibles(medicoId: Int, fecha: String): List<String> {

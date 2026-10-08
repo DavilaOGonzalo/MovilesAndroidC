@@ -126,3 +126,35 @@ reservados, la confirmación, CitaExitosaScreen y el botón volver.
 - Se agregó un test (`fechaLargaMuestraDiaYMesEnEspanol`) que valida el formato
   exacto en español, incluida la variante "setiembre".
 - Compilación y tests: BUILD SUCCESSFUL, 4/4 tests verdes.
+
+---
+
+## Prompt: Revisión final de la Fase 2
+
+Revisar todo lo implementado en la Fase 2 y dejar SaludPlus listo para entregar:
+verificar LocalDate, próximos 5 días hábiles, exclusión de sábados, domingos y
+días pasados, flechas de semana, límite de retroceso, mes/año dinámico, recálculo
+y reinicio de horarios, bloqueo de reservados, integración con ConfirmarCitaScreen
+y fecha en español, flujo de confirmación, CitaExitosaScreen, botón volver,
+diseño profesional y que no se rompiera nada de la Fase 1. Compilar y corregir
+únicamente problemas de la Fase 2.
+
+## Resumen de lo realizado (revisión final)
+
+- Checklist de 18 requisitos verificado leyendo el código de `Repositorio.kt`,
+  `FechaHoraScreen.kt`, `ConfirmarCitaScreen.kt`, `CitaExitosaScreen.kt`,
+  `AppNavigation.kt` y `Rutas.kt`: todos cumplidos.
+- Build limpio completo (`gradlew clean assembleDebug testDebugUnitTest`):
+  BUILD SUCCESSFUL, APK de debug generado, 4/4 tests unitarios verdes.
+
+## Correcciones realizadas (revisión final)
+
+- Bug de runtime: `nombreMesYAnio` usaba `Locale.of("es")`, API disponible solo
+  desde Android 16 (API 36); con `minSdk 26` fallaría en dispositivos anteriores.
+  Se reemplazó por un helper privado `mesEnEspanol()` compartido con `fechaLarga`
+  (sin `DateTimeFormatter` ni `Locale`), lo que además unifica la variante
+  "setiembre" en el encabezado del calendario.
+- Bug de layout: la fila de 5 tarjetas de día (360dp fijos) desbordaba en
+  pantallas de 360dp de ancho; se agregó `horizontalScroll` a la fila.
+- Se extendió el test de formato con aserciones de `nombreMesYAnio`
+  ("Setiembre de 2026" / "Octubre de 2026").
