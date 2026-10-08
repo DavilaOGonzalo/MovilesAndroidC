@@ -17,6 +17,7 @@ import com.saludplus.citas.ui.screens.agendamiento.ConfirmarCitaScreen
 import com.saludplus.citas.ui.screens.agendamiento.EspecialidadesScreen
 import com.saludplus.citas.ui.screens.agendamiento.FechaHoraScreen
 import com.saludplus.citas.ui.screens.agendamiento.MedicosScreen
+import com.saludplus.citas.ui.screens.agendamiento.MotivoLugarScreen
 import com.saludplus.citas.ui.screens.agendamiento.PerfilMedicoScreen
 import com.saludplus.citas.ui.screens.auth.LoginScreen
 import com.saludplus.citas.ui.screens.auth.RegistroScreen
@@ -94,7 +95,9 @@ fun AppNavigation() {
                     onIrEspecialidades = { navController.navigate(Rutas.ESPECIALIDADES) },
                     onIrFichaMedico = { medicoId ->
                         navController.navigate(Rutas.fichaMedico(medicoId))
-                    }
+                    },
+                    onIrCitas = { navController.navigate(Rutas.CITAS) },
+                    onIrResultados = { navController.navigate(Rutas.RESULTADOS) }
                 )
             }
             composable(Rutas.ESPECIALIDADES) {
@@ -137,13 +140,13 @@ fun AppNavigation() {
                 FechaHoraScreen(
                     medicoId = medicoId,
                     onContinuar = { _, fecha, hora ->
-                        navController.navigate(Rutas.confirmarCita(medicoId, fecha, hora))
+                        navController.navigate(Rutas.motivoLugar(medicoId, fecha, hora))
                     },
                     onVolver = { navController.popBackStack() }
                 )
             }
             composable(
-                route = Rutas.CONFIRMAR_CITA,
+                route = Rutas.MOTIVO_LUGAR,
                 arguments = listOf(
                     navArgument("medicoId") { type = NavType.IntType },
                     navArgument("fecha") { type = NavType.StringType },
@@ -153,10 +156,46 @@ fun AppNavigation() {
                 val medicoId = entry.arguments?.getInt("medicoId") ?: 0
                 val fecha = entry.arguments?.getString("fecha") ?: ""
                 val hora = entry.arguments?.getString("hora") ?: ""
+                MotivoLugarScreen(
+                    medicoId = medicoId,
+                    fecha = fecha,
+                    hora = hora,
+                    onContinuar = { id, selectedFecha, selectedHora, motivo, lugar ->
+                        navController.navigate(
+                            Rutas.confirmarCita(id, selectedFecha, selectedHora, motivo, lugar)
+                        )
+                    },
+                    onVolver = { navController.popBackStack() }
+                )
+            }
+            composable(
+                route = Rutas.CONFIRMAR_CITA,
+                arguments = listOf(
+                    navArgument("medicoId") { type = NavType.IntType },
+                    navArgument("fecha") { type = NavType.StringType },
+                    navArgument("hora") { type = NavType.StringType },
+                    navArgument("motivo") {
+                        type = NavType.StringType
+                        defaultValue = "Control médico"
+                    },
+                    navArgument("lugar") {
+                        type = NavType.StringType
+                        defaultValue = "Clínica SaludPlus - Sede Principal"
+                    }
+                )
+            ) { entry ->
+                val medicoId = entry.arguments?.getInt("medicoId") ?: 0
+                val fecha = entry.arguments?.getString("fecha") ?: ""
+                val hora = entry.arguments?.getString("hora") ?: ""
+                val motivo = entry.arguments?.getString("motivo") ?: "Control médico"
+                val lugar = entry.arguments?.getString("lugar")
+                    ?: "Clínica SaludPlus - Sede Principal"
                 ConfirmarCitaScreen(
                     medicoId = medicoId,
                     fecha = fecha,
                     hora = hora,
+                    motivo = motivo,
+                    lugar = lugar,
                     onConfirmado = {
                         navController.navigate(Rutas.CITA_EXITOSA) {
                             popUpTo(Rutas.ESPECIALIDADES) { inclusive = true }

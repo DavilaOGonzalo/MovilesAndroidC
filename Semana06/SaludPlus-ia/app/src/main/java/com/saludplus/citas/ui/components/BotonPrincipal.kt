@@ -22,10 +22,10 @@ fun BotonPrincipal(
     Button(
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(10.dp),
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp),
+            .height(50.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary

@@ -6,5 +6,6 @@ data class Medico(
     val especialidadId: Int,
     val calificacion: Double,
     val experiencia: Int,
-    val fotoUrl: String = ""
+    val fotoUrl: String = "",
+    val resenas: Int = 0
 )

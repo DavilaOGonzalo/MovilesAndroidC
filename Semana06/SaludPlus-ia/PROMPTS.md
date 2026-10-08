@@ -298,6 +298,47 @@ commit ("Mejora diseño creativo de SaludPlus"), sin push.
 
 ---
 
+## Prompt: Mejora diseño visual de SaludPlus
+
+Trabajar directamente en `Semana06/SaludPlus-ia` usando como referencia visual
+`C:\Users\Gonzalo\Downloads\SaludPlusIMG\a9f0ba78-9e1e-4467-a10d-581fb66323de.png`.
+Hacer que SaludPlus sea lo más fiel posible al mockup, manteniendo la lógica de
+calendario, reservas, fotos y navegación. Compilar, corregir errores y hacer
+commit con `Mejora diseño visual de SaludPlus`, sin push.
+
+## Resumen de lo realizado (mockup)
+
+- Se ajustó la identidad visual a fondo blanco/azul muy claro, azul principal
+  `#1878F0`, texto azul marino, tarjetas blancas con bordes suaves y botones
+  azules sólidos de esquinas pequeñas.
+- Se creó `LogoSaludPlus` con el corazón azul y cruz blanca, y se ordenaron
+  Login, Registro y Splash según el flujo de la referencia.
+- Home ahora tiene barra superior con marca, saludo, búsqueda, cuatro accesos
+  en grid, seis especialidades coloridas y sección de próximas citas.
+- Especialidades muestra búsqueda y lista de ocho especialidades con iconos y
+  colores diferenciados; Médicos añade filtros, fotos reales, reseñas y
+  disponibilidad.
+- Perfil médico usa fotografía grande, calificación, experiencia, clínica,
+  descripción y botón para agendar.
+- FechaHora conserva `LocalDate`, semanas, días hábiles, bloqueo de horarios y
+  selección, pero adopta el selector compacto de la referencia.
+- Se añadió `MotivoLugarScreen` y su ruta para replicar el paso intermedio del
+  mockup. La confirmación conserva `Repositorio.agendarCita` y ahora muestra
+  motivo, fecha, hora y lugar.
+- CitaExitosa, MisCitas, Perfil, Reportes y navegación inferior fueron
+  uniformados con el mismo lenguaje visual.
+- Usuario admite teléfono y Médico admite cantidad de reseñas sin romper los
+  constructores existentes. Los médicos y especialidades se actualizaron con
+  nombres y categorías visibles en la referencia.
+
+## Verificación
+
+- `compileDebugKotlin testDebugUnitTest assembleDebug` → BUILD SUCCESSFUL.
+- Tests unitarios: 4/4 verdes.
+- APK generado en `app/build/outputs/apk/debug/app-debug.apk`.
+
+---
+
 ## Prompt: Ajusta interfaz según referencia visual
 
 Ajusta toda la interfaz de SaludPlus siguiendo la referencia visual adjunta:

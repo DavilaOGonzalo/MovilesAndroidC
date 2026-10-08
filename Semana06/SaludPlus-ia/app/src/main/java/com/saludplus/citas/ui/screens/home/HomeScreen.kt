@@ -4,10 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,48 +13,52 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
 import com.saludplus.citas.ui.components.FotoPersona
+import com.saludplus.citas.ui.components.LogoSaludPlus
 import com.saludplus.citas.ui.components.TarjetaEspecialidad
 import com.saludplus.citas.ui.components.TarjetaMedicoDestacado
-import com.saludplus.citas.ui.components.TarjetaSeccion
-import com.saludplus.citas.ui.components.gradienteMarca
+import com.saludplus.citas.ui.theme.MockupLavender
+import com.saludplus.citas.ui.theme.MockupPeach
+import com.saludplus.citas.ui.theme.MockupPink
 import java.time.LocalDate
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(
     onIrEspecialidades: () -> Unit,
-    onIrFichaMedico: (Int) -> Unit
+    onIrFichaMedico: (Int) -> Unit,
+    onIrCitas: () -> Unit = {},
+    onIrResultados: () -> Unit = {}
 ) {
     val usuario = Repositorio.usuarioActual
-    val destacadas = Repositorio.especialidadesDestacadas()
-    val medicosDestacados = Repositorio.medicos.sortedByDescending { it.calificacion }.take(6)
+    val especialidades = Repositorio.especialidades.take(6)
+    val medicosDestacados = Repositorio.medicos.sortedByDescending { it.calificacion }.take(4)
     val proximaCita = Repositorio.citasDelUsuario()
         .sortedBy { it.fecha }
         .firstOrNull { cita ->
@@ -68,244 +69,278 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
+            .padding(bottom = 12.dp)
     ) {
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
-                .background(gradienteMarca())
-                .padding(horizontal = 20.dp, vertical = 26.dp)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    FotoPersona(
-                        url = usuario?.fotoUrl.orEmpty(),
-                        tamano = 58.dp,
-                        anillo = false
+            IconButton(onClick = {}) {
+                Icon(Icons.Filled.Menu, contentDescription = "Menú")
+            }
+            LogoSaludPlus(
+                modifier = Modifier.weight(1f),
+                tamano = 34.dp
+            )
+            IconButton(onClick = {}) {
+                Icon(Icons.Filled.Notifications, contentDescription = "Notificaciones")
+            }
+        }
+
+        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+            Text(
+                text = "¡Hola, ${usuario?.nombre ?: "Gonzalo"}!",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = "¿Qué deseas hacer hoy?",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onIrEspecialidades),
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 13.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
                     )
-                    Spacer(modifier = Modifier.width(14.dp))
-                    Column {
-                        Text(
-                            text = "Hola, ${usuario?.nombre ?: "Paciente"}",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "¿Cómo puedo ayudarte hoy?",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White.copy(alpha = 0.85f)
-                        )
-                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "Buscar médico, especialidad...",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                ActionCard(
+                    modifier = Modifier.weight(1f),
+                    titulo = "Agendar cita",
+                    icono = Icons.Filled.DateRange,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    tint = MaterialTheme.colorScheme.primary,
+                    onClick = onIrEspecialidades
+                )
+                ActionCard(
+                    modifier = Modifier.weight(1f),
+                    titulo = "Mis citas",
+                    icono = Icons.AutoMirrored.Filled.List,
+                    color = Color(0xFFE2F9EF),
+                    tint = Color(0xFF159B67),
+                    onClick = onIrCitas
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                ActionCard(
+                    modifier = Modifier.weight(1f),
+                    titulo = "Mis doctores",
+                    icono = Icons.Filled.Person,
+                    color = MockupLavender,
+                    tint = Color(0xFF7655D8),
+                    onClick = {
+                        Repositorio.medicos.firstOrNull()?.let { onIrFichaMedico(it.id) }
+                    }
+                )
+                ActionCard(
+                    modifier = Modifier.weight(1f),
+                    titulo = "Reportes",
+                    icono = Icons.Filled.Info,
+                    color = MockupPeach,
+                    tint = Color(0xFFF08A24),
+                    onClick = onIrResultados
+                )
+            }
+
+            Spacer(modifier = Modifier.height(22.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Especialidades",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = "Ver todas",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable(onClick = onIrEspecialidades)
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                especialidades.take(3).forEach { especialidad ->
+                    TarjetaEspecialidad(
+                        especialidad = especialidad,
+                        compacta = true,
+                        modifier = Modifier.weight(1f),
+                        onClick = onIrEspecialidades
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                especialidades.drop(3).take(3).forEach { especialidad ->
+                    TarjetaEspecialidad(
+                        especialidad = especialidad,
+                        compacta = true,
+                        modifier = Modifier.weight(1f),
+                        onClick = onIrEspecialidades
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(22.dp))
+            Text(
+                text = "Próximas citas",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            if (proximaCita != null) {
+                val medico = Repositorio.obtenerMedico(proximaCita.medicoId)
+                val especialidad = medico?.let { Repositorio.obtenerEspecialidad(it.especialidadId) }
+                val fecha = runCatching { LocalDate.parse(proximaCita.fecha) }
+                    .getOrNull()
+                    ?.let { Repositorio.fechaLarga(it) }
+                    ?: proximaCita.fecha
+                CitaResumen(
+                    nombre = medico?.nombre ?: "Médico",
+                    especialidad = especialidad?.nombre ?: "Cita médica",
+                    fotoUrl = medico?.fotoUrl.orEmpty(),
+                    detalle = "${fecha} · ${proximaCita.hora}",
+                    onClick = onIrCitas
+                )
+            } else {
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable(onClick = onIrEspecialidades),
-                    shape = RoundedCornerShape(18.dp),
-                    color = Color.White
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                        modifier = Modifier.padding(14.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Search,
+                            Icons.Filled.DateRange,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(30.dp)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = "Buscar especialidad o médico",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = onIrEspecialidades),
-                    shape = RoundedCornerShape(20.dp),
-                    color = Color.White.copy(alpha = 0.16f)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Surface(
-                            shape = CircleShape,
-                            color = Color.White,
-                            modifier = Modifier.size(46.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.DateRange,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(10.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(14.dp))
-                        Column(modifier = Modifier.weight(1f)) {
+                        Column {
+                            Text("Aún no tienes citas", style = MaterialTheme.typography.titleSmall)
                             Text(
-                                text = "Agendar cita",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = "Reserva con un especialista en minutos",
+                                "Agenda una cita con un especialista",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.85f)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
                 }
             }
         }
+    }
+}
 
-        Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Filled.Favorite,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Especialidades destacadas",
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                destacadas.forEach { especialidad ->
-                    TarjetaEspecialidad(
-                        especialidad = especialidad,
-                        compacta = true,
-                        onClick = onIrEspecialidades
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-
+@Composable
+private fun ActionCard(
+    titulo: String,
+    icono: androidx.compose.ui.graphics.vector.ImageVector,
+    color: Color,
+    tint: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .height(84.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(14.dp),
+        color = color
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(icono, contentDescription = null, tint = tint, modifier = Modifier.size(28.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = "Próxima cita",
-                style = MaterialTheme.typography.titleMedium
+                text = titulo,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.SemiBold
             )
-            Spacer(modifier = Modifier.height(12.dp))
-            if (proximaCita != null) {
-                val medico = Repositorio.obtenerMedico(proximaCita.medicoId)
-                val especialidad = medico?.let {
-                    Repositorio.obtenerEspecialidad(it.especialidadId)
-                }
-                val fechaLarga = runCatching { LocalDate.parse(proximaCita.fecha) }
-                    .getOrNull()
-                    ?.let { Repositorio.fechaLarga(it) }
-                    ?: proximaCita.fecha
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-                    ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-                    border = BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        FotoPersona(url = medico?.fotoUrl.orEmpty(), tamano = 52.dp)
-                        Spacer(modifier = Modifier.width(14.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = especialidad?.nombre ?: "Cita médica",
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = medico?.nombre ?: "Médico",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "$fechaLarga · ${proximaCita.hora}",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                }
-            } else {
-                TarjetaSeccion(
-                    titulo = "Sin citas próximas",
-                    descripcion = "Agenda tu primera cita con un especialista",
-                    onClick = onIrEspecialidades,
-                    icono = Icons.Filled.DateRange,
-                    flecha = true,
-                    colorIcono = MaterialTheme.colorScheme.tertiary
-                )
-            }
-            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.List,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+@Composable
+private fun CitaResumen(
+    nombre: String,
+    especialidad: String,
+    fotoUrl: String,
+    detalle: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            FotoPersona(url = fotoUrl, tamano = 48.dp, anillo = false)
+            Spacer(modifier = Modifier.width(10.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(nombre, style = MaterialTheme.typography.titleSmall)
+                Text(especialidad, style = MaterialTheme.typography.bodySmall)
                 Text(
-                    text = "Médicos destacados",
-                    style = MaterialTheme.typography.titleMedium
+                    detalle,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(medicosDestacados) { medico ->
-                    TarjetaMedicoDestacado(
-                        medico = medico,
-                        onClick = { onIrFichaMedico(medico.id) }
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "Accesos rápidos",
-                style = MaterialTheme.typography.titleMedium
+            Icon(
+                Icons.AutoMirrored.Filled.List,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
             )
-            Spacer(modifier = Modifier.height(12.dp))
-            TarjetaSeccion(
-                titulo = "Especialidades",
-                descripcion = "Explora todas las especialidades disponibles",
-                onClick = onIrEspecialidades,
-                icono = Icons.AutoMirrored.Filled.List,
-                flecha = true,
-                colorIcono = MaterialTheme.colorScheme.tertiary
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            TarjetaSeccion(
-                titulo = "Médicos",
-                descripcion = "Consulta a los médicos por especialidad",
-                onClick = onIrEspecialidades,
-                icono = Icons.Filled.Person,
-                flecha = true,
-                colorIcono = MaterialTheme.colorScheme.secondary
-            )
-            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 }

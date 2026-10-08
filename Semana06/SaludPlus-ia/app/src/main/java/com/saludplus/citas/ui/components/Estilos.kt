@@ -17,8 +17,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 fun gradienteMarca(): Brush {
     return Brush.horizontalGradient(
         listOf(
-            MaterialTheme.colorScheme.primary,
-            MaterialTheme.colorScheme.tertiary
+            Color(0xFF1878F0),
+            Color(0xFF2C86F3)
         )
     )
 }
@@ -27,8 +27,8 @@ fun gradienteMarca(): Brush {
 fun gradienteEncabezado(): Brush {
     return Brush.verticalGradient(
         listOf(
-            MaterialTheme.colorScheme.primary,
-            Color(0xFF3D8BEF)
+            Color(0xFFEAF5FF),
+            MaterialTheme.colorScheme.surface
         )
     )
 }
@@ -56,12 +56,14 @@ data class EstiloEspecialidad(
 @Composable
 fun estiloEspecialidad(id: Int): EstiloEspecialidad {
     return when (id) {
-        1 -> EstiloEspecialidad(Color(0xFFE53935), Icons.Filled.Favorite)
-        2 -> EstiloEspecialidad(Color(0xFFFF8F00), Icons.Filled.Face)
-        3 -> EstiloEspecialidad(Color(0xFF8E24AA), Icons.Filled.Star)
-        4 -> EstiloEspecialidad(Color(0xFF8D6E63), Icons.Filled.Build)
-        5 -> EstiloEspecialidad(Color(0xFF3949AB), Icons.Filled.Info)
-        6 -> EstiloEspecialidad(Color(0xFF00897B), Icons.Filled.Search)
+        1 -> EstiloEspecialidad(Color(0xFF3A8DFF), Icons.Filled.Search)
+        2 -> EstiloEspecialidad(Color(0xFF21B68A), Icons.Filled.Face)
+        3 -> EstiloEspecialidad(Color(0xFFF44C65), Icons.Filled.Favorite)
+        4 -> EstiloEspecialidad(Color(0xFFFF8C3A), Icons.Filled.Build)
+        5 -> EstiloEspecialidad(Color(0xFFE83D8C), Icons.Filled.Favorite)
+        6 -> EstiloEspecialidad(Color(0xFF5B73EE), Icons.Filled.Build)
+        7 -> EstiloEspecialidad(Color(0xFF6654D9), Icons.Filled.Info)
+        8 -> EstiloEspecialidad(Color(0xFF3979DD), Icons.Filled.Search)
         else -> EstiloEspecialidad(MaterialTheme.colorScheme.primary, Icons.Filled.Star)
     }
 }

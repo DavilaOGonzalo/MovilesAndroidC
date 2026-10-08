@@ -29,7 +29,7 @@ private data class DestinoInferior(
 private val destinosInferiores = listOf(
     DestinoInferior(Rutas.HOME, "Inicio", Icons.Filled.Home, Color(0xFF1E6BD6)),
     DestinoInferior(Rutas.CITAS, "Citas", Icons.AutoMirrored.Filled.List, Color(0xFF00A8C6)),
-    DestinoInferior(Rutas.RESULTADOS, "Resultados", Icons.Filled.Info, Color(0xFF8E24AA)),
+    DestinoInferior(Rutas.RESULTADOS, "Reportes", Icons.Filled.Info, Color(0xFF8E24AA)),
     DestinoInferior(Rutas.PERFIL, "Perfil", Icons.Filled.Person, Color(0xFF2E9E5B))
 )
 

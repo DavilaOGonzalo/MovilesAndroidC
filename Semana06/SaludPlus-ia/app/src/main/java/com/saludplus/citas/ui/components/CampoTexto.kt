@@ -3,7 +3,10 @@ package com.saludplus.citas.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -25,16 +28,38 @@ fun CampoTexto(
     esPassword: Boolean = false,
     tipoTeclado: KeyboardType = KeyboardType.Text,
     error: String? = null,
-    icono: ImageVector? = null
+    icono: ImageVector? = null,
+    passwordVisible: Boolean = false,
+    onTogglePassword: (() -> Unit)? = null
 ) {
     OutlinedTextField(
         value = valor,
         onValueChange = onValorChange,
-        label = { Text(etiqueta) },
+        placeholder = { Text(etiqueta) },
         singleLine = true,
         isError = error != null,
         supportingText = if (error != null) {
             { Text(error) }
+        } else {
+            null
+        },
+        trailingIcon = if (esPassword) {
+            {
+                IconButton(onClick = { onTogglePassword?.invoke() }) {
+                    Icon(
+                        imageVector = if (passwordVisible) {
+                            Icons.Filled.Info
+                        } else {
+                            Icons.Filled.Info
+                        },
+                        contentDescription = if (passwordVisible) {
+                            "Ocultar contraseña"
+                        } else {
+                            "Mostrar contraseña"
+                        }
+                    )
+                }
+            }
         } else {
             null
         },
@@ -49,13 +74,19 @@ fun CampoTexto(
         } else {
             null
         },
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface
         ),
         keyboardOptions = KeyboardOptions(keyboardType = tipoTeclado),
-        visualTransformation = if (esPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        visualTransformation = if (esPassword && !passwordVisible) {
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        },
         modifier = modifier.fillMaxWidth()
     )
 }

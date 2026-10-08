@@ -15,23 +15,25 @@ object Repositorio {
     private var siguienteId = 1
 
     val especialidades = mutableListOf(
-        Especialidad(1, "Cardiología", "Enfermedades del corazón y sistema circulatorio", destacada = true),
-        Especialidad(2, "Dermatología", "Cuidado de la piel, cabello y uñas", destacada = true),
-        Especialidad(3, "Pediatría", "Atención médica de niños y adolescentes", destacada = true),
-        Especialidad(4, "Traumatología", "Huesos, músculos y articulaciones"),
-        Especialidad(5, "Neurología", "Sistema nervioso y trastornos cerebrales"),
-        Especialidad(6, "Oftalmología", "Salud visual y enfermedades de los ojos")
+        Especialidad(1, "Medicina General", "Atención primaria y prevención", destacada = true),
+        Especialidad(2, "Pediatría", "Niños y adolescentes", destacada = true),
+        Especialidad(3, "Cardiología", "Corazón y sistema circulatorio", destacada = true),
+        Especialidad(4, "Dermatología", "Piel, cabello y uñas", destacada = true),
+        Especialidad(5, "Ginecología", "Salud de la mujer", destacada = true),
+        Especialidad(6, "Traumatología", "Huesos y articulaciones", destacada = true),
+        Especialidad(7, "Neurología", "Sistema nervioso"),
+        Especialidad(8, "Oftalmología", "Vista y ojos")
     )
 
     val medicos = mutableListOf(
-        Medico(1, "Ana Torres", 1, 4.8, 12, fotoDoctor(15752232)),
-        Medico(2, "Luis Mendoza", 1, 4.5, 8, fotoDoctor(5722163)),
-        Medico(3, "Carla Ríos", 2, 4.9, 10, fotoDoctor(19963166)),
-        Medico(4, "Pedro Gómez", 3, 4.7, 15, fotoDoctor(6762869)),
-        Medico(5, "María López", 3, 4.6, 9, fotoDoctor(5452195)),
-        Medico(6, "Jorge Vega", 4, 4.3, 7, fotoDoctor(12660379)),
-        Medico(7, "Lucía Nava", 5, 4.8, 11, fotoDoctor(8376309)),
-        Medico(8, "Diego Cruz", 6, 4.4, 6, fotoDoctor(6762862))
+        Medico(1, "Carlos Ramírez", 3, 4.8, 5, fotoDoctor(6762869), 120),
+        Medico(2, "Ana López", 3, 4.6, 8, fotoDoctor(15752232), 98),
+        Medico(3, "Miguel Torres", 3, 4.7, 10, fotoDoctor(5722163), 87),
+        Medico(4, "Sofía García", 3, 4.5, 7, fotoDoctor(19963166), 64),
+        Medico(5, "Laura Sánchez", 1, 4.9, 12, fotoDoctor(5452195), 132),
+        Medico(6, "Pedro Gómez", 2, 4.8, 15, fotoDoctor(6762869), 115),
+        Medico(7, "Jorge Vega", 6, 4.6, 7, fotoDoctor(12660379), 76),
+        Medico(8, "Lucía Nava", 7, 4.8, 11, fotoDoctor(8376309), 91)
     )
 
     private fun fotoDoctor(id: Int): String {
@@ -161,13 +163,19 @@ object Repositorio {
         return true
     }
 
-    fun registrarUsuario(nombre: String, email: String, password: String): Boolean {
+    fun registrarUsuario(
+        nombre: String,
+        email: String,
+        password: String,
+        telefono: String = ""
+    ): Boolean {
         if (usuarios.any { it.email == email }) return false
         val usuario = Usuario(
             id = siguienteId,
             nombre = nombre,
             email = email,
             password = password,
+            telefono = telefono,
             fotoUrl = fotoDeUsuario()
         )
         siguienteId++

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,9 +41,11 @@ fun TarjetaEspecialidad(
         modifier = modifier
             .then(
                 if (compacta) {
-                    Modifier.size(width = 155.dp, height = 100.dp)
+                    Modifier.size(width = 96.dp, height = 96.dp)
                 } else {
-                    Modifier.size(width = 220.dp, height = 120.dp)
+                    Modifier
+                        .fillMaxWidth()
+                        .height(78.dp)
                 }
             )
             .clickable(onClick = onClick),
@@ -50,14 +53,14 @@ fun TarjetaEspecialidad(
         colors = CardDefaults.cardColors(
             containerColor = estilo.color.copy(alpha = 0.10f)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        border = BorderStroke(1.dp, estilo.color.copy(alpha = 0.25f))
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         if (compacta) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 12.dp, vertical = 12.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 8.dp, vertical = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -65,39 +68,41 @@ fun TarjetaEspecialidad(
                     shape = CircleShape,
                     color = estilo.color.copy(alpha = 0.18f),
                     contentColor = estilo.color,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
                         imageVector = estilo.icono,
                         contentDescription = null,
-                        modifier = Modifier.padding(9.dp)
+                        modifier = Modifier.padding(8.dp)
                     )
                 }
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = especialidad.nombre,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
-                    maxLines = 1
+                    maxLines = 2
                 )
             }
         } else {
             Row(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Surface(
                     shape = CircleShape,
                     color = estilo.color.copy(alpha = 0.18f),
                     contentColor = estilo.color,
-                    modifier = Modifier.size(52.dp)
+                    modifier = Modifier.size(44.dp)
                 ) {
                     Icon(
                         imageVector = estilo.icono,
                         contentDescription = null,
-                        modifier = Modifier.padding(12.dp)
+                        modifier = Modifier.padding(10.dp)
                     )
                 }
                 Spacer(modifier = Modifier.width(12.dp))
@@ -113,7 +118,7 @@ fun TarjetaEspecialidad(
                         text = especialidad.descripcion,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 3
+                        maxLines = 2
                     )
                 }
             }

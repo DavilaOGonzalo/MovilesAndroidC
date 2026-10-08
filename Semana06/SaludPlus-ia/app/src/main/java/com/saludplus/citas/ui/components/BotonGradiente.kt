@@ -29,9 +29,9 @@ fun BotonGradiente(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp)
-            .shadow(8.dp, RoundedCornerShape(16.dp), clip = true)
-            .clip(RoundedCornerShape(16.dp))
+            .height(50.dp)
+            .shadow(3.dp, RoundedCornerShape(11.dp), clip = true)
+            .clip(RoundedCornerShape(11.dp))
             .background(
                 if (enabled) brush else Brush.horizontalGradient(
                     listOf(
@@ -46,6 +46,7 @@ fun BotonGradiente(
         Text(
             text = texto,
             style = MaterialTheme.typography.labelLarge,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
             color = if (enabled) Color.White else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
         )
     }

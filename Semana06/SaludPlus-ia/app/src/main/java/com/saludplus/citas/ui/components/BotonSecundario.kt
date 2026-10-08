@@ -23,7 +23,7 @@ fun BotonSecundario(
     OutlinedButton(
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(10.dp),
         border = BorderStroke(
             width = 1.5.dp,
             color = if (colorError) {
@@ -41,7 +41,7 @@ fun BotonSecundario(
         ),
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp)
+            .height(50.dp)
     ) {
         Text(text = texto, style = MaterialTheme.typography.labelLarge)
     }
