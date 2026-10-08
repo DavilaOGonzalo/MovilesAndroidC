@@ -1,5 +1,6 @@
 package com.saludplus.citas.ui.screens.agendamiento
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,20 +15,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
 import com.saludplus.citas.ui.components.CampoTexto
 import com.saludplus.citas.ui.components.EncabezadoConVolver
 import com.saludplus.citas.ui.components.EstadoVacio
 import com.saludplus.citas.ui.components.TarjetaMedico
+import com.saludplus.citas.ui.components.estiloEspecialidad
+import com.saludplus.citas.ui.components.gradienteMarca
 
 @Composable
 fun MedicosScreen(
@@ -37,6 +42,7 @@ fun MedicosScreen(
 ) {
     var texto by remember { mutableStateOf("") }
     val especialidad = Repositorio.obtenerEspecialidad(especialidadId)
+    val estilo = estiloEspecialidad(especialidadId)
     val medicos = if (texto.isBlank()) {
         Repositorio.medicosPorEspecialidad(especialidadId)
     } else {
@@ -50,16 +56,24 @@ fun MedicosScreen(
     ) {
         EncabezadoConVolver(titulo = "Médicos", onVolver = onVolver)
         Spacer(modifier = Modifier.height(12.dp))
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(14.dp),
-            color = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(20.dp))
+                .background(gradienteMarca())
+                .padding(18.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = especialidad?.nombre ?: "Especialidad no encontrada",
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                text = especialidad?.nombre ?: "Especialidad",
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "${medicos.size} médicos disponibles",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.85f)
             )
         }
         Spacer(modifier = Modifier.height(16.dp))

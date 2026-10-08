@@ -25,6 +25,7 @@ import com.saludplus.citas.ui.components.CampoTexto
 import com.saludplus.citas.ui.components.EncabezadoConVolver
 import com.saludplus.citas.ui.components.EstadoVacio
 import com.saludplus.citas.ui.components.TarjetaSeccion
+import com.saludplus.citas.ui.components.estiloEspecialidad
 
 @Composable
 fun EspecialidadesScreen(
@@ -40,7 +41,7 @@ fun EspecialidadesScreen(
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
         EncabezadoConVolver(titulo = "Especialidades", onVolver = onVolver)
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Elige la especialidad que necesitas",
             style = MaterialTheme.typography.bodyMedium,
@@ -65,11 +66,14 @@ fun EspecialidadesScreen(
                 contentPadding = PaddingValues(bottom = 12.dp)
             ) {
                 items(especialidades) { especialidad ->
+                    val estilo = estiloEspecialidad(especialidad.id)
                     TarjetaSeccion(
                         titulo = especialidad.nombre,
                         descripcion = especialidad.descripcion,
                         onClick = { onSeleccionar(especialidad.id) },
-                        flecha = true
+                        icono = estilo.icono,
+                        flecha = true,
+                        colorIcono = estilo.color
                     )
                 }
             }

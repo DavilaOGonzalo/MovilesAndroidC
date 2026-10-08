@@ -1,6 +1,7 @@
 package com.saludplus.citas.ui.screens.auth
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -27,11 +29,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
-import com.saludplus.citas.ui.components.BotonPrincipal
+import com.saludplus.citas.ui.components.BotonGradiente
 import com.saludplus.citas.ui.components.CampoTexto
+import com.saludplus.citas.ui.components.gradienteMarca
 
 @Composable
 fun LoginScreen(
@@ -49,98 +55,112 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.size(72.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(bottomStart = 36.dp, bottomEnd = 36.dp))
+                .background(gradienteMarca())
+                .padding(horizontal = 24.dp, vertical = 40.dp)
         ) {
-            Icon(
-                imageVector = Icons.Filled.Favorite,
-                contentDescription = null,
-                modifier = Modifier.padding(18.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Bienvenido",
-            style = MaterialTheme.typography.headlineSmall
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = "Ingresa para agendar tu cita médica",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(modifier = Modifier.height(28.dp))
-
-        CampoTexto(
-            valor = email,
-            onValorChange = { email = it; errorEmail = null; mensajeGeneral = null },
-            etiqueta = "Email",
-            tipoTeclado = KeyboardType.Email,
-            error = errorEmail,
-            icono = Icons.Filled.Email
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-
-        CampoTexto(
-            valor = password,
-            onValorChange = { password = it; errorPassword = null; mensajeGeneral = null },
-            etiqueta = "Contraseña",
-            esPassword = true,
-            error = errorPassword,
-            icono = Icons.Filled.Lock
-        )
-
-        mensajeGeneral?.let {
-            Spacer(modifier = Modifier.height(12.dp))
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.errorContainer
-            ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Surface(
+                    shape = CircleShape,
+                    color = Color.White,
+                    modifier = Modifier
+                        .size(72.dp)
+                        .shadow(10.dp, CircleShape, clip = true)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Favorite,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(18.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(14.dp))
                 Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    text = "Bienvenido",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Ingresa para agendar tu cita médica",
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                    color = Color.White.copy(alpha = 0.85f)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CampoTexto(
+                valor = email,
+                onValorChange = { email = it; errorEmail = null; mensajeGeneral = null },
+                etiqueta = "Email",
+                tipoTeclado = KeyboardType.Email,
+                error = errorEmail,
+                icono = Icons.Filled.Email
+            )
+            Spacer(modifier = Modifier.height(12.dp))
 
-        BotonPrincipal(
-            texto = "Ingresar",
-            onClick = {
-                errorEmail = when {
-                    email.isBlank() -> "Ingrese su email"
-                    !email.contains("@") -> "Email inválido"
-                    else -> null
-                }
-                errorPassword = if (password.isBlank()) "Ingrese su contraseña" else null
+            CampoTexto(
+                valor = password,
+                onValorChange = { password = it; errorPassword = null; mensajeGeneral = null },
+                etiqueta = "Contraseña",
+                esPassword = true,
+                error = errorPassword,
+                icono = Icons.Filled.Lock
+            )
 
-                val esValido = errorEmail == null && errorPassword == null
-
-                if (esValido) {
-                    val exito = Repositorio.iniciarSesion(email, password)
-                    if (exito) {
-                        onLoginCorrecto()
-                    } else {
-                        mensajeGeneral = "Email o contraseña incorrectos"
-                    }
+            mensajeGeneral?.let {
+                Spacer(modifier = Modifier.height(12.dp))
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.errorContainer
+                ) {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                    )
                 }
             }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
 
-        TextButton(onClick = onIrRegistro) {
-            Text("¿No tienes cuenta? Regístrate")
+            Spacer(modifier = Modifier.height(20.dp))
+
+            BotonGradiente(
+                texto = "Ingresar",
+                onClick = {
+                    errorEmail = when {
+                        email.isBlank() -> "Ingrese su email"
+                        !email.contains("@") -> "Email inválido"
+                        else -> null
+                    }
+                    errorPassword = if (password.isBlank()) "Ingrese su contraseña" else null
+
+                    val esValido = errorEmail == null && errorPassword == null
+
+                    if (esValido) {
+                        val exito = Repositorio.iniciarSesion(email, password)
+                        if (exito) {
+                            onLoginCorrecto()
+                        } else {
+                            mensajeGeneral = "Email o contraseña incorrectos"
+                        }
+                    }
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextButton(onClick = onIrRegistro) {
+                Text("¿No tienes cuenta? Regístrate")
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.saludplus.citas.ui.screens.auth
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,9 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
 import com.saludplus.citas.navigation.Rutas
+import com.saludplus.citas.ui.components.gradienteMarca
 import kotlinx.coroutines.delay
 
 @Composable
@@ -31,38 +38,48 @@ fun SplashScreen(onSiguiente: (String) -> Unit) {
         onSiguiente(destino)
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.primary
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.tertiary
+                    )
+                )
+            ),
+        contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Surface(
                 shape = CircleShape,
-                color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(96.dp)
+                color = Color.White,
+                modifier = Modifier
+                    .size(104.dp)
+                    .shadow(16.dp, CircleShape, clip = true)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Favorite,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(24.dp)
+                    modifier = Modifier.padding(26.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "Clínica SaludPlus",
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onPrimary
+                color = Color.White
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "App Paciente",
+                text = "Tu salud, a un toque de distancia",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f)
+                color = Color.White.copy(alpha = 0.85f)
             )
         }
     }

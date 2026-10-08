@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
@@ -32,7 +33,10 @@ fun TarjetaSeccion(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     icono: ImageVector? = null,
-    flecha: Boolean = false
+    flecha: Boolean = false,
+    colorIcono: Color? = null,
+    etiqueta: String? = null,
+    colorEtiqueta: Color? = null
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -40,7 +44,7 @@ fun TarjetaSeccion(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f))
     ) {
         Row(
@@ -51,10 +55,11 @@ fun TarjetaSeccion(
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (icono != null) {
+                val colorBase = colorIcono ?: MaterialTheme.colorScheme.primary
                 Surface(
                     shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = colorBase.copy(alpha = 0.15f),
+                    contentColor = colorBase,
                     modifier = Modifier.size(44.dp)
                 ) {
                     Icon(
@@ -76,6 +81,20 @@ fun TarjetaSeccion(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+            if (etiqueta != null) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = (colorEtiqueta ?: MaterialTheme.colorScheme.primary).copy(alpha = 0.15f),
+                    contentColor = colorEtiqueta ?: MaterialTheme.colorScheme.primary
+                ) {
+                    Text(
+                        text = etiqueta,
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                    )
+                }
             }
             if (flecha) {
                 Spacer(modifier = Modifier.width(8.dp))

@@ -221,3 +221,77 @@ bloqueo de horarios en FechaHoraScreen y la fecha en español en ConfirmarCitaSc
 - Se eliminó un import sin uso en `EspecialidadesScreen`.
 - Build limpio final: `clean assembleDebug testDebugUnitTest` → BUILD SUCCESSFUL,
   APK generado, 4/4 tests verdes.
+
+---
+
+## Prompt: Mejora creativa de diseño de SaludPlus
+
+Mejora el diseño creativo de toda la aplicación SaludPlus para que se vea más
+moderna y colorida: degradados, tarjetas modernas, bordes redondeados, sombras,
+chips, badges, muchos colores amigables y avatares con fotos profesionales de los
+médicos. No agregar librerías innecesarias, no romper la lógica de calendario,
+navegación ni el bloqueo de horarios reservados. Actualizar PROMPTS.md y hacer
+commit ("Mejora diseño creativo de SaludPlus"), sin push.
+
+## Resumen de lo realizado (diseño creativo)
+
+- Avatares: como el proyecto no tiene fotos de médicos reales y no se agregan
+  librerías de imágenes de red, se creó `AvatarInicial`: avatar circular con
+  degradado generado por nombre (`gradienteAvatar`, `Color.hsv`) y las dos
+  iniciales del médico. Se usa en TarjetaMedico, ConfirmarCita, MisCitas,
+  CitaExitosa y Perfil.
+- Nuevos componentes en `ui/components`:
+  - `Estilos.kt`: `gradienteMarca()` (primary→tertiary), `gradienteExito()`,
+    `gradienteAvatar(nombre)` y `estiloEspecialidad(id)` que asigna color e
+    icono por especialidad (Cardiología rojo/pulmón, Pediatría naranja/rostro,
+    Dermatología morado/estrella, Traumatología café/herramienta, Neurología
+    índigo/info, Medicina general teal/buscar).
+  - `BotonGradiente.kt`: botón 52 dp con degradado de marca, sombra y estado
+    deshabilitado; usado en Login, Registro, FechaHora, ConfirmarCita y
+    CitaExitosa.
+  - `TarjetaMedicoDestacado.kt`: tarjeta compacta 160x150 para el carrusel de
+    médicos destacados del Home.
+  - `TarjetaSeccion`: nuevos parámetros `colorIcono` y `etiqueta` (pastilla de
+    color) además de `icono` y `flecha`.
+  - `TarjetaEspecialidad` y `TarjetaMedico`: colores por especialidad y chip de
+    especialidad tintado; TarjetaMedico con avatar de inicial y badge de
+    calificación en pastilla ámbar.
+- Pantallas:
+  - Splash/Login/Registro: fondos con degradado de marca (cabecera redondeada
+    en Login/Registro), logo en círculo blanco con sombra.
+  - Home: cabecera con degradado (saludo + avatar persona + CTA "Agendar cita"
+    en cristal), carrusel de destacadas coloridas y de médicos destacados,
+    accesos rápidos con iconos de colores.
+  - Especialidades: tarjetas con color e icono por especialidad.
+  - Médicos: héroe con degradado de marca, nombre y cantidad de médicos.
+  - FechaHora (solo visual, lógica intacta): tarjeta de mes tintada
+    primaryContainer, día seleccionado con sombra, chip de fecha en
+    tertiaryContainer, chips de hora con sombra al seleccionar, resumen con
+    `animateContentSize` y botón degradado (mismo `enabled`).
+  - ConfirmarCita: héroe del médico con avatar de inicial, chip de
+    especialidad colorida, calificación/experiencia, filas de detalle con
+    iconos en recuadros tintados (sin divisores), botón degradado;
+    `agendarCita(medicoId, fecha, hora)` sin cambios.
+  - CitaExitosa: fondo con degradado suave, check en círculo con
+    `gradienteExito` y sombra, card con el resumen de la última cita.
+  - MisCitas: tarjetas con avatar, chip de estado "Confirmada" (fecha futura,
+    con check) o "Completada" derivado comparando la fecha ISO con
+    `LocalDate.now()`, pastilla de fecha en el color de la especialidad.
+  - Perfil: cabecera con degradado, avatar de inicial del usuario, datos en
+    tarjetas con iconos de colores.
+  - Resultados: fondo con degradado tertiaryContainer, icono en círculo
+    blanco con sombra.
+- Navegación, rutas, modelos, Repositorio y lógica de negocio sin cambios.
+
+## Correcciones realizadas (diseño creativo)
+
+- Error de compilación: `AvatarInicial.kt` no importaba `Color`.
+- Error de compilación: referencia totalmente calificada inválida de
+  `KeyboardArrowRight` en TarjetaMedico → import normal de
+  `Icons.AutoMirrored.Filled.KeyboardArrowRight`.
+- Error de compilación: `Surface` de Material3 no acepta `brush` en esta
+  versión → círculo de éxito con `Box` + `clip` + `background(gradienteExito())`.
+- MisCitas (dentro del bottom nav) no debe usar `EncabezadoConVolver` → se
+  restauró el título simple "Mis citas".
+- Build final: `compileDebugKotlin testDebugUnitTest assembleDebug` →
+  BUILD SUCCESSFUL, APK generado, 4/4 tests verdes.

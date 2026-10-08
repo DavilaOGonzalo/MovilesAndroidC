@@ -1,6 +1,7 @@
 package com.saludplus.citas.ui.screens.agendamiento
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -39,13 +40,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
-import com.saludplus.citas.ui.components.BotonPrincipal
+import com.saludplus.citas.ui.components.BotonGradiente
 import com.saludplus.citas.ui.components.EncabezadoConVolver
 import com.saludplus.citas.ui.components.EstadoVacio
 import java.time.LocalDate
@@ -95,7 +97,7 @@ fun FechaHoraScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f)
             ),
             elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
         ) {
@@ -108,7 +110,11 @@ fun FechaHoraScreen(
                 Surface(
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = if (puedeRetroceder) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                    },
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     IconButton(
@@ -130,21 +136,22 @@ fun FechaHoraScreen(
                     Text(
                         text = Repositorio.nombreMesYAnio(semanaBase),
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     if (dias.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = "Del ${dias.first().dayOfMonth} al ${dias.last().dayOfMonth}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f)
                         )
                     }
                 }
                 Surface(
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = MaterialTheme.colorScheme.primary,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     IconButton(onClick = { irASemana(semanaBase.plusWeeks(1)) }) {
@@ -194,8 +201,8 @@ fun FechaHoraScreen(
             if (fechaSeleccionada != null) {
                 Surface(
                     shape = RoundedCornerShape(50),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                 ) {
                     Text(
                         text = fechaSeleccionada?.let { Repositorio.formatearFecha(it) }.orEmpty(),
@@ -244,7 +251,9 @@ fun FechaHoraScreen(
 
         if (fechaSeleccionada != null && horaSeleccionada != null) {
             Surface(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(),
                 shape = RoundedCornerShape(18.dp),
                 color = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -263,7 +272,7 @@ fun FechaHoraScreen(
             Spacer(modifier = Modifier.height(12.dp))
         }
 
-        BotonPrincipal(
+        BotonGradiente(
             texto = "Continuar",
             enabled = fechaSeleccionada != null && horaSeleccionada != null,
             onClick = {
@@ -290,7 +299,7 @@ private fun TarjetaDia(
         targetValue = if (seleccionada) {
             MaterialTheme.colorScheme.primary
         } else {
-            MaterialTheme.colorScheme.surfaceVariant
+            MaterialTheme.colorScheme.surface
         },
         label = "fondoDia"
     )
@@ -304,6 +313,13 @@ private fun TarjetaDia(
         modifier = modifier
             .width(64.dp)
             .height(92.dp)
+            .then(
+                if (seleccionada) {
+                    Modifier.shadow(8.dp, RoundedCornerShape(20.dp), clip = true)
+                } else {
+                    Modifier
+                }
+            )
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = fondo),
@@ -358,23 +374,35 @@ private fun ChipHora(
 ) {
     val fondo = when {
         seleccionada -> MaterialTheme.colorScheme.primary
-        ocupada -> MaterialTheme.colorScheme.surfaceVariant
+        ocupada -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
         else -> MaterialTheme.colorScheme.surface
     }
     val contenido = when {
         seleccionada -> MaterialTheme.colorScheme.onPrimary
-        ocupada -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+        ocupada -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f)
         else -> MaterialTheme.colorScheme.primary
     }
     val borde = when {
         seleccionada -> null
-        ocupada -> BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        ocupada -> BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f))
         else -> BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.45f))
     }
 
     Surface(
         modifier = modifier.then(
-            if (ocupada) Modifier else Modifier.clickable(onClick = onClick)
+            if (ocupada) {
+                Modifier
+            } else {
+                Modifier
+                    .then(
+                        if (seleccionada) {
+                            Modifier.shadow(6.dp, RoundedCornerShape(14.dp), clip = true)
+                        } else {
+                            Modifier
+                        }
+                    )
+                    .clickable(onClick = onClick)
+            }
         ),
         shape = RoundedCornerShape(14.dp),
         color = fondo,
