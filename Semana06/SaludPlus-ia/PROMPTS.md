@@ -298,6 +298,46 @@ commit ("Mejora diseño creativo de SaludPlus"), sin push.
 
 ---
 
+## Prompt: Documentación final de la Fase 2
+
+Completar la documentación final de Fase 2 con las respuestas de las secciones
+VII, "Preguntas de reflexión", y VIII, "Observaciones y conclusiones". Revisar
+el código actual para que las respuestas sean coherentes con `Repositorio.kt`,
+los modelos, `Rutas.kt`, `AppNavigation.kt`, la búsqueda, el calendario dinámico,
+la confirmación de citas y el uso de `NavigationBar`. Incluir observaciones sobre
+los obstáculos encontrados, conclusiones personales y actualizar este archivo
+con los prompts usados, un resumen de la respuesta de la IA y las correcciones.
+Crear el commit `Completa reflexiones y documentacion Fase 2` y publicar la rama
+`mejora-ia`.
+
+## Resumen de la respuesta de la IA
+
+- Se revisó el código real antes de redactar las respuestas. Se confirmó que
+  `Repositorio` es un `object`, que la búsqueda y los horarios dependen del
+  estado de Compose, y que `popUpTo` limpia el flujo de agendamiento al llegar a
+  CitaExitosa.
+- Se creó `DOCUMENTACION_FASE2.md` con las secciones VII y VIII, seis respuestas
+  de reflexión, observaciones sobre el calendario y las vistas faltantes, y
+  conclusiones sobre arquitectura, Compose e IA.
+- Se dejó registrado que el flujo visual actual incluye `MotivoLugarScreen`,
+  además de FechaHora, ConfirmarCita y CitaExitosa.
+
+## Qué tuve que corregir o verificar
+
+- Se comprobó que la respuesta no describiera una lista local por pantalla: las
+  citas se mantienen en el `object Repositorio` y son consultadas desde varias
+  pantallas.
+- Se distinguió la fecha ISO usada por la lógica de la etiqueta corta que solo
+  se muestra al usuario, porque ambas no deben confundirse al explicar el
+  calendario.
+- Se verificó el comportamiento real de `popUpTo` en `AppNavigation.kt` antes de
+  explicar qué ocurre al presionar Atrás.
+- Se documentaron las correcciones históricas de `LocalDate`, compatibilidad de
+  `Locale`, fechas dinámicas, horarios reservados y desbordamiento de la fila de
+  días, en lugar de presentar el código generado por IA como definitivo.
+
+---
+
 ## Prompt: Mejora diseño visual de SaludPlus
 
 Trabajar directamente en `Semana06/SaludPlus-ia` usando como referencia visual
