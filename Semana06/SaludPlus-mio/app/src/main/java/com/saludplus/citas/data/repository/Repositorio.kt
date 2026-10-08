@@ -50,6 +50,11 @@ object Repositorio {
         return horarios.filter { it !in reservados }
     }
 
+    fun citasDelUsuario(): List<Cita> {
+        val usuario = usuarioActual ?: return emptyList()
+        return citas.filter { it.usuarioId == usuario.id }
+    }
+
     fun agendarCita(medicoId: Int, fecha: String, hora: String): Boolean {
         val medico = obtenerMedico(medicoId) ?: return false
         val usuario = usuarioActual ?: return false

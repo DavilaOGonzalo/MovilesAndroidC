@@ -163,7 +163,13 @@ fun AppNavigation() {
                 ResultadosScreen()
             }
             composable(Rutas.PERFIL) {
-                PerfilScreen()
+                PerfilScreen(
+                    onCerrarSesion = {
+                        navController.navigate(Rutas.SPLASH) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
             }
         }
     }
