@@ -1,4 +1,4 @@
-package com.gonzalo.saludplus.ui.theme
+package com.saludplus.citas.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

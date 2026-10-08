@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gonzalo.saludplus"
+    namespace = "com.saludplus.citas"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.gonzalo.saludplus"
+        applicationId = "com.saludplus.citas"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -40,6 +40,7 @@ android {
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
