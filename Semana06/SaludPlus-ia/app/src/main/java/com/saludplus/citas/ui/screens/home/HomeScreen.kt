@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,11 +38,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
+import com.saludplus.citas.ui.components.FotoPersona
 import com.saludplus.citas.ui.components.TarjetaEspecialidad
 import com.saludplus.citas.ui.components.TarjetaMedicoDestacado
 import com.saludplus.citas.ui.components.TarjetaSeccion
 import com.saludplus.citas.ui.components.gradienteMarca
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(onIrEspecialidades: () -> Unit) {
     val usuario = Repositorio.usuarioActual
@@ -61,18 +65,11 @@ fun HomeScreen(onIrEspecialidades: () -> Unit) {
         ) {
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Surface(
-                        shape = CircleShape,
-                        color = Color.White,
-                        modifier = Modifier.size(52.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(10.dp)
-                        )
-                    }
+                    FotoPersona(
+                        url = usuario?.fotoUrl.orEmpty(),
+                        tamano = 56.dp,
+                        anillo = false
+                    )
                     Spacer(modifier = Modifier.width(14.dp))
                     Column {
                         Text(
@@ -145,10 +142,15 @@ fun HomeScreen(onIrEspecialidades: () -> Unit) {
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(destacadas) { especialidad ->
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                destacadas.forEach { especialidad ->
                     TarjetaEspecialidad(
                         especialidad = especialidad,
+                        compacta = true,
                         onClick = onIrEspecialidades
                     )
                 }

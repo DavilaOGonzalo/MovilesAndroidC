@@ -48,7 +48,7 @@ fun TarjetaMedicoDestacado(
             modifier = Modifier.padding(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AvatarInicial(nombre = medico.nombre, tamano = 52.dp)
+            FotoPersona(url = medico.fotoUrl, tamano = 52.dp)
             Spacer(modifier = Modifier.size(8.dp))
             Text(
                 text = medico.nombre,

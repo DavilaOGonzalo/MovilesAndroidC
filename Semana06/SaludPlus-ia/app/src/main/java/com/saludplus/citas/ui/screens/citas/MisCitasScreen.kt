@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
-import com.saludplus.citas.ui.components.AvatarInicial
+import com.saludplus.citas.ui.components.FotoPersona
 import com.saludplus.citas.ui.components.EstadoVacio
 import com.saludplus.citas.ui.components.estiloEspecialidad
 import java.time.LocalDate
@@ -95,7 +95,7 @@ fun MisCitasScreen() {
                                 .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            AvatarInicial(nombre = medico?.nombre ?: "?", tamano = 48.dp)
+                            FotoPersona(url = medico?.fotoUrl.orEmpty(), tamano = 48.dp)
                             Spacer(modifier = Modifier.width(14.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {

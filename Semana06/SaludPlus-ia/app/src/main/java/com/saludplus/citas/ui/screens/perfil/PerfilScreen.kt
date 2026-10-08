@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
-import com.saludplus.citas.ui.components.AvatarInicial
+import com.saludplus.citas.ui.components.FotoPersona
 import com.saludplus.citas.ui.components.BotonSecundario
 import com.saludplus.citas.ui.components.TarjetaSeccion
 import com.saludplus.citas.ui.components.gradienteMarca
@@ -50,7 +50,7 @@ fun PerfilScreen(onCerrarSesion: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                AvatarInicial(nombre = usuario?.nombre ?: "?", tamano = 96.dp)
+                FotoPersona(url = usuario?.fotoUrl.orEmpty(), tamano = 100.dp, anillo = false)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = usuario?.nombre ?: "Sin usuario",

@@ -54,7 +54,7 @@ fun TarjetaMedico(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AvatarInicial(nombre = medico.nombre, tamano = 58.dp)
+            FotoPersona(url = medico.fotoUrl, tamano = 58.dp)
             Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(

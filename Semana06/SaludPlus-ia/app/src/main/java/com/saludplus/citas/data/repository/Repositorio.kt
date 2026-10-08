@@ -24,14 +24,14 @@ object Repositorio {
     )
 
     val medicos = mutableListOf(
-        Medico(1, "Ana Torres", 1, 4.8, 12),
-        Medico(2, "Luis Mendoza", 1, 4.5, 8),
-        Medico(3, "Carla Ríos", 2, 4.9, 10),
-        Medico(4, "Pedro Gómez", 3, 4.7, 15),
-        Medico(5, "María López", 3, 4.6, 9),
-        Medico(6, "Jorge Vega", 4, 4.3, 7),
-        Medico(7, "Lucía Nava", 5, 4.8, 11),
-        Medico(8, "Diego Cruz", 6, 4.4, 6)
+        Medico(1, "Ana Torres", 1, 4.8, 12, "https://randomuser.me/api/portraits/women/68.jpg"),
+        Medico(2, "Luis Mendoza", 1, 4.5, 8, "https://randomuser.me/api/portraits/men/45.jpg"),
+        Medico(3, "Carla Ríos", 2, 4.9, 10, "https://randomuser.me/api/portraits/women/32.jpg"),
+        Medico(4, "Pedro Gómez", 3, 4.7, 15, "https://randomuser.me/api/portraits/men/75.jpg"),
+        Medico(5, "María López", 3, 4.6, 9, "https://randomuser.me/api/portraits/women/17.jpg"),
+        Medico(6, "Jorge Vega", 4, 4.3, 7, "https://randomuser.me/api/portraits/men/22.jpg"),
+        Medico(7, "Lucía Nava", 5, 4.8, 11, "https://randomuser.me/api/portraits/women/90.jpg"),
+        Medico(8, "Diego Cruz", 6, 4.4, 6, "https://randomuser.me/api/portraits/men/11.jpg")
     )
 
     val citas = mutableListOf<Cita>()
@@ -135,7 +135,13 @@ object Repositorio {
 
     fun registrarUsuario(nombre: String, email: String, password: String): Boolean {
         if (usuarios.any { it.email == email }) return false
-        val usuario = Usuario(id = siguienteId, nombre = nombre, email = email, password = password)
+        val usuario = Usuario(
+            id = siguienteId,
+            nombre = nombre,
+            email = email,
+            password = password,
+            fotoUrl = fotoDeUsuario(email)
+        )
         siguienteId++
         usuarios.add(usuario)
         return true
@@ -143,8 +149,18 @@ object Repositorio {
 
     fun iniciarSesion(email: String, password: String): Boolean {
         val usuario = usuarios.find { it.email == email && it.password == password } ?: return false
-        usuarioActual = usuario
+        if (usuario.fotoUrl.isBlank()) {
+            usuarioActual = usuario.copy(fotoUrl = fotoDeUsuario(email)).also {
+                usuarios[usuarios.indexOfFirst { u -> u.id == usuario.id }] = it
+            }
+        } else {
+            usuarioActual = usuario
+        }
         return true
+    }
+
+    private fun fotoDeUsuario(email: String): String {
+        return "https://i.pravatar.cc/300?u=$email"
     }
 
     fun cerrarSesion() {
