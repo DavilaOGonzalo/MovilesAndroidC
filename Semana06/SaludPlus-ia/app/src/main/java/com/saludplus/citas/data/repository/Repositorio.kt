@@ -76,6 +76,33 @@ object Repositorio {
         return mes
     }
 
+    fun fechaLarga(fecha: LocalDate): String {
+        val dia = when (fecha.dayOfWeek) {
+            DayOfWeek.MONDAY -> "Lunes"
+            DayOfWeek.TUESDAY -> "Martes"
+            DayOfWeek.WEDNESDAY -> "Miércoles"
+            DayOfWeek.THURSDAY -> "Jueves"
+            DayOfWeek.FRIDAY -> "Viernes"
+            DayOfWeek.SATURDAY -> "Sábado"
+            DayOfWeek.SUNDAY -> "Domingo"
+        }
+        val mes = when (fecha.monthValue) {
+            1 -> "enero"
+            2 -> "febrero"
+            3 -> "marzo"
+            4 -> "abril"
+            5 -> "mayo"
+            6 -> "junio"
+            7 -> "julio"
+            8 -> "agosto"
+            9 -> "setiembre"
+            10 -> "octubre"
+            11 -> "noviembre"
+            else -> "diciembre"
+        }
+        return "$dia ${fecha.dayOfMonth} de $mes ${fecha.year}"
+    }
+
     fun horariosDisponibles(medicoId: Int, fecha: String): List<String> {
         val reservados = citas
             .filter { it.medicoId == medicoId && it.fecha == fecha }

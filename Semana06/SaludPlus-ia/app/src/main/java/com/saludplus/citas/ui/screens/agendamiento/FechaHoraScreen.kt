@@ -56,21 +56,19 @@ fun FechaHoraScreen(
     onVolver: () -> Unit
 ) {
     var semanaBase by remember { mutableStateOf(Repositorio.semanaActual()) }
-    var fechaSeleccionada by remember { mutableStateOf<String?>(null) }
+    var fechaSeleccionada by remember { mutableStateOf<LocalDate?>(null) }
     var horaSeleccionada by remember { mutableStateOf<String?>(null) }
 
     val dias = Repositorio.diasHabilesDeLaSemana(semanaBase)
     val horariosDisponibles = fechaSeleccionada
-        ?.let { Repositorio.horariosDisponibles(medicoId, it) }
+        ?.let { Repositorio.horariosDisponibles(medicoId, it.toString()) }
         ?: emptyList()
     val puedeRetroceder = semanaBase.isAfter(Repositorio.semanaActual())
     val hoy = LocalDate.now()
 
     fun irASemana(nueva: LocalDate) {
         semanaBase = nueva
-        val etiquetas = Repositorio.diasHabilesDeLaSemana(nueva)
-            .map { Repositorio.formatearFecha(it) }
-        if (fechaSeleccionada !in etiquetas) {
+        if (fechaSeleccionada !in Repositorio.diasHabilesDeLaSemana(nueva)) {
             fechaSeleccionada = null
             horaSeleccionada = null
         }
@@ -171,9 +169,9 @@ fun FechaHoraScreen(
                     diaSemana = partes.getOrElse(0) { "" },
                     numeroDia = partes.getOrElse(1) { "" }.substringBefore("/"),
                     esHoy = fecha == hoy,
-                    seleccionada = Repositorio.formatearFecha(fecha) == fechaSeleccionada,
+                    seleccionada = fecha == fechaSeleccionada,
                     onClick = {
-                        fechaSeleccionada = Repositorio.formatearFecha(fecha)
+                        fechaSeleccionada = fecha
                         horaSeleccionada = null
                     }
                 )
@@ -195,7 +193,7 @@ fun FechaHoraScreen(
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ) {
                     Text(
-                        text = fechaSeleccionada.orEmpty(),
+                        text = fechaSeleccionada?.let { Repositorio.formatearFecha(it) }.orEmpty(),
                         style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                     )
@@ -247,7 +245,9 @@ fun FechaHoraScreen(
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             ) {
                 Text(
-                    text = "Cita: $fechaSeleccionada · $horaSeleccionada",
+                    text = "Cita: ${
+                        fechaSeleccionada?.let { Repositorio.formatearFecha(it) }.orEmpty()
+                    } · $horaSeleccionada",
                     style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -265,7 +265,7 @@ fun FechaHoraScreen(
                 val fecha = fechaSeleccionada
                 val hora = horaSeleccionada
                 if (fecha != null && hora != null) {
-                    onContinuar(medicoId, fecha, hora)
+                    onContinuar(medicoId, fecha.toString(), hora)
                 }
             }
         )

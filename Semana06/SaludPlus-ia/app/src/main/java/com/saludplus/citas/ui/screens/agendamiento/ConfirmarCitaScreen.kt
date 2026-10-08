@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
 import com.saludplus.citas.ui.components.BotonPrincipal
 import com.saludplus.citas.ui.components.TarjetaSeccion
+import java.time.LocalDate
 
 @Composable
 fun ConfirmarCitaScreen(
@@ -28,6 +29,10 @@ fun ConfirmarCitaScreen(
 ) {
     val medico = Repositorio.obtenerMedico(medicoId)
     val especialidad = medico?.let { Repositorio.obtenerEspecialidad(it.especialidadId) }
+    val fechaLarga = runCatching { LocalDate.parse(fecha) }
+        .getOrNull()
+        ?.let { Repositorio.fechaLarga(it) }
+        ?: fecha
 
     Column(
         modifier = Modifier
@@ -52,7 +57,7 @@ fun ConfirmarCitaScreen(
             descripcion = medico?.nombre ?: "No encontrado"
         )
         Spacer(modifier = Modifier.height(12.dp))
-        TarjetaSeccion(titulo = "Fecha", descripcion = fecha)
+        TarjetaSeccion(titulo = "Fecha", descripcion = fechaLarga)
         Spacer(modifier = Modifier.height(12.dp))
         TarjetaSeccion(titulo = "Hora", descripcion = hora)
         Spacer(modifier = Modifier.height(24.dp))

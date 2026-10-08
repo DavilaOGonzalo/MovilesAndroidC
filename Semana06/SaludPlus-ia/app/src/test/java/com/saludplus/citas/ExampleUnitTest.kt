@@ -18,7 +18,7 @@ class ExampleUnitTest {
     @Test
     fun horariosReservadosNoAparecenDisponibles() {
         Repositorio.citas.clear()
-        val fecha = Repositorio.formatearFecha(LocalDate.now())
+        val fecha = LocalDate.now().toString()
         val horaReservada = Repositorio.horarios.first()
         Repositorio.citas.add(
             Cita(
@@ -51,5 +51,17 @@ class ExampleUnitTest {
         assertTrue(dias.all { it.dayOfWeek != DayOfWeek.SUNDAY })
         assertTrue(dias.all { !it.isBefore(LocalDate.now()) })
         assertTrue(dias.all { !it.isAfter(semana.plusDays(4)) })
+    }
+
+    @Test
+    fun fechaLargaMuestraDiaYMesEnEspanol() {
+        assertEquals(
+            "Martes 13 de octubre 2026",
+            Repositorio.fechaLarga(LocalDate.of(2026, 10, 13))
+        )
+        assertEquals(
+            "Miércoles 16 de setiembre 2026",
+            Repositorio.fechaLarga(LocalDate.of(2026, 9, 16))
+        )
     }
 }

@@ -86,3 +86,43 @@ la funcionalidad del calendario dinámico ni la navegación.
 
 - Ninguna de compilación: `compileDebugKotlin` y `testDebugUnitTest` pasaron a la
   primera (BUILD SUCCESSFUL, 3/3 tests).
+
+---
+
+## Prompt: Integración de la fecha dinámica con ConfirmarCitaScreen (Fase 3)
+
+Integrar correctamente la fecha dinámica de la Pantalla 6 con la Pantalla 7
+(ConfirmarCitaScreen), en el flujo FechaHoraScreen → ConfirmarCitaScreen →
+CitaExitosaScreen. La fecha seleccionada debe llegar correctamente y mostrarse en
+ConfirmarCitaScreen en español con formato largo como "Martes 16 de setiembre
+2026" (día de la semana, día del mes, mes en español y año), correspondiendo
+exactamente con el día seleccionado, manteniendo el horario, el bloqueo de
+reservados, la confirmación, CitaExitosaScreen y el botón volver.
+
+## Resumen de lo realizado (integración)
+
+- El problema de fondo: la navegación pasaba la etiqueta compacta "Lun 13/10"
+  (sin año), por lo que ConfirmarCitaScreen no podía reconstruir la fecha larga
+  de forma confiable. Se integró la fecha canónica `LocalDate` (ISO, "2026-10-13")
+  como clave del flujo:
+  - `FechaHoraScreen`: `fechaSeleccionada` ahora es `LocalDate?`; se envía
+    `fecha.toString()` (ISO) a la navegación; la clave interna para
+    `horariosDisponibles` también es ISO (el bloqueo de reservados sigue
+    funcionando porque `agendarCita` usa la misma clave); las etiquetas
+    visibles ("Lun 13/10") se derivan con `formatearFecha` solo para mostrar.
+  - `Repositorio`: nuevo `fechaLarga(fecha)` que genera "Martes 13 de octubre
+    2026" con día de la semana y mes en español (variante "setiembre"),
+    sin librerías adicionales.
+  - `ConfirmarCitaScreen`: recibe la fecha ISO, la parsea con
+    `LocalDate.parse` (con fallback al texto crudo si el parseo falla) y
+    muestra `fechaLarga` en la tarjeta "Fecha".
+- La confirmación (`agendarCita`), CitaExitosaScreen, el botón volver y Mis
+  Citas siguen funcionando sin cambios de código.
+
+## Correcciones realizadas (integración)
+
+- El test unitario usaba la etiqueta compacta como clave de `horariosDisponibles`;
+  se actualizó a la clave ISO (`LocalDate.now().toString()`).
+- Se agregó un test (`fechaLargaMuestraDiaYMesEnEspanol`) que valida el formato
+  exacto en español, incluida la variante "setiembre".
+- Compilación y tests: BUILD SUCCESSFUL, 4/4 tests verdes.
