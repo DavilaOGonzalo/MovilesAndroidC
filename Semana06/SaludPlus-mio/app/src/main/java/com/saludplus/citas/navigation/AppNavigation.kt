@@ -12,6 +12,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.saludplus.citas.ui.components.BarraNavegacionInferior
+import com.saludplus.citas.ui.screens.agendamiento.CitaExitosaScreen
+import com.saludplus.citas.ui.screens.agendamiento.ConfirmarCitaScreen
 import com.saludplus.citas.ui.screens.agendamiento.EspecialidadesScreen
 import com.saludplus.citas.ui.screens.agendamiento.FechaHoraScreen
 import com.saludplus.citas.ui.screens.agendamiento.MedicosScreen
@@ -117,7 +119,41 @@ fun AppNavigation() {
                 val medicoId = entry.arguments?.getInt("medicoId") ?: 0
                 FechaHoraScreen(
                     medicoId = medicoId,
-                    onContinuar = { _, _, _ -> }
+                    onContinuar = { _, fecha, hora ->
+                        navController.navigate(Rutas.confirmarCita(medicoId, fecha, hora))
+                    }
+                )
+            }
+            composable(
+                route = Rutas.CONFIRMAR_CITA,
+                arguments = listOf(
+                    navArgument("medicoId") { type = NavType.IntType },
+                    navArgument("fecha") { type = NavType.StringType },
+                    navArgument("hora") { type = NavType.StringType }
+                )
+            ) { entry ->
+                val medicoId = entry.arguments?.getInt("medicoId") ?: 0
+                val fecha = entry.arguments?.getString("fecha") ?: ""
+                val hora = entry.arguments?.getString("hora") ?: ""
+                ConfirmarCitaScreen(
+                    medicoId = medicoId,
+                    fecha = fecha,
+                    hora = hora,
+                    onConfirmado = {
+                        navController.navigate(Rutas.CITA_EXITOSA) {
+                            popUpTo(Rutas.ESPECIALIDADES) { inclusive = true }
+                        }
+                    },
+                    onVolver = { navController.popBackStack() }
+                )
+            }
+            composable(Rutas.CITA_EXITOSA) {
+                CitaExitosaScreen(
+                    onIrInicio = {
+                        navController.navigate(Rutas.HOME) {
+                            popUpTo(Rutas.CITA_EXITOSA) { inclusive = true }
+                        }
+                    }
                 )
             }
             composable(Rutas.CITAS) {

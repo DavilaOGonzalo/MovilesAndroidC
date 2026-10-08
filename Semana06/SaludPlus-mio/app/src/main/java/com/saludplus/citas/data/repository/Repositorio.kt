@@ -50,6 +50,26 @@ object Repositorio {
         return horarios.filter { it !in reservados }
     }
 
+    fun agendarCita(medicoId: Int, fecha: String, hora: String): Boolean {
+        val medico = obtenerMedico(medicoId) ?: return false
+        val usuario = usuarioActual ?: return false
+        val yaReservada = citas.any {
+            it.medicoId == medicoId && it.fecha == fecha && it.hora == hora
+        }
+        if (yaReservada) return false
+        val cita = Cita(
+            id = siguienteIdCita,
+            usuarioId = usuario.id,
+            medicoId = medicoId,
+            especialidadId = medico.especialidadId,
+            fecha = fecha,
+            hora = hora
+        )
+        siguienteIdCita++
+        citas.add(cita)
+        return true
+    }
+
     fun registrarUsuario(nombre: String, email: String, password: String): Boolean {
         if (usuarios.any { it.email == email }) return false
         val usuario = Usuario(id = siguienteId, nombre = nombre, email = email, password = password)
