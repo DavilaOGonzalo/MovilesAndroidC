@@ -21,12 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
 import com.saludplus.citas.ui.components.BotonPrincipal
+import com.saludplus.citas.ui.components.EncabezadoConVolver
 import com.saludplus.citas.ui.components.OpcionSeleccionable
 
 @Composable
 fun FechaHoraScreen(
     medicoId: Int,
-    onContinuar: (Int, String, String) -> Unit
+    onContinuar: (Int, String, String) -> Unit,
+    onVolver: () -> Unit
 ) {
     var fechaSeleccionada by remember { mutableStateOf<String?>(null) }
     var horaSeleccionada by remember { mutableStateOf<String?>(null) }
@@ -36,10 +38,7 @@ fun FechaHoraScreen(
         ?: emptyList()
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(
-            text = "Selecciona fecha y hora",
-            style = MaterialTheme.typography.headlineSmall
-        )
+        EncabezadoConVolver(titulo = "Fecha y hora", onVolver = onVolver)
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(text = "Fecha", style = MaterialTheme.typography.titleMedium)

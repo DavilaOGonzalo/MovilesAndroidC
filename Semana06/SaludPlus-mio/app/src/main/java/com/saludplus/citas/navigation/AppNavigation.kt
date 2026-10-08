@@ -97,7 +97,8 @@ fun AppNavigation() {
                 EspecialidadesScreen(
                     onSeleccionar = { especialidadId ->
                         navController.navigate(Rutas.medicos(especialidadId))
-                    }
+                    },
+                    onVolver = { navController.popBackStack() }
                 )
             }
             composable(
@@ -109,7 +110,8 @@ fun AppNavigation() {
                     especialidadId = especialidadId,
                     onSeleccionarMedico = { medicoId ->
                         navController.navigate(Rutas.fechaHora(medicoId))
-                    }
+                    },
+                    onVolver = { navController.popBackStack() }
                 )
             }
             composable(
@@ -121,7 +123,8 @@ fun AppNavigation() {
                     medicoId = medicoId,
                     onContinuar = { _, fecha, hora ->
                         navController.navigate(Rutas.confirmarCita(medicoId, fecha, hora))
-                    }
+                    },
+                    onVolver = { navController.popBackStack() }
                 )
             }
             composable(

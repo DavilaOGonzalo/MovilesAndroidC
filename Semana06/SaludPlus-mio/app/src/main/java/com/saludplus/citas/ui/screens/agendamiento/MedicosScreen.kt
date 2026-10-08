@@ -18,12 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
 import com.saludplus.citas.ui.components.CampoTexto
+import com.saludplus.citas.ui.components.EncabezadoConVolver
 import com.saludplus.citas.ui.components.TarjetaMedico
 
 @Composable
 fun MedicosScreen(
     especialidadId: Int,
-    onSeleccionarMedico: (Int) -> Unit
+    onSeleccionarMedico: (Int) -> Unit,
+    onVolver: () -> Unit
 ) {
     var texto by remember { mutableStateOf("") }
     val especialidad = Repositorio.obtenerEspecialidad(especialidadId)
@@ -34,10 +36,7 @@ fun MedicosScreen(
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(
-            text = "Médicos",
-            style = MaterialTheme.typography.headlineSmall
-        )
+        EncabezadoConVolver(titulo = "Médicos", onVolver = onVolver)
         Text(
             text = especialidad?.nombre ?: "Especialidad no encontrada",
             style = MaterialTheme.typography.bodyLarge
