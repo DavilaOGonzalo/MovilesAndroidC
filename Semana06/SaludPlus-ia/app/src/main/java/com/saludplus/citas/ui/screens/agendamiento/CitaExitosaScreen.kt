@@ -29,10 +29,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.repository.Repositorio
 import com.saludplus.citas.ui.components.BotonGradiente
+import com.saludplus.citas.ui.components.BotonSecundario
 import com.saludplus.citas.ui.components.gradienteExito
 
 @Composable
-fun CitaExitosaScreen(onIrInicio: () -> Unit) {
+fun CitaExitosaScreen(
+    onIrInicio: () -> Unit,
+    onVerCitas: () -> Unit
+) {
     val ultimaCita = Repositorio.citasDelUsuario().lastOrNull()
     val medico = ultimaCita?.let { Repositorio.obtenerMedico(it.medicoId) }
     val especialidad = medico?.let { Repositorio.obtenerEspecialidad(it.especialidadId) }
@@ -121,7 +125,9 @@ fun CitaExitosaScreen(onIrInicio: () -> Unit) {
             }
 
             Spacer(modifier = Modifier.height(32.dp))
-            BotonGradiente(texto = "Ir al inicio", onClick = onIrInicio)
+            BotonGradiente(texto = "Ver mis citas", onClick = onVerCitas)
+            Spacer(modifier = Modifier.height(10.dp))
+            BotonSecundario(texto = "Ir al inicio", onClick = onIrInicio)
         }
     }
 }

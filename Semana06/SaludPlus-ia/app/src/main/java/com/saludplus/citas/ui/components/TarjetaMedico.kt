@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.saludplus.citas.data.model.Medico
 import com.saludplus.citas.data.repository.Repositorio
@@ -36,6 +38,8 @@ fun TarjetaMedico(
 ) {
     val especialidad = Repositorio.obtenerEspecialidad(medico.especialidadId)
     val estilo = estiloEspecialidad(medico.especialidadId)
+    val disponibilidad = Repositorio.proximaDisponibilidad(medico.id)
+    val estaDisponible = disponibilidad.startsWith("Disponible")
 
     Card(
         modifier = modifier
@@ -54,7 +58,7 @@ fun TarjetaMedico(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            FotoPersona(url = medico.fotoUrl, tamano = 58.dp)
+            FotoPersona(url = medico.fotoUrl, tamano = 68.dp)
             Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -62,44 +66,52 @@ fun TarjetaMedico(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.size(4.dp))
-                Surface(
-                    shape = RoundedCornerShape(50),
-                    color = estilo.color.copy(alpha = 0.15f),
-                    contentColor = estilo.color
-                ) {
-                    Text(
-                        text = especialidad?.nombre ?: "Especialidad",
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.size(6.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
                         shape = RoundedCornerShape(50),
-                        color = RatingAmber.copy(alpha = 0.18f),
-                        contentColor = RatingAmber
+                        color = estilo.color.copy(alpha = 0.15f),
+                        contentColor = estilo.color
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Star,
-                                contentDescription = null,
-                                modifier = Modifier.size(12.dp)
-                            )
-                            Text(
-                                text = " ${medico.calificacion}",
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
+                        Text(
+                            text = especialidad?.nombre ?: "Especialidad",
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                        )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = null,
+                        tint = RatingAmber,
+                        modifier = Modifier.size(14.dp)
+                    )
                     Text(
-                        text = "${medico.experiencia} años",
-                        style = MaterialTheme.typography.bodySmall,
+                        text = " ${medico.calificacion}",
+                        style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Spacer(modifier = Modifier.size(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Filled.DateRange,
+                        contentDescription = null,
+                        tint = if (estaDisponible) {
+                            Color(0xFF2E9E5B)
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = disponibilidad,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (estaDisponible) {
+                            Color(0xFF2E9E5B)
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
                     )
                 }
             }
@@ -111,7 +123,7 @@ fun TarjetaMedico(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "Seleccionar",
+                    contentDescription = "Ver perfil",
                     modifier = Modifier.padding(8.dp)
                 )
             }

@@ -295,3 +295,61 @@ commit ("Mejora diseño creativo de SaludPlus"), sin push.
   restauró el título simple "Mis citas".
 - Build final: `compileDebugKotlin testDebugUnitTest assembleDebug` →
   BUILD SUCCESSFUL, APK generado, 4/4 tests verdes.
+
+---
+
+## Prompt: Ajusta interfaz según referencia visual
+
+Ajusta toda la interfaz de SaludPlus siguiendo la referencia visual adjunta:
+paleta azul médico, fondo claro, tarjetas redondeadas, iconos grandes y coloridos,
+fotos reales de médicos, foto real del usuario logueado, barra de navegación
+inferior, espaciado amplio, sin pantallas apretadas ni vacías. Rediseñar tema,
+Login, Registro, Home, Especialidades, Médicos, ficha de médico, FechaHora,
+ConfirmarCita, CitaExitosa, MisCitas, Perfil y Resultados. No romper la lógica
+del calendario dinámico ni el bloqueo de horarios. Actualizar PROMPTS.md y hacer
+commit ("Ajusta interfaz según referencia visual"), sin push.
+
+> Nota: la imagen de referencia no quedó accesible en el entorno (se buscó en
+> `C:\Users\Gonzalo\Desktop` y no se encontró archivo de imagen). El rediseño se
+> basó en la descripción textual del prompt.
+
+## Resumen de lo realizado (referencia visual)
+
+- Tema: `Color.kt`/`Theme.kt` con nueva paleta azul médico (`BluePrimary
+  0xFF1E6BD6`, terciario cian, ámbar para calificación, verde para
+  disponibilidad), fondo claro (`0xFFF5F8FD`) y superficies blancas; esquemas
+  claro y oscuro completos.
+- `Estilos.kt`: `gradienteMarca` azul→cian, nuevo `gradienteEncabezado`
+  azul→azul claro, `gradienteExito` verde y helper `colorDisponibilidad`.
+- `BarraNavegacionInferior`: `NavigationBar` blanca con icono/texto e indicador
+  de color distinto por destino.
+- `Repositorio`: datos de clínica (`clinicaNombre`, `clinicaDireccion`) y
+  `proximaDisponibilidad(medicoId)` que recorre hasta 10 días hábiles usando
+  `horariosDisponibles` (sin cambiar la lógica existente).
+- Nuevo `PerfilMedicoScreen` (ficha del médico): foto grande, nombre,
+  especialidad, disponibilidad, tarjetas de calificación/experiencia, sección
+  "Sobre el especialista" con enfoque y centro de atención, y botón "Agendar
+  cita" que navega a FechaHora. Ruta `FICHA_MEDICO` en `Rutas`/`AppNavigation`.
+- Home: cabecera con degradado azul (saludo + foto de usuario), barra de
+  búsqueda, CTA "Agendar cita", especialidades destacadas centradas, tarjeta
+  "Próxima cita" (o acceso para agendar) y carrusel de médicos destacados que
+  abre la ficha del médico.
+- Especialidades: encabezado, buscador y chips de filtro "Todas"/"Destacadas";
+  tarjetas con icono de color y etiqueta "Destacada".
+- Médicos: tarjetas grandes con foto real, especialidad, calificación y
+  disponibilidad (verde/neutro) que abren la ficha del médico.
+- Login/Registro/Perfil: cabeceras de marca ordenadas, campos centrados y
+  botones amplios separados; estilo uniforme.
+- ConfirmarCita: card del médico con foto real y fila de detalle "Clínica".
+- CitaExitosa: icono grande, mensaje, resumen y dos botones separados
+  ("Ver mis citas" + "Ir al inicio").
+- Fotos reales ya integradas con Coil (Pexels): médicos y foto del usuario.
+- Lógica de calendario, bloqueo de horarios reservados, `agendarCita`,
+  navegación y fecha en español: sin cambios.
+
+## Correcciones realizadas (referencia visual)
+
+- `Icons.Filled.Work` no existe en `material-icons-core` → se usó
+  `Icons.Filled.Build` en las tarjetas de estadística de la ficha del médico.
+- Build final: `compileDebugKotlin testDebugUnitTest assembleDebug` →
+  BUILD SUCCESSFUL, APK generado, 4/4 tests verdes.

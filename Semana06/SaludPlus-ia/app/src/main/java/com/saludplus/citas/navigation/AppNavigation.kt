@@ -17,6 +17,7 @@ import com.saludplus.citas.ui.screens.agendamiento.ConfirmarCitaScreen
 import com.saludplus.citas.ui.screens.agendamiento.EspecialidadesScreen
 import com.saludplus.citas.ui.screens.agendamiento.FechaHoraScreen
 import com.saludplus.citas.ui.screens.agendamiento.MedicosScreen
+import com.saludplus.citas.ui.screens.agendamiento.PerfilMedicoScreen
 import com.saludplus.citas.ui.screens.auth.LoginScreen
 import com.saludplus.citas.ui.screens.auth.RegistroScreen
 import com.saludplus.citas.ui.screens.auth.SplashScreen
@@ -90,7 +91,10 @@ fun AppNavigation() {
             }
             composable(Rutas.HOME) {
                 HomeScreen(
-                    onIrEspecialidades = { navController.navigate(Rutas.ESPECIALIDADES) }
+                    onIrEspecialidades = { navController.navigate(Rutas.ESPECIALIDADES) },
+                    onIrFichaMedico = { medicoId ->
+                        navController.navigate(Rutas.fichaMedico(medicoId))
+                    }
                 )
             }
             composable(Rutas.ESPECIALIDADES) {
@@ -109,8 +113,19 @@ fun AppNavigation() {
                 MedicosScreen(
                     especialidadId = especialidadId,
                     onSeleccionarMedico = { medicoId ->
-                        navController.navigate(Rutas.fechaHora(medicoId))
+                        navController.navigate(Rutas.fichaMedico(medicoId))
                     },
+                    onVolver = { navController.popBackStack() }
+                )
+            }
+            composable(
+                route = Rutas.FICHA_MEDICO,
+                arguments = listOf(navArgument("medicoId") { type = NavType.IntType })
+            ) { entry ->
+                val medicoId = entry.arguments?.getInt("medicoId") ?: 0
+                PerfilMedicoScreen(
+                    medicoId = medicoId,
+                    onAgendar = { navController.navigate(Rutas.fechaHora(medicoId)) },
                     onVolver = { navController.popBackStack() }
                 )
             }
@@ -154,7 +169,12 @@ fun AppNavigation() {
                 CitaExitosaScreen(
                     onIrInicio = {
                         navController.navigate(Rutas.HOME) {
-                            popUpTo(Rutas.CITA_EXITOSA) { inclusive = true }
+                            popUpTo(Rutas.HOME) { inclusive = true }
+                        }
+                    },
+                    onVerCitas = {
+                        navController.navigate(Rutas.CITAS) {
+                            popUpTo(Rutas.HOME) { inclusive = true }
                         }
                     }
                 )

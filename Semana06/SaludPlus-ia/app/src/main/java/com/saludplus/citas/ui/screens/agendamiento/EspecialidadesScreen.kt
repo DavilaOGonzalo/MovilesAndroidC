@@ -3,6 +3,7 @@ package com.saludplus.citas.ui.screens.agendamiento
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -11,6 +12,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +36,11 @@ fun EspecialidadesScreen(
     onVolver: () -> Unit
 ) {
     var texto by remember { mutableStateOf("") }
-    val especialidades = Repositorio.buscarEspecialidades(texto)
+    var soloDestacadas by remember { mutableStateOf(false) }
+    var especialidades = Repositorio.buscarEspecialidades(texto)
+    if (soloDestacadas) {
+        especialidades = especialidades.filter { it.destacada }
+    }
 
     Column(
         modifier = Modifier
@@ -54,6 +61,27 @@ fun EspecialidadesScreen(
             etiqueta = "Buscar especialidad",
             icono = Icons.Filled.Search
         )
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            FilterChip(
+                selected = !soloDestacadas,
+                onClick = { soloDestacadas = false },
+                label = { Text("Todas") },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+            FilterChip(
+                selected = soloDestacadas,
+                onClick = { soloDestacadas = true },
+                label = { Text("Destacadas") },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         if (especialidades.isEmpty()) {
             EstadoVacio(
@@ -73,7 +101,9 @@ fun EspecialidadesScreen(
                         onClick = { onSeleccionar(especialidad.id) },
                         icono = estilo.icono,
                         flecha = true,
-                        colorIcono = estilo.color
+                        colorIcono = estilo.color,
+                        etiqueta = if (especialidad.destacada) "Destacada" else null,
+                        colorEtiqueta = estilo.color
                     )
                 }
             }

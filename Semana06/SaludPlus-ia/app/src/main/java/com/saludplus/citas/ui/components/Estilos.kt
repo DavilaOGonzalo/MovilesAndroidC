@@ -24,9 +24,19 @@ fun gradienteMarca(): Brush {
 }
 
 @Composable
+fun gradienteEncabezado(): Brush {
+    return Brush.verticalGradient(
+        listOf(
+            MaterialTheme.colorScheme.primary,
+            Color(0xFF3D8BEF)
+        )
+    )
+}
+
+@Composable
 fun gradienteExito(): Brush {
     return Brush.horizontalGradient(
-        listOf(Color(0xFF0E7C86), Color(0xFF43A047))
+        listOf(Color(0xFF2E9E5B), Color(0xFF43C06B))
     )
 }
 
@@ -47,11 +57,15 @@ data class EstiloEspecialidad(
 fun estiloEspecialidad(id: Int): EstiloEspecialidad {
     return when (id) {
         1 -> EstiloEspecialidad(Color(0xFFE53935), Icons.Filled.Favorite)
-        2 -> EstiloEspecialidad(Color(0xFFFB8C00), Icons.Filled.Face)
+        2 -> EstiloEspecialidad(Color(0xFFFF8F00), Icons.Filled.Face)
         3 -> EstiloEspecialidad(Color(0xFF8E24AA), Icons.Filled.Star)
-        4 -> EstiloEspecialidad(Color(0xFF6D4C41), Icons.Filled.Build)
+        4 -> EstiloEspecialidad(Color(0xFF8D6E63), Icons.Filled.Build)
         5 -> EstiloEspecialidad(Color(0xFF3949AB), Icons.Filled.Info)
         6 -> EstiloEspecialidad(Color(0xFF00897B), Icons.Filled.Search)
         else -> EstiloEspecialidad(MaterialTheme.colorScheme.primary, Icons.Filled.Star)
     }
+}
+
+fun colorDisponibilidad(disponible: Boolean): Color {
+    return if (disponible) Color(0xFF2E9E5B) else Color(0xFF9AA5B4)
 }

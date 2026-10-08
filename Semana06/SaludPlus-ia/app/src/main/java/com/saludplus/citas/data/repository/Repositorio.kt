@@ -24,15 +24,20 @@ object Repositorio {
     )
 
     val medicos = mutableListOf(
-        Medico(1, "Ana Torres", 1, 4.8, 12, "https://randomuser.me/api/portraits/women/68.jpg"),
-        Medico(2, "Luis Mendoza", 1, 4.5, 8, "https://randomuser.me/api/portraits/men/45.jpg"),
-        Medico(3, "Carla Ríos", 2, 4.9, 10, "https://randomuser.me/api/portraits/women/32.jpg"),
-        Medico(4, "Pedro Gómez", 3, 4.7, 15, "https://randomuser.me/api/portraits/men/75.jpg"),
-        Medico(5, "María López", 3, 4.6, 9, "https://randomuser.me/api/portraits/women/17.jpg"),
-        Medico(6, "Jorge Vega", 4, 4.3, 7, "https://randomuser.me/api/portraits/men/22.jpg"),
-        Medico(7, "Lucía Nava", 5, 4.8, 11, "https://randomuser.me/api/portraits/women/90.jpg"),
-        Medico(8, "Diego Cruz", 6, 4.4, 6, "https://randomuser.me/api/portraits/men/11.jpg")
+        Medico(1, "Ana Torres", 1, 4.8, 12, fotoDoctor(15752232)),
+        Medico(2, "Luis Mendoza", 1, 4.5, 8, fotoDoctor(5722163)),
+        Medico(3, "Carla Ríos", 2, 4.9, 10, fotoDoctor(19963166)),
+        Medico(4, "Pedro Gómez", 3, 4.7, 15, fotoDoctor(6762869)),
+        Medico(5, "María López", 3, 4.6, 9, fotoDoctor(5452195)),
+        Medico(6, "Jorge Vega", 4, 4.3, 7, fotoDoctor(12660379)),
+        Medico(7, "Lucía Nava", 5, 4.8, 11, fotoDoctor(8376309)),
+        Medico(8, "Diego Cruz", 6, 4.4, 6, fotoDoctor(6762862))
     )
+
+    private fun fotoDoctor(id: Int): String {
+        return "https://images.pexels.com/photos/$id/pexels-photo-$id.jpeg" +
+                "?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop"
+    }
 
     val citas = mutableListOf<Cita>()
     private var siguienteIdCita = 1
@@ -41,6 +46,9 @@ object Repositorio {
         "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
         "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
     )
+
+    const val clinicaNombre = "Clínica SaludPlus"
+    const val clinicaDireccion = "Av. Central 123, Lima"
 
     fun semanaActual(): LocalDate {
         return LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
@@ -108,6 +116,26 @@ object Repositorio {
         return horarios.filter { it !in reservados }
     }
 
+    fun proximaDisponibilidad(medicoId: Int): String {
+        val hoy = LocalDate.now()
+        for (i in 0..10) {
+            val fecha = hoy.plusDays(i.toLong())
+            if (fecha.dayOfWeek == DayOfWeek.SATURDAY ||
+                fecha.dayOfWeek == DayOfWeek.SUNDAY
+            ) {
+                continue
+            }
+            if (horariosDisponibles(medicoId, fecha.toString()).isNotEmpty()) {
+                return when (i) {
+                    0 -> "Disponible hoy"
+                    1 -> "Disponible mañana"
+                    else -> "Disponible ${formatearFecha(fecha)}"
+                }
+            }
+        }
+        return "Sin disponibilidad"
+    }
+
     fun citasDelUsuario(): List<Cita> {
         val usuario = usuarioActual ?: return emptyList()
         return citas.filter { it.usuarioId == usuario.id }
@@ -140,7 +168,7 @@ object Repositorio {
             nombre = nombre,
             email = email,
             password = password,
-            fotoUrl = fotoDeUsuario(email)
+            fotoUrl = fotoDeUsuario()
         )
         siguienteId++
         usuarios.add(usuario)
@@ -150,7 +178,7 @@ object Repositorio {
     fun iniciarSesion(email: String, password: String): Boolean {
         val usuario = usuarios.find { it.email == email && it.password == password } ?: return false
         if (usuario.fotoUrl.isBlank()) {
-            usuarioActual = usuario.copy(fotoUrl = fotoDeUsuario(email)).also {
+            usuarioActual = usuario.copy(fotoUrl = fotoDeUsuario()).also {
                 usuarios[usuarios.indexOfFirst { u -> u.id == usuario.id }] = it
             }
         } else {
@@ -159,8 +187,9 @@ object Repositorio {
         return true
     }
 
-    private fun fotoDeUsuario(email: String): String {
-        return "https://i.pravatar.cc/300?u=$email"
+    private fun fotoDeUsuario(): String {
+        return "https://images.pexels.com/photos/19438563/pexels-photo-19438563.jpeg" +
+                "?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop"
     }
 
     fun cerrarSesion() {

@@ -13,11 +13,13 @@ object Rutas {
     const val PERFIL = "perfil"
     const val ESPECIALIDADES = "especialidades"
     const val MEDICOS = "medicos/{especialidadId}"
+    const val FICHA_MEDICO = "fichaMedico/{medicoId}"
     const val FECHA_HORA = "fechaHora/{medicoId}"
     const val CONFIRMAR_CITA = "confirmarCita/{medicoId}/{fecha}/{hora}"
     const val CITA_EXITOSA = "citaExitosa"
 
     fun medicos(especialidadId: Int): String = "medicos/$especialidadId"
+    fun fichaMedico(medicoId: Int): String = "fichaMedico/$medicoId"
     fun fechaHora(medicoId: Int): String = "fechaHora/$medicoId"
 
     fun confirmarCita(medicoId: Int, fecha: String, hora: String): String =

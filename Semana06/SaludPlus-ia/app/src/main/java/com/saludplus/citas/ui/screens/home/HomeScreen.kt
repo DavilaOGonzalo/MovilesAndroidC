@@ -1,5 +1,6 @@
 package com.saludplus.citas.ui.screens.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,9 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -43,13 +47,23 @@ import com.saludplus.citas.ui.components.TarjetaEspecialidad
 import com.saludplus.citas.ui.components.TarjetaMedicoDestacado
 import com.saludplus.citas.ui.components.TarjetaSeccion
 import com.saludplus.citas.ui.components.gradienteMarca
+import java.time.LocalDate
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun HomeScreen(onIrEspecialidades: () -> Unit) {
+fun HomeScreen(
+    onIrEspecialidades: () -> Unit,
+    onIrFichaMedico: (Int) -> Unit
+) {
     val usuario = Repositorio.usuarioActual
     val destacadas = Repositorio.especialidadesDestacadas()
-    val medicosDestacados = Repositorio.medicos.sortedByDescending { it.calificacion }.take(5)
+    val medicosDestacados = Repositorio.medicos.sortedByDescending { it.calificacion }.take(6)
+    val proximaCita = Repositorio.citasDelUsuario()
+        .sortedBy { it.fecha }
+        .firstOrNull { cita ->
+            runCatching { !LocalDate.parse(cita.fecha).isBefore(LocalDate.now()) }
+                .getOrDefault(true)
+        }
 
     Column(
         modifier = Modifier
@@ -61,13 +75,13 @@ fun HomeScreen(onIrEspecialidades: () -> Unit) {
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
                 .background(gradienteMarca())
-                .padding(horizontal = 20.dp, vertical = 24.dp)
+                .padding(horizontal = 20.dp, vertical = 26.dp)
         ) {
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     FotoPersona(
                         url = usuario?.fotoUrl.orEmpty(),
-                        tamano = 56.dp,
+                        tamano = 58.dp,
                         anillo = false
                     )
                     Spacer(modifier = Modifier.width(14.dp))
@@ -85,6 +99,31 @@ fun HomeScreen(onIrEspecialidades: () -> Unit) {
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onIrEspecialidades),
+                    shape = RoundedCornerShape(18.dp),
+                    color = Color.White
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Buscar especialidad o médico",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -157,6 +196,69 @@ fun HomeScreen(onIrEspecialidades: () -> Unit) {
             }
             Spacer(modifier = Modifier.height(24.dp))
 
+            Text(
+                text = "Próxima cita",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            if (proximaCita != null) {
+                val medico = Repositorio.obtenerMedico(proximaCita.medicoId)
+                val especialidad = medico?.let {
+                    Repositorio.obtenerEspecialidad(it.especialidadId)
+                }
+                val fechaLarga = runCatching { LocalDate.parse(proximaCita.fecha) }
+                    .getOrNull()
+                    ?.let { Repositorio.fechaLarga(it) }
+                    ?: proximaCita.fecha
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        FotoPersona(url = medico?.fotoUrl.orEmpty(), tamano = 52.dp)
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = especialidad?.nombre ?: "Cita médica",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = medico?.nombre ?: "Médico",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "$fechaLarga · ${proximaCita.hora}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+            } else {
+                TarjetaSeccion(
+                    titulo = "Sin citas próximas",
+                    descripcion = "Agenda tu primera cita con un especialista",
+                    onClick = onIrEspecialidades,
+                    icono = Icons.Filled.DateRange,
+                    flecha = true,
+                    colorIcono = MaterialTheme.colorScheme.tertiary
+                )
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.List,
@@ -175,7 +277,7 @@ fun HomeScreen(onIrEspecialidades: () -> Unit) {
                 items(medicosDestacados) { medico ->
                     TarjetaMedicoDestacado(
                         medico = medico,
-                        onClick = onIrEspecialidades
+                        onClick = { onIrFichaMedico(medico.id) }
                     )
                 }
             }
@@ -203,6 +305,7 @@ fun HomeScreen(onIrEspecialidades: () -> Unit) {
                 flecha = true,
                 colorIcono = MaterialTheme.colorScheme.secondary
             )
+            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 }

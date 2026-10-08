@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
@@ -158,6 +159,12 @@ fun ConfirmarCitaScreen(
                     icono = Icons.Filled.Star,
                     titulo = "Hora",
                     valor = hora
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                DetalleFila(
+                    icono = Icons.Filled.Info,
+                    titulo = "Clínica",
+                    valor = "${Repositorio.clinicaNombre} · ${Repositorio.clinicaDireccion}"
                 )
             }
         }
