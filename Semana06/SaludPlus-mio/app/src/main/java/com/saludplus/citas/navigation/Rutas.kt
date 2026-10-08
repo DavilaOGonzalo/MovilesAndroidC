@@ -6,4 +6,7 @@ object Rutas {
     const val REGISTRO = "registro"
     const val TERMINOS = "terminos"
     const val HOME = "home"
+    const val CITAS = "citas"
+    const val RESULTADOS = "resultados"
+    const val PERFIL = "perfil"
 }
