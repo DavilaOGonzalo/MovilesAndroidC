@@ -1,0 +1,163 @@
+package com.saludplus.citas.data.repository
+
+import com.saludplus.citas.data.model.Cita
+import com.saludplus.citas.data.model.Especialidad
+import com.saludplus.citas.data.model.Medico
+import com.saludplus.citas.data.model.Usuario
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAdjusters
+import java.util.Locale
+
+object Repositorio {
+
+    val usuarios = mutableListOf<Usuario>()
+    var usuarioActual: Usuario? = null
+    private var siguienteId = 1
+
+    val especialidades = mutableListOf(
+        Especialidad(1, "Cardiología", "Enfermedades del corazón y sistema circulatorio", destacada = true),
+        Especialidad(2, "Dermatología", "Cuidado de la piel, cabello y uñas", destacada = true),
+        Especialidad(3, "Pediatría", "Atención médica de niños y adolescentes", destacada = true),
+        Especialidad(4, "Traumatología", "Huesos, músculos y articulaciones"),
+        Especialidad(5, "Neurología", "Sistema nervioso y trastornos cerebrales"),
+        Especialidad(6, "Oftalmología", "Salud visual y enfermedades de los ojos")
+    )
+
+    val medicos = mutableListOf(
+        Medico(1, "Ana Torres", 1, 4.8, 12),
+        Medico(2, "Luis Mendoza", 1, 4.5, 8),
+        Medico(3, "Carla Ríos", 2, 4.9, 10),
+        Medico(4, "Pedro Gómez", 3, 4.7, 15),
+        Medico(5, "María López", 3, 4.6, 9),
+        Medico(6, "Jorge Vega", 4, 4.3, 7),
+        Medico(7, "Lucía Nava", 5, 4.8, 11),
+        Medico(8, "Diego Cruz", 6, 4.4, 6)
+    )
+
+    val citas = mutableListOf<Cita>()
+    private var siguienteIdCita = 1
+
+    val horarios = listOf(
+        "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+        "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
+    )
+
+    fun semanaActual(): LocalDate {
+        return LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+    }
+
+    fun diasHabilesDeLaSemana(inicioSemana: LocalDate): List<LocalDate> {
+        return (0..6)
+            .map { inicioSemana.plusDays(it.toLong()) }
+            .filter {
+                it.dayOfWeek != DayOfWeek.SATURDAY &&
+                        it.dayOfWeek != DayOfWeek.SUNDAY &&
+                        !it.isBefore(LocalDate.now())
+            }
+    }
+
+    fun formatearFecha(fecha: LocalDate): String {
+        val dia = when (fecha.dayOfWeek) {
+            DayOfWeek.MONDAY -> "Lun"
+            DayOfWeek.TUESDAY -> "Mar"
+            DayOfWeek.WEDNESDAY -> "Mié"
+            DayOfWeek.THURSDAY -> "Jue"
+            DayOfWeek.FRIDAY -> "Vie"
+            else -> ""
+        }
+        return "$dia ${fecha.dayOfMonth}/${fecha.monthValue}"
+    }
+
+    fun nombreMesYAnio(fecha: LocalDate): String {
+        val formatter = DateTimeFormatter.ofPattern("MMMM 'de' yyyy", Locale.of("es"))
+        val mes = formatter.format(fecha).replaceFirstChar { it.uppercase() }
+        return mes
+    }
+
+    fun horariosDisponibles(medicoId: Int, fecha: String): List<String> {
+        val reservados = citas
+            .filter { it.medicoId == medicoId && it.fecha == fecha }
+            .map { it.hora }
+        return horarios.filter { it !in reservados }
+    }
+
+    fun citasDelUsuario(): List<Cita> {
+        val usuario = usuarioActual ?: return emptyList()
+        return citas.filter { it.usuarioId == usuario.id }
+    }
+
+    fun agendarCita(medicoId: Int, fecha: String, hora: String): Boolean {
+        val medico = obtenerMedico(medicoId) ?: return false
+        val usuario = usuarioActual ?: return false
+        val yaReservada = citas.any {
+            it.medicoId == medicoId && it.fecha == fecha && it.hora == hora
+        }
+        if (yaReservada) return false
+        val cita = Cita(
+            id = siguienteIdCita,
+            usuarioId = usuario.id,
+            medicoId = medicoId,
+            especialidadId = medico.especialidadId,
+            fecha = fecha,
+            hora = hora
+        )
+        siguienteIdCita++
+        citas.add(cita)
+        return true
+    }
+
+    fun registrarUsuario(nombre: String, email: String, password: String): Boolean {
+        if (usuarios.any { it.email == email }) return false
+        val usuario = Usuario(id = siguienteId, nombre = nombre, email = email, password = password)
+        siguienteId++
+        usuarios.add(usuario)
+        return true
+    }
+
+    fun iniciarSesion(email: String, password: String): Boolean {
+        val usuario = usuarios.find { it.email == email && it.password == password } ?: return false
+        usuarioActual = usuario
+        return true
+    }
+
+    fun cerrarSesion() {
+        usuarioActual = null
+    }
+
+    fun buscarEspecialidades(texto: String): List<Especialidad> {
+        return especialidades.filter {
+            it.nombre.contains(texto, ignoreCase = true) ||
+                    it.descripcion.contains(texto, ignoreCase = true)
+        }
+    }
+
+    fun especialidadesDestacadas(): List<Especialidad> {
+        return especialidades.filter { it.destacada }
+    }
+
+    fun obtenerEspecialidad(id: Int): Especialidad? {
+        return especialidades.find { it.id == id }
+    }
+
+    fun obtenerMedico(id: Int): Medico? {
+        return medicos.find { it.id == id }
+    }
+
+    fun medicosPorEspecialidad(especialidadId: Int): List<Medico> {
+        return medicos
+            .filter { it.especialidadId == especialidadId }
+            .sortedByDescending { it.calificacion }
+    }
+
+    fun buscarMedicos(texto: String): List<Medico> {
+        return medicos
+            .filter { medico ->
+                medico.nombre.contains(texto, ignoreCase = true) ||
+                        (obtenerEspecialidad(medico.especialidadId)?.nombre
+                            ?.contains(texto, ignoreCase = true) == true)
+            }
+            .sortedByDescending { it.calificacion }
+    }
+}
