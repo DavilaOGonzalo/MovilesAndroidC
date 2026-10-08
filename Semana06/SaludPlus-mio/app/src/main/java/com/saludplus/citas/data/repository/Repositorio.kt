@@ -1,5 +1,6 @@
 package com.saludplus.citas.data.repository
 
+import com.saludplus.citas.data.model.Cita
 import com.saludplus.citas.data.model.Especialidad
 import com.saludplus.citas.data.model.Medico
 import com.saludplus.citas.data.model.Usuario
@@ -29,6 +30,25 @@ object Repositorio {
         Medico(7, "Lucía Nava", 5, 4.8, 11),
         Medico(8, "Diego Cruz", 6, 4.4, 6)
     )
+
+    val citas = mutableListOf<Cita>()
+    private var siguienteIdCita = 1
+
+    val fechasDisponibles = listOf(
+        "Lun 13/10", "Mar 14/10", "Mié 15/10", "Jue 16/10", "Vie 17/10"
+    )
+
+    val horarios = listOf(
+        "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+        "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
+    )
+
+    fun horariosDisponibles(medicoId: Int, fecha: String): List<String> {
+        val reservados = citas
+            .filter { it.medicoId == medicoId && it.fecha == fecha }
+            .map { it.hora }
+        return horarios.filter { it !in reservados }
+    }
 
     fun registrarUsuario(nombre: String, email: String, password: String): Boolean {
         if (usuarios.any { it.email == email }) return false

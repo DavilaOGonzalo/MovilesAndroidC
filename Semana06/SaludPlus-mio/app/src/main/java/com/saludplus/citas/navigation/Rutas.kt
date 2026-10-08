@@ -11,6 +11,8 @@ object Rutas {
     const val PERFIL = "perfil"
     const val ESPECIALIDADES = "especialidades"
     const val MEDICOS = "medicos/{especialidadId}"
+    const val FECHA_HORA = "fechaHora/{medicoId}"
 
     fun medicos(especialidadId: Int): String = "medicos/$especialidadId"
+    fun fechaHora(medicoId: Int): String = "fechaHora/$medicoId"
 }

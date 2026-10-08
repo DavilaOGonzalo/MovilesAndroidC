@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.saludplus.citas.ui.components.BarraNavegacionInferior
 import com.saludplus.citas.ui.screens.agendamiento.EspecialidadesScreen
+import com.saludplus.citas.ui.screens.agendamiento.FechaHoraScreen
 import com.saludplus.citas.ui.screens.agendamiento.MedicosScreen
 import com.saludplus.citas.ui.screens.auth.LoginScreen
 import com.saludplus.citas.ui.screens.auth.RegistroScreen
@@ -102,7 +103,22 @@ fun AppNavigation() {
                 arguments = listOf(navArgument("especialidadId") { type = NavType.IntType })
             ) { entry ->
                 val especialidadId = entry.arguments?.getInt("especialidadId") ?: 0
-                MedicosScreen(especialidadId = especialidadId)
+                MedicosScreen(
+                    especialidadId = especialidadId,
+                    onSeleccionarMedico = { medicoId ->
+                        navController.navigate(Rutas.fechaHora(medicoId))
+                    }
+                )
+            }
+            composable(
+                route = Rutas.FECHA_HORA,
+                arguments = listOf(navArgument("medicoId") { type = NavType.IntType })
+            ) { entry ->
+                val medicoId = entry.arguments?.getInt("medicoId") ?: 0
+                FechaHoraScreen(
+                    medicoId = medicoId,
+                    onContinuar = { _, _, _ -> }
+                )
             }
             composable(Rutas.CITAS) {
                 MisCitasScreen()

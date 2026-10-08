@@ -21,7 +21,10 @@ import com.saludplus.citas.ui.components.CampoTexto
 import com.saludplus.citas.ui.components.TarjetaMedico
 
 @Composable
-fun MedicosScreen(especialidadId: Int) {
+fun MedicosScreen(
+    especialidadId: Int,
+    onSeleccionarMedico: (Int) -> Unit
+) {
     var texto by remember { mutableStateOf("") }
     val especialidad = Repositorio.obtenerEspecialidad(especialidadId)
     val medicos = if (texto.isBlank()) {
@@ -49,7 +52,10 @@ fun MedicosScreen(especialidadId: Int) {
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             items(medicos) { medico ->
-                TarjetaMedico(medico = medico)
+                TarjetaMedico(
+                    medico = medico,
+                    onClick = { onSeleccionarMedico(medico.id) }
+                )
             }
         }
     }
