@@ -24,6 +24,8 @@ class NuevoPedidoViewModel(
     private val usuarioId: Int,
     repeatPedidoId: Int = -1
 ) : ViewModel() {
+    val esRepetido: Boolean = repeatPedidoId > 0
+
     val servicios: StateFlow<List<Servicio>> = repo.observarServiciosActivos()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 

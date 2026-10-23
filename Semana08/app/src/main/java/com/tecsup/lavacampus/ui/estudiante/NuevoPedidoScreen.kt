@@ -52,7 +52,10 @@ fun NuevoPedidoScreen(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        AppTopBar(title = "Nuevo pedido", onBack = onBack)
+        AppTopBar(title = if (vm.esRepetido) "Pedir de nuevo" else "Nuevo pedido", onBack = onBack)
+        if (vm.esRepetido) {
+            Text("Revisa tus servicios; se aplicarán las tarifas vigentes.", color = MaterialTheme.colorScheme.primary)
+        }
         Text("¿Qué necesitas?", style = MaterialTheme.typography.titleMedium)
         servicios.forEach { servicio ->
             ServicioCantidadItem(
