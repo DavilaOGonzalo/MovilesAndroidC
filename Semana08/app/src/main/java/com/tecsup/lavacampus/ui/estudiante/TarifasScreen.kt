@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.tecsup.lavacampus.data.repository.LavaRepository
 import com.tecsup.lavacampus.ui.components.AppTopBar
 import com.tecsup.lavacampus.ui.components.IconoServicio
 import com.tecsup.lavacampus.viewmodel.ServiciosViewModel

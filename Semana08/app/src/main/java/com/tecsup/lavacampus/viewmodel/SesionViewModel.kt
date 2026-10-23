@@ -56,9 +56,9 @@ class SesionViewModel(
             }
 
             var usuario: Usuario? = null
-            repeat(10) {
+            for (intento in 0 until 10) {
                 usuario = repo.login(correo.trim(), clave)
-                if (usuario != null) return@repeat
+                if (usuario != null) break
                 delay(100)
             }
             val encontrado = usuario
@@ -88,9 +88,9 @@ class SesionViewModel(
     }
 
     fun cerrarSesion() {
+        _usuarioActual.value = null
         viewModelScope.launch {
             preferencias.cerrarSesion()
-            _usuarioActual.value = null
         }
     }
 
