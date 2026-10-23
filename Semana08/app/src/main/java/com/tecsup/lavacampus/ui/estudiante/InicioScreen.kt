@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ListAlt
+import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.outlined.LocalOffer
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -83,7 +83,7 @@ fun InicioScreen(
         LavaButton(text = "Nuevo pedido", onClick = onNuevoPedido)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             OutlinedButton(onClick = onPedidos, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Outlined.ListAlt, contentDescription = null)
+                Icon(Icons.AutoMirrored.Outlined.ListAlt, contentDescription = null)
                 Text("  Mis pedidos")
             }
             OutlinedButton(onClick = onTarifas, modifier = Modifier.weight(1f)) {

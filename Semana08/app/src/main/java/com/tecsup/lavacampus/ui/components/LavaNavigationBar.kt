@@ -4,7 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.ListAlt
+import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.outlined.LocalOffer
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Person
@@ -35,7 +35,7 @@ fun LavaNavigationBar(
     val items = if (admin) {
         listOf(
             LavaNavItem("admin/panel", "Panel", Icons.Outlined.Dashboard),
-            LavaNavItem("admin/pedidos", "Pedidos", Icons.Outlined.ListAlt),
+            LavaNavItem("admin/pedidos", "Pedidos", Icons.AutoMirrored.Outlined.ListAlt),
             LavaNavItem("admin/servicios", "Servicios", Icons.Outlined.Build),
             LavaNavItem("admin/clientes", "Clientes", Icons.Outlined.People),
             LavaNavItem("admin/ajustes", "Ajustes", Icons.Outlined.Settings)
@@ -43,7 +43,7 @@ fun LavaNavigationBar(
     } else {
         listOf(
             LavaNavItem("estudiante/inicio", "Inicio", Icons.Outlined.Home),
-            LavaNavItem("estudiante/pedidos", "Pedidos", Icons.Outlined.ListAlt),
+            LavaNavItem("estudiante/pedidos", "Pedidos", Icons.AutoMirrored.Outlined.ListAlt),
             LavaNavItem("estudiante/tarifas", "Tarifas", Icons.Outlined.LocalOffer),
             LavaNavItem("estudiante/perfil", "Perfil", Icons.Outlined.Person)
         )
