@@ -39,9 +39,13 @@ class LavaRepositoryRoom(
         if (s.id == 0) servicioDao.insertar(s) else servicioDao.actualizar(s)
     }
 
-    override suspend fun eliminarServicio(s: Servicio) = servicioDao.eliminar(s)
+    override suspend fun eliminarServicio(s: Servicio) {
+        servicioDao.eliminar(s)
+    }
 
-    override suspend fun cambiarActivo(id: Int, activo: Boolean) = servicioDao.cambiarActivo(id, activo)
+    override suspend fun cambiarActivo(id: Int, activo: Boolean) {
+        servicioDao.cambiarActivo(id, activo)
+    }
 
     override suspend fun servicioTieneDetalles(id: Int): Boolean =
         detalleDao.contarPorServicio(id) > 0
@@ -63,15 +67,21 @@ class LavaRepositoryRoom(
                 subtotal = linea.cantidad * servicio.precio
             )
         }
+        val subtotal = detallesBase.sumOf { it.subtotal }
+        val kilosLavado = lineas.mapNotNull { linea ->
+            servicioDao.obtener(linea.servicioId)?.takeIf { it.unidad == "KG" }?.let { linea.cantidad }
+        }.sum()
+        val descuento = if (kilosLavado > 5.0) subtotal * 0.10 else 0.0
         val pedidoId = pedidoDao.insertar(
             Pedido(
                 usuarioId = usuarioId,
                 fechaRegistro = LocalDate.now().toString(),
                 fechaEntrega = fechaEntrega,
                 estado = EstadoPedido.RECIBIDO.name,
-                total = detallesBase.sumOf { it.subtotal },
+                total = subtotal - descuento,
                 pagado = false,
-                nota = nota
+                nota = nota,
+                descuento = descuento
             )
         )
         detalleDao.insertarTodos(detallesBase.map { it.copy(pedidoId = pedidoId.toInt()) })
@@ -87,11 +97,13 @@ class LavaRepositoryRoom(
 
     override fun observarPedido(id: Int): Flow<PedidoConDetalle?> = pedidoDao.observarUno(id)
 
-    override suspend fun cambiarEstado(id: Int, estado: EstadoPedido, casillero: String?) =
+    override suspend fun cambiarEstado(id: Int, estado: EstadoPedido, casillero: String?) {
         pedidoDao.actualizarEstado(id, estado.name, casillero)
+    }
 
-    override suspend fun marcarPagado(id: Int, pagado: Boolean) =
+    override suspend fun marcarPagado(id: Int, pagado: Boolean) {
         pedidoDao.actualizarPagado(id, pagado)
+    }
 
     override fun observarCasillerosOcupados(): Flow<List<String>> =
         pedidoDao.observarCasillerosOcupados()
