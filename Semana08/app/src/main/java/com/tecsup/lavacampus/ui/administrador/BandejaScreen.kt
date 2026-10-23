@@ -34,7 +34,7 @@ fun BandejaScreen(
     val busqueda by vm.busqueda.collectAsStateWithLifecycle()
     val filtro by vm.filtro.collectAsStateWithLifecycle()
     val atrasados by vm.idsAtrasados.collectAsStateWithLifecycle()
-    val filtros = listOf("Todos", "Recibido", "En proceso", "Listo")
+    val filtros = listOf("Todos", "Recibido", "En proceso", "Listo", "Atrasados")
 
     Column(Modifier.fillMaxSize()) {
         AppTopBar(title = "Pedidos", onBack = onBack)
