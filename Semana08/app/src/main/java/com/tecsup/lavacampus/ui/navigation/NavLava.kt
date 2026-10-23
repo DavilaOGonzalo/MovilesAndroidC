@@ -78,6 +78,22 @@ fun NavLava(preferencias: PreferenciasStore) {
         }
     }
 
+    fun navegarEstudiante(route: String) {
+        navController.navigate(route) {
+            popUpTo(Rutas.INICIO) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
+    fun navegarAdministrador(route: String) {
+        navController.navigate(route) {
+            popUpTo(Rutas.PANEL) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     NavHost(navController = navController, startDestination = Rutas.SPLASH) {
         composable(Rutas.SPLASH) {
             SplashScreen()
@@ -101,7 +117,7 @@ fun NavLava(preferencias: PreferenciasStore) {
             val actual = usuario
             if (actual == null) Cargando() else {
                 val vm: InicioViewModel = viewModel(factory = LavaViewModelFactory { InicioViewModel(app.repository, actual) })
-                LavaMainScaffold(false, Rutas.INICIO, navController::navigate) { padding ->
+                LavaMainScaffold(false, Rutas.INICIO, ::navegarEstudiante) { padding ->
                     InicioScreen(
                         vm = vm,
                         usuario = actual,
@@ -118,7 +134,7 @@ fun NavLava(preferencias: PreferenciasStore) {
             val actual = usuario
             if (actual == null) Cargando() else {
                 val vm: MisPedidosViewModel = viewModel(factory = LavaViewModelFactory { MisPedidosViewModel(app.repository, actual) })
-                LavaMainScaffold(false, Rutas.MIS_PEDIDOS, navController::navigate) { padding ->
+                LavaMainScaffold(false, Rutas.MIS_PEDIDOS, ::navegarEstudiante) { padding ->
                     Box(Modifier.fillMaxSize().padding(padding)) {
                         MisPedidosScreen(
                             vm = vm,
@@ -133,7 +149,7 @@ fun NavLava(preferencias: PreferenciasStore) {
         }
         composable(Rutas.TARIFAS) {
             val vm: ServiciosViewModel = viewModel(factory = LavaViewModelFactory { ServiciosViewModel(app.repository) })
-            LavaMainScaffold(false, Rutas.TARIFAS, navController::navigate) { padding ->
+            LavaMainScaffold(false, Rutas.TARIFAS, ::navegarEstudiante) { padding ->
                 Box(Modifier.fillMaxSize().padding(padding)) { TarifasScreen(vm, onBack = { navController.popBackStack() }) }
             }
         }
@@ -141,7 +157,7 @@ fun NavLava(preferencias: PreferenciasStore) {
             val actual = usuario
             if (actual == null) Cargando() else {
                 val vm: PerfilViewModel = viewModel(factory = LavaViewModelFactory { PerfilViewModel(app.repository, actual) })
-                LavaMainScaffold(false, Rutas.PERFIL, navController::navigate) { padding ->
+                LavaMainScaffold(false, Rutas.PERFIL, ::navegarEstudiante) { padding ->
                     Box(Modifier.fillMaxSize().padding(padding)) {
                         PerfilScreen(actual, vm, sesionVm, ::navegarLogin, ::navegarLogin)
                     }
@@ -173,19 +189,19 @@ fun NavLava(preferencias: PreferenciasStore) {
 
         composable(Rutas.PANEL) {
             val vm: PanelViewModel = viewModel(factory = LavaViewModelFactory { PanelViewModel(app.repository) })
-            LavaMainScaffold(true, Rutas.PANEL, navController::navigate) { padding ->
+            LavaMainScaffold(true, Rutas.PANEL, ::navegarAdministrador) { padding ->
                 PanelScreen(vm, onVerPedidos = { navController.navigate(Rutas.BANDEJA) }, contentModifier = Modifier.padding(padding))
             }
         }
         composable(Rutas.BANDEJA) {
             val vm: BandejaViewModel = viewModel(factory = LavaViewModelFactory { BandejaViewModel(app.repository) })
-            LavaMainScaffold(true, Rutas.BANDEJA, navController::navigate) { padding ->
+            LavaMainScaffold(true, Rutas.BANDEJA, ::navegarAdministrador) { padding ->
                 Box(Modifier.fillMaxSize().padding(padding)) { BandejaScreen(vm, { navController.popBackStack() }, { navController.navigate(Rutas.gestion(it)) }) }
             }
         }
         composable(Rutas.SERVICIOS) {
             val vm: ServiciosViewModel = viewModel(factory = LavaViewModelFactory { ServiciosViewModel(app.repository) })
-            LavaMainScaffold(true, Rutas.SERVICIOS, navController::navigate) { padding ->
+            LavaMainScaffold(true, Rutas.SERVICIOS, ::navegarAdministrador) { padding ->
                 Box(Modifier.fillMaxSize().padding(padding)) {
                     ServiciosScreen(vm, { navController.navigate(Rutas.formularioServicio()) }, { navController.navigate(Rutas.formularioServicio(it)) }, { navController.popBackStack() })
                 }
@@ -193,14 +209,14 @@ fun NavLava(preferencias: PreferenciasStore) {
         }
         composable(Rutas.CLIENTES) {
             val vm: ClientesViewModel = viewModel(factory = LavaViewModelFactory { ClientesViewModel(app.repository) })
-            LavaMainScaffold(true, Rutas.CLIENTES, navController::navigate) { padding ->
+            LavaMainScaffold(true, Rutas.CLIENTES, ::navegarAdministrador) { padding ->
                 Box(Modifier.fillMaxSize().padding(padding)) { ClientesScreen(vm, { navController.popBackStack() }) }
             }
         }
         composable(Rutas.AJUSTES) {
             val actual = usuario
             if (actual == null) Cargando() else {
-                LavaMainScaffold(true, Rutas.AJUSTES, navController::navigate) { padding ->
+                LavaMainScaffold(true, Rutas.AJUSTES, ::navegarAdministrador) { padding ->
                     Box(Modifier.fillMaxSize().padding(padding)) { AjustesScreen(actual, sesionVm, ::navegarLogin, ::navegarLogin) }
                 }
             }
