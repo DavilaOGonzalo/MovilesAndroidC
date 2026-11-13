@@ -30,8 +30,8 @@ Herramienta: Codex (GPT-6), asistente de programación.
 
 Prompt (resumen fiel): Continuar Firebase Authentication y Cloud Firestore después de habilitar Email/Password, crear cuentas y documentos de roles; probar ambos inicios de sesión, corregir errores, compilar y probar, sin push ni cambio de rama.
 
-Qué respondió (resumen): Revisó el mapeo de `usuarios/{uid}` a los roles, ajustó la cancelación de operaciones Firebase, recompiló y abrió la app en el emulador para la validación manual de las dos cuentas.
+Qué respondió (resumen): Revisó el mapeo de `usuarios/{uid}` a los roles, ajustó la cancelación de operaciones Firebase, recompiló y abrió la app en el emulador. El usuario confirmó que las dos cuentas iniciaron sesión y que los controles de rol se mostraron correctamente.
 
-Qué usamos / qué cambiamos y por qué: La comprobación de credenciales se hace en el emulador; las contraseñas no se copian al chat. La prueba de ambos roles queda pendiente de confirmar después de que el usuario complete los formularios.
+Qué usamos / qué cambiamos y por qué: La comprobación de credenciales se hizo manualmente en el emulador; las contraseñas no se copiaron al chat. ADMIN mostró la entrada “Admin” y USUARIO no la mostró.
 
-Qué aprendimos: La compilación no prueba las credenciales reales ni los documentos de Firestore; hay que comprobar ADMIN y USUARIO en el dispositivo.
+Qué aprendimos: La compilación no prueba las credenciales reales ni los documentos de Firestore; la validación en el emulador confirmó el inicio de sesión y la visibilidad por rol.
