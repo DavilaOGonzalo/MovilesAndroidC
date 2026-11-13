@@ -59,7 +59,7 @@ Completa estos pasos en Firebase Console con el proyecto que usarás para la app
 1. Crea un proyecto en [Firebase Console](https://console.firebase.google.com/).
 2. Registra una aplicación Android con el ID exacto `com.tecsup.pokemon`.
 3. Descarga `google-services.json` y colócalo dentro de la carpeta `app/`.
-4. En `app/build.gradle.kts`, agrega `id("com.google.gms.google-services")` al bloque `plugins`. El plugin con versión `4.4.2` ya está declarado en el `build.gradle.kts` raíz.
+4. El plugin Google Services `4.4.2` ya está declarado en el `build.gradle.kts` raíz y aplicado en `app/build.gradle.kts`.
 5. Sincroniza Gradle en Android Studio.
 6. En Authentication → Sign-in method, activa Correo electrónico/contraseña.
 7. En Authentication → Users, crea una cuenta para el administrador y otra para el usuario.

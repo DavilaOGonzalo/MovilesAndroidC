@@ -11,3 +11,15 @@ Qué respondió (resumen): Inspeccionó el Word, identificó que la carpeta esta
 Qué usamos / qué cambiamos y por qué: Se usó la estructura, los contratos y las versiones del laboratorio. Se adaptó `Item` a `Pokemon` con ID de nombre; se separaron modelos API, Room y dominio. El proyecto usa `codigo-mio` por instrucción explícita del usuario, aunque el Word describe ramas de fases distintas.
 
 Qué aprendimos: La caché debe conservar los favoritos al sincronizar. Firebase necesita un proyecto y configuración creados por el equipo antes de probar login real.
+
+## Consulta 2 — Fecha: 2026-11-13
+
+Herramienta: Codex (GPT-6), asistente de programación.
+
+Prompt (resumen fiel): Después de colocar `google-services.json` en `app/`, aplicar Google Services en Gradle, verificar Firebase Authentication y Cloud Firestore, compilar y corregir errores sin cambiar la arquitectura, rama ni publicar cambios.
+
+Qué respondió (resumen): Validó el JSON sin mostrar su contenido, confirmó el paquete Android, aplicó el plugin, resolvió Firebase y ejecutó la compilación y las pruebas.
+
+Qué usamos / qué cambiamos y por qué: Se aplicó `com.google.gms.google-services` al módulo, manteniendo su versión 4.4.2 declarada en el proyecto. Se conservó el archivo JSON fuera del control de versiones.
+
+Qué aprendimos: La configuración local de Firebase procesó el archivo correctamente y la app compila con Auth y Firestore.
