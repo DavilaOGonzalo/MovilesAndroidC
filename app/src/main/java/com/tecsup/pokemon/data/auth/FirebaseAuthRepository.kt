@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.tecsup.pokemon.domain.model.Rol
 import com.tecsup.pokemon.domain.model.Sesion
 import com.tecsup.pokemon.domain.repository.AuthRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 
 class FirebaseAuthRepository(
@@ -15,6 +16,8 @@ class FirebaseAuthRepository(
         val result = auth.signInWithEmailAndPassword(correo, clave).await()
         val user = requireNotNull(result.user) { "Firebase no devolvió un usuario autenticado." }
         Result.success(leerSesion(user.uid, user.email.orEmpty()))
+    } catch (exception: CancellationException) {
+        throw exception
     } catch (exception: Exception) {
         auth.signOut()
         Result.failure(exception)
@@ -24,6 +27,8 @@ class FirebaseAuthRepository(
         val user = auth.currentUser ?: return null
         return try {
             leerSesion(user.uid, user.email.orEmpty())
+        } catch (exception: CancellationException) {
+            throw exception
         } catch (_: Exception) {
             auth.signOut()
             null
