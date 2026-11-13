@@ -23,3 +23,15 @@ Qué respondió (resumen): Validó el JSON sin mostrar su contenido, confirmó e
 Qué usamos / qué cambiamos y por qué: Se aplicó `com.google.gms.google-services` al módulo, manteniendo su versión 4.4.2 declarada en el proyecto. Se conservó el archivo JSON fuera del control de versiones.
 
 Qué aprendimos: La configuración local de Firebase procesó el archivo correctamente y la app compila con Auth y Firestore.
+
+## Consulta 3 — Fecha: 2026-11-13
+
+Herramienta: Codex (GPT-6), asistente de programación.
+
+Prompt (resumen fiel): Continuar Firebase Authentication y Cloud Firestore después de habilitar Email/Password, crear cuentas y documentos de roles; probar ambos inicios de sesión, corregir errores, compilar y probar, sin push ni cambio de rama.
+
+Qué respondió (resumen): Revisó el mapeo de `usuarios/{uid}` a los roles, ajustó la cancelación de operaciones Firebase, recompiló y abrió la app en el emulador para la validación manual de las dos cuentas.
+
+Qué usamos / qué cambiamos y por qué: La comprobación de credenciales se hace en el emulador; las contraseñas no se copian al chat. La prueba de ambos roles queda pendiente de confirmar después de que el usuario complete los formularios.
+
+Qué aprendimos: La compilación no prueba las credenciales reales ni los documentos de Firestore; hay que comprobar ADMIN y USUARIO en el dispositivo.
