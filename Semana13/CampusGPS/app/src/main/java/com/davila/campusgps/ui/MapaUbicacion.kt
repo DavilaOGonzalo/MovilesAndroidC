@@ -19,6 +19,7 @@ import com.google.maps.android.compose.rememberMarkerState
 fun MapaUbicacion(
     posicionUsuario: Posicion?,
     lugares: List<Lugar>,
+    seleccionadoId: Int?,
     modifier: Modifier = Modifier,
 ) {
     val centroInicial = remember { LatLng(-12.0464, -77.0428) }
@@ -31,6 +32,19 @@ fun MapaUbicacion(
             cameraPositionState.animate(
                 update = CameraUpdateFactory.newLatLngZoom(
                     LatLng(posicion.latitud, posicion.longitud),
+                    17f,
+                ),
+                durationMs = 800,
+            )
+        }
+    }
+
+    val lugarSeleccionado = lugares.firstOrNull { it.id == seleccionadoId }
+    LaunchedEffect(lugarSeleccionado?.id) {
+        lugarSeleccionado?.let { lugar ->
+            cameraPositionState.animate(
+                update = CameraUpdateFactory.newLatLngZoom(
+                    LatLng(lugar.latitud, lugar.longitud),
                     17f,
                 ),
                 durationMs = 800,

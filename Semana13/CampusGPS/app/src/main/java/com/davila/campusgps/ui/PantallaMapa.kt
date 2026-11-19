@@ -38,6 +38,8 @@ fun PantallaMapa(viewModel: MapaViewModel) {
     val context = LocalContext.current
     val estado by viewModel.estado.collectAsState()
     val lugares by viewModel.lugares.collectAsState()
+    val lugaresConDistancia by viewModel.lugaresConDistancia.collectAsState()
+    val seleccionadoId by viewModel.seleccionadoId.collectAsState()
     val solicitudPermisos = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
     ) { permisosConcedidos ->
@@ -60,9 +62,10 @@ fun PantallaMapa(viewModel: MapaViewModel) {
             MapaUbicacion(
                 posicionUsuario = (estado as? UbicacionUi.Disponible)?.posicion,
                 lugares = lugares,
+                seleccionadoId = seleccionadoId,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1.15f),
             )
 
             Button(
@@ -108,6 +111,15 @@ fun PantallaMapa(viewModel: MapaViewModel) {
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
                 )
             }
+
+            ListaLugares(
+                lugares = lugaresConDistancia,
+                seleccionadoId = seleccionadoId,
+                onSeleccionar = viewModel::seleccionar,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            )
         }
     }
 }

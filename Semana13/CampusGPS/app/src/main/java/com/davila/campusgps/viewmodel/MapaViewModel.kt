@@ -27,6 +27,9 @@ class MapaViewModel(
     private val _lugares = MutableStateFlow(_lugaresConDistancia.value.map { it.lugar })
     val lugares = _lugares.asStateFlow()
 
+    private val _seleccionadoId = MutableStateFlow<Int?>(null)
+    val seleccionadoId = _seleccionadoId.asStateFlow()
+
     fun buscar() {
         if (_estado.value is UbicacionUi.Buscando) return
 
@@ -47,6 +50,12 @@ class MapaViewModel(
 
     fun permisoDenegado() {
         _estado.value = UbicacionUi.PermisoDenegado
+    }
+
+    fun seleccionar(id: Int) {
+        if (_lugaresConDistancia.value.any { it.lugar.id == id }) {
+            _seleccionadoId.value = id
+        }
     }
 
     private fun actualizarDistancias(posicion: Posicion) {
