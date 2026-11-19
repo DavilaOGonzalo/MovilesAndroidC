@@ -9,8 +9,8 @@ data class Lugar(
     val id: Int,
     val nombre: String,
     val categoria: String,
-    val latitud: Double,
-    val longitud: Double,
+    val posicion: Posicion?,
+    val referenciaPendiente: String? = null,
 )
 
 data class LugarConDistancia(

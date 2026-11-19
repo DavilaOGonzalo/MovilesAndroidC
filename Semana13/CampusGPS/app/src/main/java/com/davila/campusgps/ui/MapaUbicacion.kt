@@ -2,6 +2,7 @@ package com.davila.campusgps.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.davila.campusgps.model.Lugar
@@ -23,7 +24,8 @@ fun MapaUbicacion(
     lugarMasCercanoId: Int?,
     modifier: Modifier = Modifier,
 ) {
-    val centroInicial = remember { LatLng(-12.0464, -77.0428) }
+    // Centro de Tecsup Lima según el polígono de OpenStreetMap.
+    val centroInicial = remember { LatLng(-12.04398, -76.95291) }
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(centroInicial, 16f)
     }
@@ -40,12 +42,12 @@ fun MapaUbicacion(
         }
     }
 
-    val lugarSeleccionado = lugares.firstOrNull { it.id == seleccionadoId }
+    val lugarSeleccionado = lugares.firstOrNull { it.id == seleccionadoId && it.posicion != null }
     LaunchedEffect(lugarSeleccionado?.id) {
-        lugarSeleccionado?.let { lugar ->
+        lugarSeleccionado?.posicion?.let { posicion ->
             cameraPositionState.animate(
                 update = CameraUpdateFactory.newLatLngZoom(
-                    LatLng(lugar.latitud, lugar.longitud),
+                    LatLng(posicion.latitud, posicion.longitud),
                     17f,
                 ),
                 durationMs = 800,
@@ -58,19 +60,22 @@ fun MapaUbicacion(
         cameraPositionState = cameraPositionState,
     ) {
         lugares.forEach { lugar ->
-            val coordenada = LatLng(lugar.latitud, lugar.longitud)
-            Marker(
-                state = rememberMarkerState(position = coordenada),
-                title = lugar.nombre,
-                snippet = lugar.categoria,
-                icon = BitmapDescriptorFactory.defaultMarker(
-                    if (lugar.id == lugarMasCercanoId) {
-                        BitmapDescriptorFactory.HUE_GREEN
-                    } else {
-                        BitmapDescriptorFactory.HUE_AZURE
-                    },
-                ),
-            )
+            val posicion = lugar.posicion ?: return@forEach
+            val coordenada = LatLng(posicion.latitud, posicion.longitud)
+            key(lugar.id) {
+                Marker(
+                    state = rememberMarkerState(position = coordenada),
+                    title = lugar.nombre,
+                    snippet = lugar.categoria,
+                    icon = BitmapDescriptorFactory.defaultMarker(
+                        if (lugar.id == lugarMasCercanoId) {
+                            BitmapDescriptorFactory.HUE_GREEN
+                        } else {
+                            BitmapDescriptorFactory.HUE_AZURE
+                        },
+                    ),
+                )
+            }
         }
 
         posicionUsuario?.let { posicion ->

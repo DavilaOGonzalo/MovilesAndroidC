@@ -1,6 +1,6 @@
 # CampusGPS
 
-CampusGPS muestra la ubicación del usuario y cinco lugares ficticios de un campus en un mapa. Después de obtener la ubicación, ordena los lugares por distancia y permite seleccionar uno o navegar al más cercano.
+CampusGPS muestra la ubicación del usuario y lugares del campus Tecsup Lima en un mapa. Después de obtener la ubicación, ordena por distancia los espacios con coordenadas confirmadas y permite seleccionar uno o navegar al más cercano.
 
 ## Configuración
 
@@ -12,9 +12,11 @@ CampusGPS muestra la ubicación del usuario y cinco lugares ficticios de un camp
    ```
 
 3. Sincroniza Gradle, selecciona un emulador con Google Play y ejecuta `app`.
-4. Para probar el campus, configura la ubicación del emulador cerca de `-12.0464, -77.0428`.
+4. Para probar el campus, configura la ubicación del emulador cerca de `-12.04398, -76.95291`.
 
-La clave no se incluye en el proyecto ni en el repositorio. Sin una clave válida, el SDK muestra el fondo del mapa vacío y no se pueden verificar visualmente sus marcadores ni sus mosaicos. Las capturas actuales se hicieron con el AVD Pixel 8; la clave local estaba vacía durante esa ejecución.
+La clave no se incluye en el proyecto ni en el repositorio. El centro inicial usa el centro geográfico del campus mapeado en OpenStreetMap: `-12.04398, -76.95291` ([ficha del campus en Mapcarta, basada en OpenStreetMap](https://mapcarta.com/W357287696), [polígono TECSUP en OpenStreetMap](https://www.openstreetmap.org/way/357287696)). Tecsup confirma la dirección Av. Cascanueces 2221, Santa Anita ([sede Lima](https://www.tecsup.edu.pe/sede/sede-lima/)).
+
+Las coordenadas confirmadas de los cinco espacios se usan para dibujar sus marcadores y calcular las distancias. La lista se ordena por distancia después de obtener la ubicación del usuario.
 
 ## Estructura de paquetes
 
@@ -71,13 +73,13 @@ La pantalla obtuvo `-12.0464, -77.0428`; el mapa aparece vacío por no tener una
 
 ### Marcadores del campus
 
-La API Key vacía impide que Google Maps renderice los mosaicos y marcadores; esta captura documenta la pantalla del mapa, pero no acredita la visualización de los cinco marcadores.
+Esta captura proviene de la versión anterior y no refleja las coordenadas confirmadas recientemente.
 
 ![Pantalla de mapa para los lugares del campus](docs/capturas/03-marcadores-campus.png)
 
 ### Lista ordenada por distancia
 
-Ubicación de prueba: punto base del laboratorio. La Biblioteca Central quedó a 88 m y la Cafetería Campus a 109 m.
+Esta captura proviene de la versión anterior; los valores de distancia corresponden a las coordenadas ficticias iniciales.
 
 ![Lista de lugares ordenada por distancia](docs/capturas/04-lista-ordenada.png)
 
@@ -92,7 +94,7 @@ Ubicación de prueba: punto base del laboratorio. La Biblioteca Central quedó a
 | La app abre y solicita permiso | Verificado en Pixel 8 AVD |
 | Permitir ubicación | Verificado: se obtuvo ubicación y se actualizaron las distancias |
 | Negar permiso y abrir ajustes | Implementado; falta repetir manualmente esta prueba |
-| Cargar cinco marcadores en Google Maps | Pendiente: configurar una API Key válida |
+| Cargar los cinco marcadores del campus en Google Maps | Coordenadas confirmadas para los cinco espacios |
 | Tocar un marcador y ver título/categoría | Pendiente: configurar una API Key válida |
 | Ordenar lista y mostrar metros | Verificado en AVD |
 | Seleccionar tarjeta y mover la cámara | La interacción está implementada; pendiente de comprobación visual con API Key |

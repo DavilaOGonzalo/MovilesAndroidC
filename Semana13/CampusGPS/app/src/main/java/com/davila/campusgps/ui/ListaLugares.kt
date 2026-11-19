@@ -52,9 +52,22 @@ fun ListaLugares(
                     Column {
                         Text(text = item.lugar.nombre, style = MaterialTheme.typography.titleSmall)
                         Text(text = item.lugar.categoria, style = MaterialTheme.typography.bodySmall)
+                        if (item.lugar.posicion == null) {
+                            Text(
+                                text = item.lugar.referenciaPendiente?.let {
+                                    "Código plus pendiente: $it"
+                                } ?: "Ubicación interna por confirmar",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error,
+                            )
+                        }
                     }
                     Text(
-                        text = formatearDistancia(item.metros),
+                        text = if (item.lugar.posicion == null) {
+                            "Pendiente"
+                        } else {
+                            formatearDistancia(item.metros)
+                        },
                         style = MaterialTheme.typography.labelLarge,
                     )
                 }
