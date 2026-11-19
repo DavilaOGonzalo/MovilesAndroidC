@@ -2,7 +2,9 @@ package com.davila.campusgps.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.davila.campusgps.data.LugaresRepository
 import com.davila.campusgps.data.UbicacionRepository
+import com.davila.campusgps.model.Lugar
 import com.davila.campusgps.model.UbicacionUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,9 +12,13 @@ import kotlinx.coroutines.launch
 
 class MapaViewModel(
     private val ubicacionRepository: UbicacionRepository,
+    lugaresRepository: LugaresRepository,
 ) : ViewModel() {
     private val _estado = MutableStateFlow<UbicacionUi>(UbicacionUi.Inicial)
     val estado = _estado.asStateFlow()
+
+    private val _lugares = MutableStateFlow(lugaresRepository.obtenerLugares())
+    val lugares = _lugares.asStateFlow()
 
     fun buscar() {
         if (_estado.value is UbicacionUi.Buscando) return

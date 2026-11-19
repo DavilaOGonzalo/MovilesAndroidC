@@ -37,6 +37,7 @@ private val permisosUbicacion = arrayOf(
 fun PantallaMapa(viewModel: MapaViewModel) {
     val context = LocalContext.current
     val estado by viewModel.estado.collectAsState()
+    val lugares by viewModel.lugares.collectAsState()
     val solicitudPermisos = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
     ) { permisosConcedidos ->
@@ -58,6 +59,7 @@ fun PantallaMapa(viewModel: MapaViewModel) {
         ) {
             MapaUbicacion(
                 posicionUsuario = (estado as? UbicacionUi.Disponible)?.posicion,
+                lugares = lugares,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
