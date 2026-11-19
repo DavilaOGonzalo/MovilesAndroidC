@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.davila.campusgps.model.UbicacionUi
+import com.davila.campusgps.util.formatearDistancia
 import com.davila.campusgps.viewmodel.MapaViewModel
 
 private val permisosUbicacion = arrayOf(
@@ -40,6 +41,7 @@ fun PantallaMapa(viewModel: MapaViewModel) {
     val lugares by viewModel.lugares.collectAsState()
     val lugaresConDistancia by viewModel.lugaresConDistancia.collectAsState()
     val seleccionadoId by viewModel.seleccionadoId.collectAsState()
+    val lugarMasCercano by viewModel.lugarMasCercano.collectAsState()
     val solicitudPermisos = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
     ) { permisosConcedidos ->
@@ -63,6 +65,7 @@ fun PantallaMapa(viewModel: MapaViewModel) {
                 posicionUsuario = (estado as? UbicacionUi.Disponible)?.posicion,
                 lugares = lugares,
                 seleccionadoId = seleccionadoId,
+                lugarMasCercanoId = lugarMasCercano?.lugar?.id,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1.15f),
@@ -88,6 +91,22 @@ fun PantallaMapa(viewModel: MapaViewModel) {
                 },
             ) {
                 Text("Obtener mi ubicación")
+            }
+
+            Button(
+                enabled = lugarMasCercano != null,
+                onClick = {
+                    lugarMasCercano?.let { viewModel.seleccionar(it.lugar.id) }
+                },
+            ) {
+                Text("Ir al más cercano")
+            }
+
+            lugarMasCercano?.let { cercano ->
+                Text(
+                    text = "Más cercano: ${cercano.lugar.nombre} (${formatearDistancia(cercano.metros)})",
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
+                )
             }
 
             when (val ui = estado) {

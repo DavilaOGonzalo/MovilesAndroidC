@@ -24,6 +24,9 @@ class MapaViewModel(
     )
     val lugaresConDistancia = _lugaresConDistancia.asStateFlow()
 
+    private val _lugarMasCercano = MutableStateFlow<LugarConDistancia?>(null)
+    val lugarMasCercano = _lugarMasCercano.asStateFlow()
+
     private val _lugares = MutableStateFlow(_lugaresConDistancia.value.map { it.lugar })
     val lugares = _lugares.asStateFlow()
 
@@ -65,5 +68,6 @@ class MapaViewModel(
 
         _lugaresConDistancia.value = ordenados
         _lugares.value = ordenados.map { it.lugar }
+        _lugarMasCercano.value = ordenados.firstOrNull { it.metros != null }
     }
 }

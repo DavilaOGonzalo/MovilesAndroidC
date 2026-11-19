@@ -20,6 +20,7 @@ fun MapaUbicacion(
     posicionUsuario: Posicion?,
     lugares: List<Lugar>,
     seleccionadoId: Int?,
+    lugarMasCercanoId: Int?,
     modifier: Modifier = Modifier,
 ) {
     val centroInicial = remember { LatLng(-12.0464, -77.0428) }
@@ -63,7 +64,11 @@ fun MapaUbicacion(
                 title = lugar.nombre,
                 snippet = lugar.categoria,
                 icon = BitmapDescriptorFactory.defaultMarker(
-                    BitmapDescriptorFactory.HUE_AZURE,
+                    if (lugar.id == lugarMasCercanoId) {
+                        BitmapDescriptorFactory.HUE_GREEN
+                    } else {
+                        BitmapDescriptorFactory.HUE_AZURE
+                    },
                 ),
             )
         }
