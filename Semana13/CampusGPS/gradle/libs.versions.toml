@@ -3,7 +3,9 @@ agp = "9.2.1"
 kotlin = "2.2.10"
 composeBom = "2026.02.01"
 activityCompose = "1.13.0"
+activityKtx = "1.13.0"
 coreKtx = "1.19.0"
+lifecycle = "2.11.0"
 playServicesLocation = "21.3.0"
 mapsCompose = "6.1.1"
 coroutinesPlayServices = "1.8.1"
@@ -11,6 +13,8 @@ coroutinesPlayServices = "1.8.1"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 google-play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 google-maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }

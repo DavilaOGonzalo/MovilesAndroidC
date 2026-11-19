@@ -3,27 +3,25 @@ package com.davila.campusgps
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import com.davila.campusgps.data.UbicacionRepositoryGoogle
+import com.davila.campusgps.ui.PantallaMapa
+import com.davila.campusgps.viewmodel.CampusViewModelFactory
+import com.davila.campusgps.viewmodel.MapaViewModel
+import com.google.android.gms.location.LocationServices
 
 class MainActivity : ComponentActivity() {
+    private val mapaViewModel: MapaViewModel by viewModels {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
+        CampusViewModelFactory(UbicacionRepositoryGoogle(fusedLocationClient))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(text = "CampusGPS")
-                    }
-                }
+                PantallaMapa(mapaViewModel)
             }
         }
     }
