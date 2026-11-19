@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.davila.campusgps.model.UbicacionUi
+import com.davila.campusgps.model.TipoErrorUbicacion
 import com.davila.campusgps.util.formatearDistancia
 import com.davila.campusgps.viewmodel.MapaViewModel
 
@@ -115,19 +116,19 @@ fun PantallaMapa(viewModel: MapaViewModel) {
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
                 )
                 UbicacionUi.Buscando -> CircularProgressIndicator(modifier = Modifier.padding(8.dp))
-                UbicacionUi.PermisoDenegado -> Text(
-                    text = "Sin permiso de ubicación no se puede mostrar dónde estás.",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                UbicacionUi.PermisoDenegado -> MensajeErrorUbicacion(
+                    mensaje = "Sin permiso de ubicación no se puede mostrar dónde estás.",
+                    tipo = TipoErrorUbicacion.SIN_PERMISO,
+                    onReintentar = { solicitudPermisos.launch(permisosUbicacion) },
                 )
                 is UbicacionUi.Disponible -> Text(
                     text = "Latitud: ${ui.posicion.latitud}\nLongitud: ${ui.posicion.longitud}",
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
                 )
-                is UbicacionUi.Error -> Text(
-                    text = ui.mensaje,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                is UbicacionUi.Error -> MensajeErrorUbicacion(
+                    mensaje = ui.mensaje,
+                    tipo = ui.tipo,
+                    onReintentar = viewModel::buscar,
                 )
             }
 

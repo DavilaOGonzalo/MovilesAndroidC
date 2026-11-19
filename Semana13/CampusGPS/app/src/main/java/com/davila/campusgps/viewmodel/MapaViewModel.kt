@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.davila.campusgps.data.LugaresRepository
 import com.davila.campusgps.data.UbicacionRepository
 import com.davila.campusgps.model.LugarConDistancia
+import com.davila.campusgps.model.ErrorUbicacion
 import com.davila.campusgps.model.Posicion
 import com.davila.campusgps.model.UbicacionUi
 import com.davila.campusgps.util.metrosDesde
@@ -38,15 +39,29 @@ class MapaViewModel(
 
         viewModelScope.launch {
             _estado.value = UbicacionUi.Buscando
+            if (!ubicacionRepository.playServicesDisponible()) {
+                _estado.value = UbicacionUi.Error(
+                    com.davila.campusgps.model.TipoErrorUbicacion.SIN_PLAY_SERVICES,
+                    "Este dispositivo no tiene Google Play Services.",
+                )
+                return@launch
+            }
             ubicacionRepository.obtenerPosicion()
                 .onSuccess { posicion ->
                     actualizarDistancias(posicion)
                     _estado.value = UbicacionUi.Disponible(posicion)
                 }
                 .onFailure { error ->
-                    _estado.value = UbicacionUi.Error(
-                        error.message ?: "No se pudo obtener la ubicación.",
-                    )
+                    _estado.value = if (error is ErrorUbicacion && error.tipo == com.davila.campusgps.model.TipoErrorUbicacion.SIN_PERMISO) {
+                        UbicacionUi.PermisoDenegado
+                    } else if (error is ErrorUbicacion) {
+                        UbicacionUi.Error(error.tipo, error.message ?: "No se pudo obtener la ubicación.")
+                    } else {
+                        UbicacionUi.Error(
+                            com.davila.campusgps.model.TipoErrorUbicacion.OTRO,
+                            error.message ?: "No se pudo obtener la ubicación.",
+                        )
+                    }
                 }
         }
     }

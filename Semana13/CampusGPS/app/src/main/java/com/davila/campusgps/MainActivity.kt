@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
     private val mapaViewModel: MapaViewModel by viewModels {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
         CampusViewModelFactory(
-            ubicacionRepository = UbicacionRepositoryGoogle(fusedLocationClient),
+            ubicacionRepository = UbicacionRepositoryGoogle(applicationContext, fusedLocationClient),
             lugaresRepository = LugaresRepositoryLocal(),
         )
     }
