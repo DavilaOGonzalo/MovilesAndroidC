@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -51,11 +52,17 @@ fun PantallaMapa(viewModel: MapaViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(24.dp),
+                .padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+            verticalArrangement = Arrangement.Top,
         ) {
+            MapaUbicacion(
+                posicionUsuario = (estado as? UbicacionUi.Disponible)?.posicion,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            )
+
             Button(
                 enabled = estado !is UbicacionUi.Buscando,
                 onClick = {
@@ -79,18 +86,24 @@ fun PantallaMapa(viewModel: MapaViewModel) {
             }
 
             when (val ui = estado) {
-                UbicacionUi.Inicial -> Text("Solicita permiso para consultar tu ubicación.")
-                UbicacionUi.Buscando -> CircularProgressIndicator()
+                UbicacionUi.Inicial -> Text(
+                    text = "Solicita permiso para consultar tu ubicación.",
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                )
+                UbicacionUi.Buscando -> CircularProgressIndicator(modifier = Modifier.padding(8.dp))
                 UbicacionUi.PermisoDenegado -> Text(
                     text = "Sin permiso de ubicación no se puede mostrar dónde estás.",
                     color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
                 )
                 is UbicacionUi.Disponible -> Text(
-                    "Latitud: ${ui.posicion.latitud}\nLongitud: ${ui.posicion.longitud}",
+                    text = "Latitud: ${ui.posicion.latitud}\nLongitud: ${ui.posicion.longitud}",
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
                 )
                 is UbicacionUi.Error -> Text(
                     text = ui.mensaje,
                     color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
                 )
             }
         }
