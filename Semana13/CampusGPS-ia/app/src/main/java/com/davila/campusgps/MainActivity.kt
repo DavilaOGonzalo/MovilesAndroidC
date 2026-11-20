@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import com.davila.campusgps.data.LugaresRepositoryLocal
+import com.davila.campusgps.data.UltimoLugarVisitadoRepositoryDataStore
 import com.davila.campusgps.data.UbicacionRepositoryGoogle
+import com.davila.campusgps.data.campusGpsDataStore
 import com.davila.campusgps.ui.PantallaMapa
 import com.davila.campusgps.viewmodel.CampusViewModelFactory
 import com.davila.campusgps.viewmodel.MapaViewModel
@@ -18,6 +20,9 @@ class MainActivity : ComponentActivity() {
         CampusViewModelFactory(
             ubicacionRepository = UbicacionRepositoryGoogle(applicationContext, fusedLocationClient),
             lugaresRepository = LugaresRepositoryLocal(),
+            ultimoLugarVisitadoRepository = UltimoLugarVisitadoRepositoryDataStore(
+                applicationContext.campusGpsDataStore,
+            ),
         )
     }
 
