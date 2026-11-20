@@ -13,3 +13,5 @@ sealed interface CargaUi {
     data class Exito(val modo: String, val perfil: String, val pedidos: Int, val milisegundos: Long) : CargaUi
     data class Error(val mensaje: String) : CargaUi
 }
+
+data class RegistroCarga(val modo: String, val milisegundos: Long, val resultado: String)
