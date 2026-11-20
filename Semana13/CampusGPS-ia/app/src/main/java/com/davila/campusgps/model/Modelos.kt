@@ -16,6 +16,7 @@ data class Lugar(
 data class LugarConDistancia(
     val lugar: Lugar,
     val metros: Float?,
+    val dentroDelRadio: Boolean? = null,
 )
 
 enum class CategoriaFiltro(val etiqueta: String, val categoria: String?) {

@@ -22,6 +22,7 @@ import com.davila.campusgps.util.formatearDistancia
 fun ListaLugares(
     lugares: List<LugarConDistancia>,
     seleccionadoId: Int?,
+    radioMetros: Int,
     onSeleccionar: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -52,6 +53,9 @@ fun ListaLugares(
                     Column {
                         Text(text = item.lugar.nombre, style = MaterialTheme.typography.titleSmall)
                         Text(text = item.lugar.categoria, style = MaterialTheme.typography.bodySmall)
+                        if (item.dentroDelRadio == true) {
+                            Text("Dentro de $radioMetros m", style = MaterialTheme.typography.labelSmall)
+                        }
                         if (item.lugar.posicion == null) {
                             Text(
                                 text = item.lugar.referenciaPendiente?.let {

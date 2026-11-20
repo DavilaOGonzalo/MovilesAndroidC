@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -46,11 +46,12 @@ private val permisosUbicacion = arrayOf(
 fun PantallaMapa(viewModel: MapaViewModel) {
     val context = LocalContext.current
     val estado by viewModel.estado.collectAsState()
-    val lugares by viewModel.lugares.collectAsState()
+    val lugaresParaMapa by viewModel.lugaresParaMapa.collectAsState()
     val lugaresConDistancia by viewModel.lugaresConDistancia.collectAsState()
     val seleccionadoId by viewModel.seleccionadoId.collectAsState()
     val lugarMasCercano by viewModel.lugarMasCercano.collectAsState()
     val categoriaSeleccionada by viewModel.categoriaSeleccionada.collectAsState()
+    val radioMetros by viewModel.radioMetros.collectAsState()
     val solicitudPermisos = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
     ) { permisosConcedidos ->
@@ -72,9 +73,10 @@ fun PantallaMapa(viewModel: MapaViewModel) {
         ) {
             MapaUbicacion(
                 posicionUsuario = (estado as? UbicacionUi.Disponible)?.posicion,
-                lugares = lugares,
+                lugares = lugaresParaMapa,
                 seleccionadoId = seleccionadoId,
                 lugarMasCercanoId = lugarMasCercano?.lugar?.id,
+                radioMetros = radioMetros,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1.15f),
@@ -90,6 +92,27 @@ fun PantallaMapa(viewModel: MapaViewModel) {
                         onClick = { viewModel.seleccionarCategoria(categoria) },
                         label = { Text(categoria.etiqueta) },
                     )
+                    Spacer(Modifier.width(8.dp))
+                }
+            }
+
+            Text(
+                text = if ((estado as? UbicacionUi.Disponible) == null) {
+                    "Obtén tu ubicación para filtrar por radio."
+                } else {
+                    "${lugaresConDistancia.size} lugares dentro de $radioMetros m"
+                },
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
+                style = MaterialTheme.typography.bodySmall,
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("Radio:", modifier = Modifier.padding(end = 8.dp))
+                MapaViewModel.RADIOS_CERCANIA_METROS.forEach { radio ->
+                    FilterChip(radioMetros == radio, { viewModel.seleccionarRadio(radio) }, label = { Text("$radio m") })
                     Spacer(Modifier.width(8.dp))
                 }
             }
@@ -118,9 +141,7 @@ fun PantallaMapa(viewModel: MapaViewModel) {
 
             Button(
                 enabled = lugarMasCercano != null,
-                onClick = {
-                    lugarMasCercano?.let { viewModel.seleccionar(it.lugar.id) }
-                },
+                onClick = viewModel::irAlMasCercano,
             ) {
                 Text("Ir al más cercano")
             }
@@ -157,6 +178,7 @@ fun PantallaMapa(viewModel: MapaViewModel) {
             ListaLugares(
                 lugares = lugaresConDistancia,
                 seleccionadoId = seleccionadoId,
+                radioMetros = radioMetros,
                 onSeleccionar = viewModel::seleccionar,
                 modifier = Modifier
                     .fillMaxWidth()

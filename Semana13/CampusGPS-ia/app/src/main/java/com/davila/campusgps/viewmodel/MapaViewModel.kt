@@ -30,14 +30,17 @@ class MapaViewModel(
     private val _lugarMasCercano = MutableStateFlow<LugarConDistancia?>(null)
     val lugarMasCercano = _lugarMasCercano.asStateFlow()
 
-    private val _lugares = MutableStateFlow(_lugaresConDistancia.value.map { it.lugar })
-    val lugares = _lugares.asStateFlow()
+    private val _lugaresParaMapa = MutableStateFlow(todosLosLugaresConDistancia)
+    val lugaresParaMapa = _lugaresParaMapa.asStateFlow()
 
     private val _seleccionadoId = MutableStateFlow<Int?>(null)
     val seleccionadoId = _seleccionadoId.asStateFlow()
 
     private val _categoriaSeleccionada = MutableStateFlow(CategoriaFiltro.TODOS)
     val categoriaSeleccionada = _categoriaSeleccionada.asStateFlow()
+
+    private val _radioMetros = MutableStateFlow(RADIOS_CERCANIA_METROS[1])
+    val radioMetros = _radioMetros.asStateFlow()
 
     fun buscar() {
         if (_estado.value is UbicacionUi.Buscando) return
@@ -81,15 +84,42 @@ class MapaViewModel(
         aplicarFiltroCategoria()
     }
 
+    fun seleccionarRadio(metros: Int) {
+        if (metros !in RADIOS_CERCANIA_METROS || _radioMetros.value == metros) return
+        _radioMetros.value = metros
+        recalcularResultados()
+    }
+
     fun seleccionar(id: Int) {
-        if (_lugaresConDistancia.value.any { it.lugar.id == id }) {
-            _seleccionadoId.value = id
-        }
+        if (lugaresBase.any { it.id == id }) _seleccionadoId.value = id
+    }
+
+    fun irAlMasCercano() {
+        val cercano = _lugarMasCercano.value ?: return
+        val categoria = CategoriaFiltro.entries.firstOrNull { it.categoria == cercano.lugar.categoria }
+        if (categoria != null) _categoriaSeleccionada.value = categoria
+        val radioQueLoIncluye = RADIOS_CERCANIA_METROS.firstOrNull {
+            cercano.metros != null && cercano.metros <= it
+        } ?: RADIOS_CERCANIA_METROS.last()
+        _radioMetros.value = maxOf(_radioMetros.value, radioQueLoIncluye)
+        recalcularResultados()
+        seleccionar(cercano.lugar.id)
     }
 
     private fun actualizarDistancias(posicion: Posicion) {
-        val ordenados = todosLosLugaresConDistancia
-            .map { item -> item.copy(metros = metrosDesde(posicion, item.lugar)) }
+        posicionActual = posicion
+        recalcularResultados()
+    }
+
+    private var posicionActual: Posicion? = null
+
+    private fun recalcularResultados() {
+        val radio = _radioMetros.value
+        val ordenados = lugaresBase
+            .map { lugar ->
+                val metros = posicionActual?.let { metrosDesde(it, lugar) }
+                LugarConDistancia(lugar, metros, metros?.let { it <= radio })
+            }
             .sortedBy { item -> item.metros ?: Float.POSITIVE_INFINITY }
 
         todosLosLugaresConDistancia = ordenados
@@ -102,7 +132,13 @@ class MapaViewModel(
         val filtrados = if (categoria == null) todosLosLugaresConDistancia else {
             todosLosLugaresConDistancia.filter { it.lugar.categoria == categoria }
         }
-        _lugaresConDistancia.value = filtrados
-        _lugares.value = filtrados.map { it.lugar }
+        _lugaresParaMapa.value = filtrados
+        _lugaresConDistancia.value = if (posicionActual == null) filtrados else {
+            filtrados.filter { it.dentroDelRadio == true }
+        }
+    }
+
+    companion object {
+        val RADIOS_CERCANIA_METROS = listOf(100, 200, 500)
     }
 }

@@ -4,14 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
-import com.davila.campusgps.model.Lugar
+import com.davila.campusgps.model.LugarConDistancia
 import com.davila.campusgps.model.Posicion
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
@@ -19,9 +21,10 @@ import com.google.maps.android.compose.rememberMarkerState
 @Composable
 fun MapaUbicacion(
     posicionUsuario: Posicion?,
-    lugares: List<Lugar>,
+    lugares: List<LugarConDistancia>,
     seleccionadoId: Int?,
     lugarMasCercanoId: Int?,
+    radioMetros: Int,
     modifier: Modifier = Modifier,
 ) {
     // Centro de Tecsup Lima según el polígono de OpenStreetMap.
@@ -42,7 +45,7 @@ fun MapaUbicacion(
         }
     }
 
-    val lugarSeleccionado = lugares.firstOrNull { it.id == seleccionadoId && it.posicion != null }
+    val lugarSeleccionado = lugares.firstOrNull { it.lugar.id == seleccionadoId }?.lugar
     LaunchedEffect(lugarSeleccionado?.id) {
         lugarSeleccionado?.posicion?.let { posicion ->
             cameraPositionState.animate(
@@ -59,16 +62,30 @@ fun MapaUbicacion(
         modifier = modifier,
         cameraPositionState = cameraPositionState,
     ) {
+        posicionUsuario?.let { posicion ->
+            Circle(
+                center = LatLng(posicion.latitud, posicion.longitud),
+                radius = radioMetros.toDouble(),
+                fillColor = Color(0x223F51B5),
+                strokeColor = Color(0xFF3F51B5),
+                strokeWidth = 2f,
+            )
+        }
         lugares.forEach { lugar ->
-            val posicion = lugar.posicion ?: return@forEach
+            val posicion = lugar.lugar.posicion ?: return@forEach
             val coordenada = LatLng(posicion.latitud, posicion.longitud)
-            key(lugar.id) {
+            val estadoRadio = when (lugar.dentroDelRadio) {
+                true -> "Dentro de $radioMetros m"
+                false -> "Fuera de $radioMetros m"
+                null -> "Radio sin ubicación actual"
+            }
+            key(lugar.lugar.id) {
                 Marker(
                     state = rememberMarkerState(position = coordenada),
-                    title = lugar.nombre,
-                    snippet = lugar.categoria,
+                    title = lugar.lugar.nombre,
+                    snippet = "${lugar.lugar.categoria} · $estadoRadio",
                     icon = BitmapDescriptorFactory.defaultMarker(
-                        if (lugar.id == lugarMasCercanoId) {
+                        if (lugar.lugar.id == lugarMasCercanoId) {
                             BitmapDescriptorFactory.HUE_GREEN
                         } else {
                             BitmapDescriptorFactory.HUE_AZURE
