@@ -21,13 +21,14 @@ import com.tecsup.centrotareas.viewmodel.TareasViewModelFactory
     CentroTareasTheme {
         Scaffold(topBar = { TopAppBar(title = { Text("CentroTareas") }) }) { padding ->
             Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Card { Column(Modifier.padding(16.dp)) { Text("Tarea con progreso", style = MaterialTheme.typography.titleMedium); Button(onClick = { toques++ }) { Text("Tócame: $toques") }; Button(onClick = { }) { Text("Tarea larga (MAL)") }; Text(mensaje) } }
+                Card { Column(Modifier.padding(16.dp)) { Text("Tarea con progreso", style = MaterialTheme.typography.titleMedium); Button(onClick = { toques++ }) { Text("Tócame: $toques") }; Button(onClick = { vm.tareaLargaMala() }) { Text("Tarea larga (MAL)") }; Text(mensaje) } }
                 Card { Column(Modifier.padding(16.dp)) { Text("Contar números primos", style = MaterialTheme.typography.titleMedium); OutlinedTextField("1000", {}, label = { Text("Hasta N") }); Button(onClick = {}) { Text("Contar") } } }
                 Card { Column(Modifier.padding(16.dp)) { Text("Dos cargas", style = MaterialTheme.typography.titleMedium); Row { OutlinedButton(onClick = {}) { Text("Una por una") }; Button(onClick = {}) { Text("A la vez") } } } }
             }
         }
     }
 }
+
 
 
 

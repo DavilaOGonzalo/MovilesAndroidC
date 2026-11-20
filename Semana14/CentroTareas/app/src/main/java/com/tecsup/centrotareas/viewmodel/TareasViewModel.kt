@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.asStateFlow
 class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
     private val _mensaje = MutableStateFlow("Listo")
     val mensaje = _mensaje.asStateFlow()
-    fun tocar() { }
+    fun tareaLargaMala() { _mensaje.value = "Trabajando..."; Thread.sleep(4_000); _mensaje.value = "Terminó" }
 }
