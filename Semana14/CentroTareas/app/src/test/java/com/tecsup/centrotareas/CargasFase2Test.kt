@@ -43,6 +43,10 @@ class CargasFase2Test {
         assertEquals("A la vez", estado.modo)
         assertEquals(3, repository.intentos.get())
         assertEquals(1, vm.comparaciones.value.size)
+        vm.cargarUnaPorUna()
+        advanceUntilIdle()
+        assertEquals(2, vm.comparaciones.value.size)
+        assertEquals(listOf("A la vez", "Una por una"), vm.comparaciones.value.map { it.modo })
     }
 }
 
@@ -68,5 +72,6 @@ class MainDispatcherRule(val dispatcher: TestDispatcher = StandardTestDispatcher
     override fun starting(description: Description) { Dispatchers.setMain(dispatcher) }
     override fun finished(description: Description) { Dispatchers.resetMain() }
 }
+
 
 
