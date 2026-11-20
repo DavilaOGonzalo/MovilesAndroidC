@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tecsup.centrotareas.data.TareasRepositoryLocal
 import com.tecsup.centrotareas.model.PrimosUi
+import com.tecsup.centrotareas.model.CargaUi
 import com.tecsup.centrotareas.ui.theme.CentroTareasTheme
 import com.tecsup.centrotareas.viewmodel.TareasViewModel
 import com.tecsup.centrotareas.viewmodel.TareasViewModelFactory
@@ -22,6 +23,7 @@ fun PantallaTareas() {
     val progreso by vm.progreso.collectAsState()
     val corriendo by vm.corriendo.collectAsState()
     val primos by vm.primos.collectAsState()
+    val carga by vm.carga.collectAsState()
     var limitePrimos by remember { mutableStateOf("1000") }
     var toques by remember { mutableIntStateOf(0) }
     CentroTareasTheme {
@@ -39,9 +41,10 @@ fun PantallaTareas() {
                     }
                 }
                 Card { Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { Text("Contar números primos", style = MaterialTheme.typography.titleMedium); OutlinedTextField(limitePrimos, { limitePrimos = it.filter(Char::isDigit) }, label = { Text("Hasta N") }); Row { Button(onClick = { limitePrimos.toIntOrNull()?.let(vm::contar) }) { Text("Contar") }; OutlinedButton(onClick = vm::cancelarPrimos) { Text("Cancelar") } }; when (val estado = primos) { PrimosUi.Inicial -> Text("Ingresa un límite de al menos 2"); PrimosUi.Calculando -> CircularProgressIndicator(); PrimosUi.Cancelado -> Text("Cancelado", color = MaterialTheme.colorScheme.error); is PrimosUi.Listo -> Text("${estado.cantidad} primos · ${estado.milisegundos} ms", color = MaterialTheme.colorScheme.primary) } } }
-                Card { Column(Modifier.padding(16.dp)) { Text("Dos cargas", style = MaterialTheme.typography.titleMedium); Row { OutlinedButton(onClick = {}) { Text("Una por una") }; Button(onClick = {}) { Text("A la vez") } } } }
+                Card { Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { Text("Dos cargas", style = MaterialTheme.typography.titleMedium); Row { OutlinedButton(onClick = vm::cargarUnaPorUna, enabled = carga !is CargaUi.Cargando) { Text("Una por una") }; Button(onClick = vm::cargarALaVez, enabled = carga !is CargaUi.Cargando) { Text("A la vez") } }; when (val estado = carga) { CargaUi.Inicial -> Text("Compara la carga secuencial y paralela"); CargaUi.Cargando -> CircularProgressIndicator(); is CargaUi.Exito -> Text("${estado.modo}: ${estado.perfil}, ${estado.pedidos} pedidos · ${estado.milisegundos} ms", color = MaterialTheme.colorScheme.primary); is CargaUi.Error -> Text(estado.mensaje, color = MaterialTheme.colorScheme.error) } } }
             }
         }
     }
 }
+
 
