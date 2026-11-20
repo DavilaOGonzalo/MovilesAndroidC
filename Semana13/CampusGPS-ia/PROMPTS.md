@@ -1,0 +1,10 @@
+# Prompts y decisiones de Fase 2
+
+Gemini no fue consultado durante esta implementación. La columna de respuesta lo indica para no atribuirle contenido inventado. Los prompts registrados son resúmenes de las solicitudes recibidas para esta tarea.
+
+| Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
+|---|---|---|---|
+| Solicitud recibida: agregar chips Todos, Estudio, Comida, Eventos y Servicios; aplicar el filtro desde el ViewModel al mapa y a la lista. | No hubo respuesta: Gemini no fue consultado. | Añadí `CategoriaFiltro`, estado `categoriaSeleccionada` y filtrado conjunto en `MapaViewModel`; los chips solo envían eventos desde Compose. | Mantener la lógica de negocio en ViewModel y sincronizar mapa y lista. |
+| Solicitud recibida: seleccionar 100, 200 o 500 metros, dibujar el radio del usuario, identificar lugares dentro del radio y actualizar la lista. | No hubo respuesta: Gemini no fue consultado. | Añadí el radio al ViewModel, cálculo de distancia Haversine en `util`, estado `dentroDelRadio`, círculo y clasificación en los marcadores; la lista muestra solo lugares dentro del radio una vez disponible la ubicación. | Hacer los cálculos fuera de Compose y conservar los marcadores por categoría para que el círculo permita distinguir dentro/fuera. |
+| Solicitud recibida: guardar y restaurar automáticamente el último lugar seleccionado usando DataStore, Repository y ViewModel. | No hubo respuesta: Gemini no fue consultado. | Añadí `UltimoLugarVisitadoRepository`, su implementación DataStore y persistencia/restauración desde `MapaViewModel`; `Context` queda en la capa de datos y en el ensamblado de dependencias. | Cumplir MVVM + Repository sin pasar `Context` al ViewModel. |
+| Solicitud recibida: probar las mejoras y ejecutar `assembleDebug` y las pruebas disponibles. | No hubo respuesta: Gemini no fue consultado. | Añadí pruebas de ViewModel para filtros, radio y restauración/guardado, además de una prueba del Repository DataStore. | Verificar el comportamiento y mantener la implementación comprobable. |
