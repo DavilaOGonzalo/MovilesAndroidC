@@ -25,6 +25,8 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
     private val _primos = MutableStateFlow<PrimosUi>(PrimosUi.Inicial); val primos = _primos.asStateFlow()
     private var trabajoPrimos: Job? = null
     private val _carga = MutableStateFlow<CargaUi>(CargaUi.Inicial); val carga = _carga.asStateFlow()
+    private val _simularError = MutableStateFlow(false); val simularError = _simularError.asStateFlow()
+    fun cambiarSimularError(valor: Boolean) { _simularError.value = valor }
     private var trabajoCarga: Job? = null
 
     fun tareaLarga() {
@@ -49,17 +51,26 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
     }
     fun cancelarPrimos() { trabajoPrimos?.cancel() }
     fun cargarUnaPorUna() = ejecutarCarga("Una por una") {
-        val perfil = repo.cargarPerfil(); val pedidos = repo.cargarPedidos(false); perfil to pedidos
+        val perfil = repo.cargarPerfil(); val pedidos = repo.cargarPedidos(_simularError.value); perfil to pedidos
     }
     fun cargarALaVez() = ejecutarCarga("A la vez") {
-        coroutineScope { val perfil = async { repo.cargarPerfil() }; val pedidos = async { repo.cargarPedidos(false) }; perfil.await() to pedidos.await() }
+        coroutineScope { val perfil = async { repo.cargarPerfil() }; val pedidos = async { repo.cargarPedidos(_simularError.value) }; perfil.await() to pedidos.await() }
     }
     private fun ejecutarCarga(modo: String, bloque: suspend () -> Pair<String, List<String>>) {
         if (trabajoCarga?.isActive == true) return
         trabajoCarga = viewModelScope.launch {
-            _carga.value = CargaUi.Cargando; val inicio = System.currentTimeMillis()
-            val (perfil, pedidos) = bloque()
-            _carga.value = CargaUi.Exito(modo, perfil, pedidos.size, System.currentTimeMillis() - inicio)
+            _carga.value = CargaUi.Cargando
+            val inicio = System.currentTimeMillis()
+            try {
+                val (perfil, pedidos) = bloque()
+                _carga.value = CargaUi.Exito(modo, perfil, pedidos.size, System.currentTimeMillis() - inicio)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _carga.value = CargaUi.Error("No se pudo cargar: ${e.message ?: "Error desconocido"}")
+            }
         }
     }
 }
+
+
