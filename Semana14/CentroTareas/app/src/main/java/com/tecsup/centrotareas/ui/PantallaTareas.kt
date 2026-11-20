@@ -49,9 +49,13 @@ fun PantallaTareas() {
                     HorizontalDivider()
                     Text("Comparación de tiempos", style = MaterialTheme.typography.titleSmall)
                     if (comparaciones.isEmpty()) Text("Los resultados se acumularán aquí.") else {
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text("Modo", style = MaterialTheme.typography.labelLarge); Text("Tiempo / resultado", style = MaterialTheme.typography.labelLarge) }
                         comparaciones.forEach { fila ->
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text(fila.modo); Text("${fila.milisegundos} ms · ${fila.resultado}") }
+                            ElevatedCard(Modifier.fillMaxWidth()) {
+                                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text("${fila.modo} · ${fila.milisegundos} ms", style = MaterialTheme.typography.titleSmall)
+                                    Text(fila.resultado, style = MaterialTheme.typography.bodyMedium)
+                                }
+                            }
                         }
                     }
                 } }
@@ -59,3 +63,4 @@ fun PantallaTareas() {
         }
     }
 }
+
