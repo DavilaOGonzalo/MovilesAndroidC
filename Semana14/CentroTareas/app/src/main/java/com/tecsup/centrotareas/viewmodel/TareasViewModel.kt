@@ -66,7 +66,7 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
             _carga.value = CargaUi.Cargando
             val inicio = System.currentTimeMillis()
             try {
-                val (perfil, pedidos) = withTimeout(2_000) { bloque() }
+                val (perfil, pedidos) = cargarConReintentos(bloque)
                 _carga.value = CargaUi.Exito(modo, perfil, pedidos.size, System.currentTimeMillis() - inicio)
             } catch (e: TimeoutCancellationException) {
                 _carga.value = CargaUi.Error("Tardó demasiado")
@@ -77,7 +77,23 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
             }
         }
     }
-}
+    private suspend fun cargarConReintentos(bloque: suspend () -> Pair<String, List<String>>): Pair<String, List<String>> {
+        val maxReintentos = 3
+        for (intento in 0..maxReintentos) {
+            try {
+                return withTimeout(2_000) { bloque() }
+            } catch (e: TimeoutCancellationException) {
+                if (intento == maxReintentos) throw e
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                if (intento == maxReintentos) throw e
+            }
+            delay(500L * (intento + 1))
+        }
+        error("No se completaron los intentos de carga")
+    }}
+
 
 
 
