@@ -1,0 +1,15 @@
+# Android and Gradle generated files
+.gradle/
+**/build/
+local.properties
+**/local.properties
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Local secrets
+secrets.properties
+*.keystore
+*.jks
