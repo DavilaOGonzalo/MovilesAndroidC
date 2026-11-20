@@ -14,13 +14,20 @@ import kotlinx.coroutines.flow.asStateFlow
 class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
     private val _mensaje = MutableStateFlow("Listo")
     val mensaje = _mensaje.asStateFlow()
+    private val _progreso = MutableStateFlow(0f)
+    val progreso = _progreso.asStateFlow()
     fun tareaLarga() {
         viewModelScope.launch {
             _mensaje.value = "Trabajando..."
+            _progreso.value = 0f
             Log.d("HILO", "Antes: ${Thread.currentThread().name}")
-            withContext(Dispatchers.Default) { Log.d("HILO", "Dentro: ${Thread.currentThread().name}"); delay(4_000) }
+            withContext(Dispatchers.Default) {
+                Log.d("HILO", "Dentro: ${Thread.currentThread().name}")
+                repeat(100) { i -> delay(40); _progreso.value = (i + 1) / 100f }
+            }
             Log.d("HILO", "Después: ${Thread.currentThread().name}")
             _mensaje.value = "Terminó"
         }
     }
 }
+
