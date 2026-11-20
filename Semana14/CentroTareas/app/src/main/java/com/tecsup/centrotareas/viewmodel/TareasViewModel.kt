@@ -9,6 +9,8 @@ import com.tecsup.centrotareas.model.PrimosUi
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -37,6 +39,8 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
                 Log.d("HILO", "Antes: ${Thread.currentThread().name}")
                 withContext(Dispatchers.Default) { Log.d("HILO", "Dentro: ${Thread.currentThread().name}"); repeat(100) { i -> delay(40); _progreso.value = (i + 1) / 100f } }
                 Log.d("HILO", "Después: ${Thread.currentThread().name}"); _mensaje.value = "Terminó"
+            } catch (e: TimeoutCancellationException) {
+                _carga.value = CargaUi.Error("Tardó demasiado")
             } catch (e: CancellationException) { throw e } finally { _corriendo.value = false }
         }
     }
@@ -62,8 +66,10 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
             _carga.value = CargaUi.Cargando
             val inicio = System.currentTimeMillis()
             try {
-                val (perfil, pedidos) = bloque()
+                val (perfil, pedidos) = withTimeout(2_000) { bloque() }
                 _carga.value = CargaUi.Exito(modo, perfil, pedidos.size, System.currentTimeMillis() - inicio)
+            } catch (e: TimeoutCancellationException) {
+                _carga.value = CargaUi.Error("Tardó demasiado")
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -72,5 +78,7 @@ class TareasViewModel(private val repo: TareasRepository) : ViewModel() {
         }
     }
 }
+
+
 
 
