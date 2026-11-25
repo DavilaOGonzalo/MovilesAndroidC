@@ -1,5 +1,6 @@
 package com.tecsup.murocampus.viewmodel
 
+import com.tecsup.murocampus.data.ErrorDeDatos
 import java.io.IOException
 
 sealed interface UiState<out T> {
@@ -9,6 +10,7 @@ sealed interface UiState<out T> {
 }
 
 fun mensajeDe(error: Throwable): String = when (error) {
+    is ErrorDeDatos -> error.message ?: "Error desconocido"
     is IOException -> "Sin conexión a internet.\nRevisa tu red e inténtalo otra vez."
     else -> "Error desconocido"
 }
