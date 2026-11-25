@@ -20,7 +20,7 @@ import com.tecsup.murocampus.viewmodel.UiState
 fun PantallaLista(
     vm: PostsViewModel,
     modifier: Modifier = Modifier,
-    alAbrir: (Int) -> Unit = {},
+    alAbrir: (Int) -> Unit,
 ) {
     val estado by vm.lista.collectAsStateWithLifecycle()
 
