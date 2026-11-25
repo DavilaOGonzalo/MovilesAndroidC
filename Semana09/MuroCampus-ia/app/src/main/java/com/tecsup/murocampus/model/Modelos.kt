@@ -19,3 +19,6 @@ data class Comentario(
 
 @Serializable
 data class NuevoPost(val userId: Int, val title: String, val body: String)
+
+@Serializable
+data class CambioTitulo(val title: String)

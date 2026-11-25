@@ -1,6 +1,7 @@
 package com.tecsup.murocampus.data
 
 import com.tecsup.murocampus.data.remote.PostApi
+import com.tecsup.murocampus.model.CambioTitulo
 import com.tecsup.murocampus.model.Comentario
 import com.tecsup.murocampus.model.NuevoPost
 import com.tecsup.murocampus.model.Post
@@ -15,6 +16,7 @@ interface PostRepository {
     suspend fun comentarios(id: Int): Result<List<Comentario>>
     suspend fun porUsuario(userId: Int): Result<List<Post>>
     suspend fun eliminar(id: Int): Result<Unit>
+    suspend fun editarTitulo(id: Int, cambio: CambioTitulo): Result<Post>
     suspend fun crear(nuevo: NuevoPost): Result<Post>
 }
 
@@ -36,6 +38,9 @@ class PostRepositoryRemote(private val api: PostApi) : PostRepository {
         val respuesta = api.eliminar(id)
         if (!respuesta.isSuccessful) throw HttpException(respuesta)
     }
+
+    override suspend fun editarTitulo(id: Int, cambio: CambioTitulo): Result<Post> =
+        llamar { api.editarTitulo(id, cambio) }
 
     override suspend fun crear(nuevo: NuevoPost): Result<Post> = llamar { api.crear(nuevo) }
 

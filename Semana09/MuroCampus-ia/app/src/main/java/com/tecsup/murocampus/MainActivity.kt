@@ -34,6 +34,7 @@ import com.tecsup.murocampus.data.PostRepositoryRemote
 import com.tecsup.murocampus.data.remote.RetrofitClient
 import com.tecsup.murocampus.ui.PantallaCrear
 import com.tecsup.murocampus.ui.PantallaDetalle
+import com.tecsup.murocampus.ui.PantallaEditar
 import com.tecsup.murocampus.ui.PantallaLista
 import com.tecsup.murocampus.ui.theme.MuroCampusTheme
 import com.tecsup.murocampus.viewmodel.PostsViewModel
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
                     PostsViewModel(PostRepositoryRemote(RetrofitClient.api))
                 })
                 val idSeleccionado by vm.idSeleccionado.collectAsStateWithLifecycle()
+                val editando by vm.editando.collectAsStateWithLifecycle()
                 val estadosPantallas = rememberSaveableStateHolder()
                 val snackbar = remember { SnackbarHostState() }
                 val eliminacion by vm.eliminacion.collectAsStateWithLifecycle()
@@ -62,7 +64,8 @@ class MainActivity : ComponentActivity() {
                     }
                 }
                 var creando by rememberSaveable { mutableStateOf(false) }
-                BackHandler(enabled = idSeleccionado != null, onBack = vm::cerrarDetalle)
+                BackHandler(enabled = idSeleccionado != null && !editando, onBack = vm::cerrarDetalle)
+                BackHandler(enabled = editando, onBack = vm::cerrarEditor)
                 BackHandler(enabled = creando) {
                     vm.limpiarPublicacion()
                     creando = false
@@ -93,6 +96,7 @@ class MainActivity : ComponentActivity() {
                     val modifier = Modifier.padding(padding)
                     when {
                         creando -> PantallaCrear(vm, modifier)
+                        editando -> PantallaEditar(vm, modifier)
                         idSeleccionado != null -> PantallaDetalle(vm, modifier)
                         else -> estadosPantallas.SaveableStateProvider("lista") {
                             PantallaLista(vm, modifier, alAbrir = vm::abrir)

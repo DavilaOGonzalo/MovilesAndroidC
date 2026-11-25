@@ -3,6 +3,7 @@ package com.tecsup.murocampus.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tecsup.murocampus.data.PostRepository
+import com.tecsup.murocampus.model.CambioTitulo
 import com.tecsup.murocampus.model.Comentario
 import com.tecsup.murocampus.model.NuevoPost
 import com.tecsup.murocampus.model.Post
@@ -30,6 +31,12 @@ class PostsViewModel(private val repo: PostRepository) : ViewModel() {
     private val _eliminacion = MutableStateFlow<UiState<Unit>?>(null)
     val eliminacion = _eliminacion.asStateFlow()
 
+    private val titulosEditados = mutableMapOf<Int, String>()
+    private val _editando = MutableStateFlow(false)
+    val editando = _editando.asStateFlow()
+    private val _edicion = MutableStateFlow<UiState<Post>?>(null)
+    val edicion = _edicion.asStateFlow()
+
     private val _publicacion = MutableStateFlow<UiState<Post>?>(null)
     val publicacion = _publicacion.asStateFlow()
     private var envioPublicacion: Job? = null
@@ -46,7 +53,7 @@ class PostsViewModel(private val repo: PostRepository) : ViewModel() {
             val respuesta = if (usuarioId == null) repo.listar() else repo.porUsuario(usuarioId)
             ensureActive()
             _lista.value = respuesta.fold(
-                onSuccess = { UiState.Exito(it.filterNot { post -> post.id in idsEliminados }) },
+                onSuccess = { UiState.Exito(aplicarCambios(it)) },
                 onFailure = { UiState.Error(mensajeDe(it)) },
             )
         }
@@ -71,7 +78,7 @@ class PostsViewModel(private val repo: PostRepository) : ViewModel() {
             val comentarios = repo.comentarios(id)
             ensureActive()
             _detalle.value = comentarios.fold(
-                onSuccess = { UiState.Exito(DetalleUi(post, it)) },
+                onSuccess = { UiState.Exito(DetalleUi(post.conTituloLocal(), it)) },
                 onFailure = { UiState.Error(mensajeDe(it)) },
             )
         }
@@ -82,7 +89,7 @@ class PostsViewModel(private val repo: PostRepository) : ViewModel() {
     }
 
     fun cerrarDetalle() {
-        if (_eliminacion.value == UiState.Cargando) return
+        if (_eliminacion.value == UiState.Cargando || _editando.value) return
         if (_eliminacion.value is UiState.Error) _eliminacion.value = null
         cargaDetalle?.cancel()
         _idSeleccionado.value = null
@@ -91,17 +98,17 @@ class PostsViewModel(private val repo: PostRepository) : ViewModel() {
 
     fun eliminar() {
         val id = _idSeleccionado.value ?: return
-        if (_detalle.value !is UiState.Exito || _eliminacion.value == UiState.Cargando) return
+        if (_detalle.value !is UiState.Exito || _eliminacion.value == UiState.Cargando || _editando.value) {
+            return
+        }
         _eliminacion.value = UiState.Cargando
         viewModelScope.launch {
             val respuesta = repo.eliminar(id)
             ensureActive()
             respuesta.onSuccess {
                 idsEliminados.add(id)
-                val listaActual = _lista.value
-                if (listaActual is UiState.Exito) {
-                    _lista.value = UiState.Exito(listaActual.datos.filterNot { it.id == id })
-                }
+                titulosEditados.remove(id)
+                reflejarCambiosEnLista()
                 _eliminacion.value = UiState.Exito(Unit)
                 cerrarDetalle()
             }.onFailure {
@@ -112,6 +119,57 @@ class PostsViewModel(private val repo: PostRepository) : ViewModel() {
 
     fun consumirAvisoEliminacion() {
         if (_eliminacion.value is UiState.Exito) _eliminacion.value = null
+    }
+
+    fun abrirEditor() {
+        if (_detalle.value !is UiState.Exito || _eliminacion.value == UiState.Cargando) return
+        _edicion.value = null
+        _editando.value = true
+    }
+
+    fun cerrarEditor() {
+        if (_edicion.value == UiState.Cargando) return
+        _editando.value = false
+        _edicion.value = null
+    }
+
+    fun editarTitulo(titulo: String) {
+        val detalleActual = (_detalle.value as? UiState.Exito)?.datos ?: return
+        val nuevoTitulo = titulo.trim()
+        if (!_editando.value || _edicion.value == UiState.Cargando ||
+            nuevoTitulo.isEmpty() || nuevoTitulo == detalleActual.post.title
+        ) return
+
+        _edicion.value = UiState.Cargando
+        viewModelScope.launch {
+            val respuesta = repo.editarTitulo(detalleActual.post.id, CambioTitulo(nuevoTitulo))
+            ensureActive()
+            respuesta.onSuccess { editado ->
+                titulosEditados[detalleActual.post.id] = editado.title
+                reflejarCambiosEnLista()
+                _detalle.value = UiState.Exito(
+                    detalleActual.copy(post = detalleActual.post.conTituloLocal()),
+                )
+                _edicion.value = UiState.Exito(editado)
+            }.onFailure {
+                _edicion.value = UiState.Error(mensajeDe(it))
+            }
+        }
+    }
+
+    fun limpiarAvisoEdicion() {
+        if (_edicion.value != UiState.Cargando) _edicion.value = null
+    }
+
+    private fun aplicarCambios(posts: List<Post>): List<Post> =
+        posts.filterNot { it.id in idsEliminados }.map { it.conTituloLocal() }
+
+    private fun Post.conTituloLocal(): Post =
+        titulosEditados[id]?.let { copy(title = it) } ?: this
+
+    private fun reflejarCambiosEnLista() {
+        val listaActual = _lista.value as? UiState.Exito ?: return
+        _lista.value = UiState.Exito(aplicarCambios(listaActual.datos))
     }
 
     fun publicar(titulo: String, texto: String) {
