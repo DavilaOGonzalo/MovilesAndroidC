@@ -10,7 +10,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.tecsup.murocampus"
+        applicationId = "com.tecsup.murocampus.ia"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

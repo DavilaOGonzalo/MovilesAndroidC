@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MuroCampus"
+rootProject.name = "MuroCampus-ia"
 include(":app")
