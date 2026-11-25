@@ -12,10 +12,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,6 +37,7 @@ import com.tecsup.murocampus.ui.PantallaDetalle
 import com.tecsup.murocampus.ui.PantallaLista
 import com.tecsup.murocampus.ui.theme.MuroCampusTheme
 import com.tecsup.murocampus.viewmodel.PostsViewModel
+import com.tecsup.murocampus.viewmodel.UiState
 import com.tecsup.murocampus.viewmodel.postsViewModelFactory
 
 class MainActivity : ComponentActivity() {
@@ -47,6 +52,15 @@ class MainActivity : ComponentActivity() {
                 })
                 val idSeleccionado by vm.idSeleccionado.collectAsStateWithLifecycle()
                 val estadosPantallas = rememberSaveableStateHolder()
+                val snackbar = remember { SnackbarHostState() }
+                val eliminacion by vm.eliminacion.collectAsStateWithLifecycle()
+                val avisoEliminacion = stringResource(R.string.publicacion_eliminada)
+                LaunchedEffect(eliminacion) {
+                    if (eliminacion is UiState.Exito) {
+                        snackbar.showSnackbar(avisoEliminacion)
+                        vm.consumirAvisoEliminacion()
+                    }
+                }
                 var creando by rememberSaveable { mutableStateOf(false) }
                 BackHandler(enabled = idSeleccionado != null, onBack = vm::cerrarDetalle)
                 BackHandler(enabled = creando) {
@@ -54,6 +68,7 @@ class MainActivity : ComponentActivity() {
                     creando = false
                 }
                 Scaffold(
+                    snackbarHost = { SnackbarHost(snackbar) },
                     topBar = {
                         TopAppBar(
                             title = { Text(stringResource(R.string.app_name)) },

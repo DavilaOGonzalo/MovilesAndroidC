@@ -13,4 +13,10 @@
     <string name="contenido_publicacion">Contenido</string>
     <string name="publicar">Publicar</string>
     <string name="publicado_con_id">Publicado con id %1$d</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="eliminar_publicacion">¿Eliminar esta publicación?</string>
+    <string name="confirmar_eliminacion_descripcion">Se ocultará de esta sesión cuando el servidor confirme la eliminación.</string>
+    <string name="confirmar_eliminacion">Confirmar eliminación</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="publicacion_eliminada">Publicación eliminada de esta sesión</string>
 </resources>

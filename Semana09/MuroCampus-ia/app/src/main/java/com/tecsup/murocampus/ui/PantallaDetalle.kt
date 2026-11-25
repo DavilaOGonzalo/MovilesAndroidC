@@ -5,14 +5,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,6 +33,28 @@ import com.tecsup.murocampus.viewmodel.UiState
 @Composable
 fun PantallaDetalle(vm: PostsViewModel, modifier: Modifier = Modifier) {
     val estado by vm.detalle.collectAsStateWithLifecycle()
+    val eliminacion by vm.eliminacion.collectAsStateWithLifecycle()
+    var confirmar by rememberSaveable { mutableStateOf(false) }
+    val eliminando = eliminacion == UiState.Cargando
+
+    if (confirmar) {
+        AlertDialog(
+            onDismissRequest = { confirmar = false },
+            title = { Text(stringResource(R.string.eliminar_publicacion)) },
+            text = { Text(stringResource(R.string.confirmar_eliminacion_descripcion)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmar = false
+                    vm.eliminar()
+                }) { Text(stringResource(R.string.confirmar_eliminacion)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmar = false }) {
+                    Text(stringResource(R.string.cancelar))
+                }
+            },
+        )
+    }
 
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         when (val actual = estado) {
@@ -43,6 +73,14 @@ fun PantallaDetalle(vm: PostsViewModel, modifier: Modifier = Modifier) {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(actual.datos.post.title, style = MaterialTheme.typography.headlineSmall)
                         Text(actual.datos.post.body)
+                        OutlinedButton(onClick = { confirmar = true }, enabled = !eliminando) {
+                            Text(stringResource(R.string.eliminar), color = MaterialTheme.colorScheme.error)
+                        }
+                        if (eliminando) LinearProgressIndicator(Modifier.fillMaxWidth())
+                        val error = eliminacion as? UiState.Error
+                        if (error != null) {
+                            Text(error.mensaje, color = MaterialTheme.colorScheme.error)
+                        }
                     }
                 }
                 item {

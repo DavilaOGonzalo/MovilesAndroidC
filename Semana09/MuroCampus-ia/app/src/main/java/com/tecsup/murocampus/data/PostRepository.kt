@@ -14,6 +14,7 @@ interface PostRepository {
     suspend fun detalle(id: Int): Result<Post>
     suspend fun comentarios(id: Int): Result<List<Comentario>>
     suspend fun porUsuario(userId: Int): Result<List<Post>>
+    suspend fun eliminar(id: Int): Result<Unit>
     suspend fun crear(nuevo: NuevoPost): Result<Post>
 }
 
@@ -30,6 +31,11 @@ class PostRepositoryRemote(private val api: PostApi) : PostRepository {
 
     override suspend fun porUsuario(userId: Int): Result<List<Post>> =
         llamar { api.porUsuario(userId) }
+
+    override suspend fun eliminar(id: Int): Result<Unit> = llamar {
+        val respuesta = api.eliminar(id)
+        if (!respuesta.isSuccessful) throw HttpException(respuesta)
+    }
 
     override suspend fun crear(nuevo: NuevoPost): Result<Post> = llamar { api.crear(nuevo) }
 

@@ -3,7 +3,9 @@ package com.tecsup.murocampus.data.remote
 import com.tecsup.murocampus.model.Comentario
 import com.tecsup.murocampus.model.NuevoPost
 import com.tecsup.murocampus.model.Post
+import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -21,6 +23,9 @@ interface PostApi {
 
     @GET("posts")
     suspend fun porUsuario(@Query("userId") userId: Int): List<Post>
+
+    @DELETE("posts/{id}")
+    suspend fun eliminar(@Path("id") id: Int): Response<Unit>
 
     @POST("posts")
     suspend fun crear(@Body nuevo: NuevoPost): Post
