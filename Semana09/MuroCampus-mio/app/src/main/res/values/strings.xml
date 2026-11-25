@@ -5,4 +5,6 @@
     <string name="reintentar">Reintentar</string>
     <string name="usuario_numero">Usuario %1$d</string>
     <string name="comentarios_cantidad">Comentarios (%1$d)</string>
+    <string name="todos_los_usuarios">Todos</string>
+    <string name="sin_publicaciones">Sin publicaciones</string>
 </resources>

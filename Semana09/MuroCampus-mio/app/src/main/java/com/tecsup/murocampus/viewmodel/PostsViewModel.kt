@@ -17,6 +17,8 @@ class PostsViewModel(private val repo: PostRepository) : ViewModel() {
     private val _lista = MutableStateFlow<UiState<List<Post>>>(UiState.Cargando)
     val lista = _lista.asStateFlow()
     private var cargaLista: Job? = null
+    private val _usuarioFiltro = MutableStateFlow<Int?>(null)
+    val usuarioFiltro = _usuarioFiltro.asStateFlow()
 
     private val _idSeleccionado = MutableStateFlow<Int?>(null)
     val idSeleccionado = _idSeleccionado.asStateFlow()
@@ -30,12 +32,22 @@ class PostsViewModel(private val repo: PostRepository) : ViewModel() {
 
     fun cargar() {
         cargaLista?.cancel()
+        val usuarioId = _usuarioFiltro.value
         cargaLista = viewModelScope.launch {
             _lista.value = UiState.Cargando
-            repo.listar()
-                .onSuccess { _lista.value = UiState.Exito(it) }
-                .onFailure { _lista.value = UiState.Error(mensajeDe(it)) }
+            val respuesta = if (usuarioId == null) repo.listar() else repo.porUsuario(usuarioId)
+            ensureActive()
+            _lista.value = respuesta.fold(
+                onSuccess = { UiState.Exito(it) },
+                onFailure = { UiState.Error(mensajeDe(it)) },
+            )
         }
+    }
+
+    fun filtrar(userId: Int?) {
+        if (_usuarioFiltro.value == userId) return
+        _usuarioFiltro.value = userId
+        cargar()
     }
 
     fun abrir(id: Int) {
