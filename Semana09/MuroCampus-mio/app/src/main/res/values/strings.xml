@@ -7,4 +7,9 @@
     <string name="comentarios_cantidad">Comentarios (%1$d)</string>
     <string name="todos_los_usuarios">Todos</string>
     <string name="sin_publicaciones">Sin publicaciones</string>
+    <string name="crear_publicacion">Crear publicación</string>
+    <string name="titulo_publicacion">Título</string>
+    <string name="contenido_publicacion">Contenido</string>
+    <string name="publicar">Publicar</string>
+    <string name="publicado_con_id">Publicado con id %1$d</string>
 </resources>

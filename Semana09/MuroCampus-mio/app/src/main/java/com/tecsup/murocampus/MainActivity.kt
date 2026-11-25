@@ -9,19 +9,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tecsup.murocampus.data.PostRepositoryRemote
 import com.tecsup.murocampus.data.remote.RetrofitClient
+import com.tecsup.murocampus.ui.PantallaCrear
 import com.tecsup.murocampus.ui.PantallaDetalle
 import com.tecsup.murocampus.ui.PantallaLista
 import com.tecsup.murocampus.ui.theme.MuroCampusTheme
@@ -40,7 +47,12 @@ class MainActivity : ComponentActivity() {
                 })
                 val idSeleccionado by vm.idSeleccionado.collectAsStateWithLifecycle()
                 val estadosPantallas = rememberSaveableStateHolder()
+                var creando by rememberSaveable { mutableStateOf(false) }
                 BackHandler(enabled = idSeleccionado != null, onBack = vm::cerrarDetalle)
+                BackHandler(enabled = creando) {
+                    vm.limpiarPublicacion()
+                    creando = false
+                }
                 Scaffold(
                     topBar = {
                         TopAppBar(
@@ -51,12 +63,23 @@ class MainActivity : ComponentActivity() {
                             ),
                         )
                     },
+                    floatingActionButton = {
+                        if (!creando && idSeleccionado == null) {
+                            val etiqueta = stringResource(R.string.crear_publicacion)
+                            FloatingActionButton(
+                                onClick = { creando = true },
+                                modifier = Modifier.semantics { contentDescription = etiqueta },
+                            ) {
+                                Text("+", style = MaterialTheme.typography.headlineSmall)
+                            }
+                        }
+                    },
                 ) { padding ->
                     val modifier = Modifier.padding(padding)
-                    if (idSeleccionado != null) {
-                        PantallaDetalle(vm, modifier)
-                    } else {
-                        estadosPantallas.SaveableStateProvider("lista") {
+                    when {
+                        creando -> PantallaCrear(vm, modifier)
+                        idSeleccionado != null -> PantallaDetalle(vm, modifier)
+                        else -> estadosPantallas.SaveableStateProvider("lista") {
                             PantallaLista(vm, modifier, alAbrir = vm::abrir)
                         }
                     }
