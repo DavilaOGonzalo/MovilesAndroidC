@@ -23,4 +23,7 @@
     <string name="guardar_titulo">Guardar título</string>
     <string name="volver_al_detalle">Volver al detalle</string>
     <string name="titulo_actualizado">Título actualizado: %1$s</string>
+    <string name="buscar_por_titulo">Buscar por título</string>
+    <string name="limpiar_busqueda">Limpiar búsqueda</string>
+    <string name="sin_coincidencias">Sin coincidencias</string>
 </resources>

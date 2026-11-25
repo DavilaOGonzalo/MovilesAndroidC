@@ -9,7 +9,10 @@ import com.tecsup.murocampus.model.NuevoPost
 import com.tecsup.murocampus.model.Post
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.ensureActive
 
@@ -18,6 +21,17 @@ data class DetalleUi(val post: Post, val comentarios: List<Comentario>)
 class PostsViewModel(private val repo: PostRepository) : ViewModel() {
     private val _lista = MutableStateFlow<UiState<List<Post>>>(UiState.Cargando)
     val lista = _lista.asStateFlow()
+    private val _busqueda = MutableStateFlow("")
+    val busqueda = _busqueda.asStateFlow()
+
+    val listaVisible = combine(lista, busqueda) { estado, consulta ->
+        val texto = consulta.trim()
+        if (estado is UiState.Exito && texto.isNotEmpty()) {
+            UiState.Exito(estado.datos.filter { it.title.contains(texto, ignoreCase = true) })
+        } else {
+            estado
+        }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState.Cargando)
     private var cargaLista: Job? = null
     private val _usuarioFiltro = MutableStateFlow<Int?>(null)
     val usuarioFiltro = _usuarioFiltro.asStateFlow()
@@ -57,6 +71,10 @@ class PostsViewModel(private val repo: PostRepository) : ViewModel() {
                 onFailure = { UiState.Error(mensajeDe(it)) },
             )
         }
+    }
+
+    fun buscar(consulta: String) {
+        _busqueda.value = consulta
     }
 
     fun filtrar(userId: Int?) {
