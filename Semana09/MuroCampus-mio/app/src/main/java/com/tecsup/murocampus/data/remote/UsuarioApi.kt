@@ -1,8 +1,9 @@
 package com.tecsup.murocampus.data.remote
 
 import com.tecsup.murocampus.model.Usuario
+import retrofit2.http.GET
 
 interface UsuarioApi {
-    // Ruta del ejemplo [E]: GET users. La anotación requiere el paso 1.
+    @GET("users")
     suspend fun listar(): List<Usuario>
 }
