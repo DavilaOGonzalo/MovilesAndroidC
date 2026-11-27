@@ -15,14 +15,17 @@ import androidx.core.app.NotificationManagerCompat
 import com.davila.avisoscampus.R
 import com.davila.avisoscampus.MainActivity
 import com.davila.avisoscampus.model.Aviso
+import com.davila.avisoscampus.model.Origen
 
 object Notificador {
     const val CANAL = "avisos"
+    const val URGENTES = "urgentes"
 
     fun crearCanal(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val canal = NotificationChannel(CANAL, "Avisos", NotificationManager.IMPORTANCE_DEFAULT)
-            context.getSystemService(NotificationManager::class.java).createNotificationChannel(canal)
+            val manager = context.getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(NotificationChannel(CANAL, "Avisos", NotificationManager.IMPORTANCE_DEFAULT))
+            manager.createNotificationChannel(NotificationChannel(URGENTES, "Urgentes", NotificationManager.IMPORTANCE_HIGH))
         }
     }
 
@@ -37,11 +40,13 @@ object Notificador {
         if (!tienePermiso(context)) return false
         val intent = Intent(context, MainActivity::class.java)
         val pendiente = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        val notificacion = NotificationCompat.Builder(context, CANAL)
+        val esRecordatorio = aviso.origen == Origen.RECORDATORIO
+        val canal = if (esRecordatorio) URGENTES else CANAL
+        val notificacion = NotificationCompat.Builder(context, canal)
             .setSmallIcon(R.drawable.ic_notificacion)
             .setContentTitle(aviso.titulo)
             .setContentText(aviso.texto)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(if (esRecordatorio) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
             .setContentIntent(pendiente)
             .build()
