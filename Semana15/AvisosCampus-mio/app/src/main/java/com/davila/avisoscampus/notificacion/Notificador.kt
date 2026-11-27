@@ -1,13 +1,19 @@
 package com.davila.avisoscampus.notificacion
 
 import android.content.Context
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import com.davila.avisoscampus.model.Aviso
 
 object Notificador {
     const val CANAL = "avisos"
 
     fun crearCanal(context: Context) {
-        // TODO Paso 1: en Android O+, registrar NotificationChannel(CANAL, "Avisos", IMPORTANCE_DEFAULT).
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val canal = NotificationChannel(CANAL, "Avisos", NotificationManager.IMPORTANCE_DEFAULT)
+            context.getSystemService(NotificationManager::class.java).createNotificationChannel(canal)
+        }
     }
 
     fun tienePermiso(context: Context): Boolean {
