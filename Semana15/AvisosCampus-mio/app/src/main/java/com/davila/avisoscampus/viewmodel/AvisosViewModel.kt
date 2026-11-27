@@ -20,7 +20,9 @@ class AvisosViewModel(private val repo: AvisosRepository) : ViewModel() {
     private val _mensaje = MutableStateFlow<String?>(null)
     val mensaje: StateFlow<String?> = _mensaje.asStateFlow()
 
-    // TODO Paso 2: fun permisoRespondido(concedido: Boolean)
+    fun permisoRespondido(concedido: Boolean) {
+        _permiso.value = if (concedido) PermisoUi.Concedido else PermisoUi.Denegado
+    }
     // TODO Paso 3: fun avisarAhora()
     // TODO Paso 5: faltan, recordarEn(segundos) y cancelarRecordatorio()
     // TODO Paso 6: escuchandoAvion, cambiarEscucha(valor) y alCambiarModoAvion(activo)

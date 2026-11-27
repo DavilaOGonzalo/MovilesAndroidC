@@ -1,5 +1,9 @@
 package com.davila.avisoscampus.ui
 
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
 import com.davila.avisoscampus.model.PermisoUi
 import com.davila.avisoscampus.notificacion.Notificador
 import com.davila.avisoscampus.viewmodel.AvisosViewModel
@@ -33,6 +38,13 @@ import com.davila.avisoscampus.viewmodel.AvisosViewModel
 fun PantallaAvisos(vm: AvisosViewModel) {
     val contexto = LocalContext.current
     val permiso by vm.permiso.collectAsState()
+    val lanzador = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { concedido ->
+        vm.permisoRespondido(concedido)
+    }
+
+    LaunchedEffect(Unit) {
+        if (Notificador.tienePermiso(contexto)) vm.permisoRespondido(true)
+    }
 
     LaunchedEffect(Unit) {
         vm.eventos.collect { aviso ->
@@ -59,8 +71,15 @@ fun PantallaAvisos(vm: AvisosViewModel) {
                     PermisoUi.SinPedir -> "Sin pedir"
                     PermisoUi.Concedido -> "Permitido"
                     PermisoUi.Denegado -> "Denegado"
+                }, color = when (permiso) {
+                    PermisoUi.SinPedir -> Color.Gray
+                    PermisoUi.Concedido -> Color(0xFF2E7D32)
+                    PermisoUi.Denegado -> MaterialTheme.colorScheme.error
                 })
-                Button(onClick = { /* TODO Paso 2: RequestPermission; API < 33: concedido */ }, enabled = false) {
+                Button(onClick = {
+                    if (Build.VERSION.SDK_INT >= 33) lanzador.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    else vm.permisoRespondido(true)
+                }) {
                     Text("Permitir notificaciones")
                 }
             }
