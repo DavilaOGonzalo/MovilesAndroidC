@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +39,7 @@ import com.davila.avisoscampus.viewmodel.AvisosViewModel
 fun PantallaAvisos(vm: AvisosViewModel) {
     val contexto = LocalContext.current
     val permiso by vm.permiso.collectAsState()
+    val faltan by vm.faltan.collectAsState()
     val lanzador = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { concedido ->
         vm.permisoRespondido(concedido)
     }
@@ -89,11 +91,11 @@ fun PantallaAvisos(vm: AvisosViewModel) {
                 }
             }
             Tarjeta("Recordatorio") {
-                Text("Sin recordatorio activo")
-                Button(onClick = { /* TODO Paso 5: vm.recordarEn() */ }, enabled = false) {
+                if (faltan != null) Text("Faltan ${faltan}s")
+                Button(onClick = { vm.recordarEn() }, enabled = faltan == null) {
                     Text("Recordar en 10 s")
                 }
-                Button(onClick = { /* TODO Paso 5: vm.cancelarRecordatorio() */ }, enabled = false) {
+                OutlinedButton(onClick = vm::cancelarRecordatorio, enabled = faltan != null) {
                     Text("Cancelar")
                 }
             }
