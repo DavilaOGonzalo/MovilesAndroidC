@@ -46,6 +46,7 @@ fun PantallaAvisos(vm: AvisosViewModel) {
     val permiso by vm.permiso.collectAsState()
     val faltan by vm.faltan.collectAsState()
     val escuchando by vm.escuchandoAvion.collectAsState()
+    val avisos by vm.avisos.collectAsState()
     DisposableEffect(escuchando) {
         if (escuchando) {
             val receptor = ModoAvionReceiver { activo -> vm.alCambiarModoAvion(activo) }
@@ -121,10 +122,7 @@ fun PantallaAvisos(vm: AvisosViewModel) {
                 Text("Escuchar el modo avión")
                 Switch(checked = escuchando, onCheckedChange = vm::cambiarEscucha)
             }
-            Tarjeta("Historial") {
-                // TODO Paso 7: reemplazar con HistorialAvisos(vm.avisos.collectAsState().value).
-                Text("Sin avisos todavía")
-            }
+            HistorialAvisos(avisos)
         }
     }
 }
