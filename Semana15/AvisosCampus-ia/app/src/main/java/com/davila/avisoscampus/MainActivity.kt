@@ -4,14 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.davila.avisoscampus.data.AvisosRepositoryMemoria
 import com.davila.avisoscampus.ui.PantallaAvisos
 import com.davila.avisoscampus.ui.theme.AvisosCampusTheme
 import com.davila.avisoscampus.viewmodel.AvisosViewModel
 import com.davila.avisoscampus.viewmodel.AvisosViewModelFactory
 
 class MainActivity : ComponentActivity() {
-    private val repository by lazy { AvisosRepositoryMemoria() }
+    private val repository by lazy { (application as AvisosApp).repository }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

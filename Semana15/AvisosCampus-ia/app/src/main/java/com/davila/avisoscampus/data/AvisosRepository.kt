@@ -2,27 +2,31 @@ package com.davila.avisoscampus.data
 
 import com.davila.avisoscampus.model.Aviso
 import com.davila.avisoscampus.model.Origen
+import com.davila.avisoscampus.data.local.AvisoEntity
+import com.davila.avisoscampus.data.local.AvisosDao
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 interface AvisosRepository {
     val avisos: StateFlow<List<Aviso>>
-    fun registrar(titulo: String, texto: String, origen: Origen): Aviso
+    suspend fun registrar(titulo: String, texto: String, origen: Origen): Aviso
 }
 
-class AvisosRepositoryMemoria : AvisosRepository {
-    private val _avisos = MutableStateFlow<List<Aviso>>(emptyList())
-    override val avisos: StateFlow<List<Aviso>> = _avisos.asStateFlow()
-    private var siguiente = 1
+class AvisosRepositoryRoom(private val dao: AvisosDao, scope: CoroutineScope) : AvisosRepository {
+    override val avisos: StateFlow<List<Aviso>> = dao.observar()
+        .map { entities -> entities.map(AvisoEntity::aModelo) }
+        .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    override fun registrar(titulo: String, texto: String, origen: Origen): Aviso {
+    override suspend fun registrar(titulo: String, texto: String, origen: Origen): Aviso {
         val hora = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
-        val aviso = Aviso(siguiente++, titulo, texto, origen, hora)
-        _avisos.value = listOf(aviso) + _avisos.value
-        return aviso
+        val entity = AvisoEntity(titulo = titulo, texto = texto, origen = origen.name, hora = hora)
+        val id = dao.insertar(entity).toInt()
+        return Aviso(id, titulo, texto, origen, hora)
     }
 }
