@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Build
 import android.content.Intent
 import android.content.IntentFilter
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -47,6 +49,7 @@ fun PantallaAvisos(vm: AvisosViewModel) {
     val faltan by vm.faltan.collectAsState()
     val escuchando by vm.escuchandoAvion.collectAsState()
     val avisos by vm.avisos.collectAsState()
+    val mensaje by vm.mensaje.collectAsState()
     DisposableEffect(escuchando) {
         if (escuchando) {
             val receptor = ModoAvionReceiver { activo -> vm.alCambiarModoAvion(activo) }
@@ -70,7 +73,7 @@ fun PantallaAvisos(vm: AvisosViewModel) {
     LaunchedEffect(Unit) {
         vm.eventos.collect { aviso ->
             val mostrado = Notificador.mostrar(contexto, aviso)
-            // TODO Paso 8: si no se mostró, llamar a vm.noSePudoMostrar().
+            if (!mostrado) vm.noSePudoMostrar()
         }
     }
 
@@ -98,10 +101,25 @@ fun PantallaAvisos(vm: AvisosViewModel) {
                     PermisoUi.Denegado -> MaterialTheme.colorScheme.error
                 })
                 Button(onClick = {
-                    if (Build.VERSION.SDK_INT >= 33) lanzador.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    if (Notificador.tienePermiso(contexto)) vm.permisoRespondido(true)
+                    else if (Build.VERSION.SDK_INT >= 33) lanzador.launch(Manifest.permission.POST_NOTIFICATIONS)
                     else vm.permisoRespondido(true)
                 }) {
                     Text("Permitir notificaciones")
+                }
+                if (mensaje != null) {
+                    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
+                        Text(
+                            mensaje.orEmpty(),
+                            modifier = Modifier.padding(12.dp),
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
+                    Button(onClick = {
+                        contexto.startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, contexto.packageName)
+                        })
+                    }) { Text("Abrir ajustes") }
                 }
             }
             Tarjeta("Avisos") {
