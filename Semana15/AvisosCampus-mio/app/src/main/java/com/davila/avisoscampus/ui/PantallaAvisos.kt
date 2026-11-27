@@ -84,7 +84,7 @@ fun PantallaAvisos(vm: AvisosViewModel) {
                 }
             }
             Tarjeta("Avisos") {
-                Button(onClick = { /* TODO Paso 3: vm.avisarAhora() */ }, enabled = false) {
+                Button(onClick = vm::avisarAhora) {
                     Text("Mostrar aviso")
                 }
             }
