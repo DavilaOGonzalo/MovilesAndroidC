@@ -2,6 +2,8 @@ package com.davila.avisoscampus.ui
 
 import android.Manifest
 import android.os.Build
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +26,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -32,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.davila.avisoscampus.model.PermisoUi
 import com.davila.avisoscampus.notificacion.Notificador
+import com.davila.avisoscampus.receiver.ModoAvionReceiver
+import androidx.core.content.ContextCompat
 import com.davila.avisoscampus.viewmodel.AvisosViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,6 +45,19 @@ fun PantallaAvisos(vm: AvisosViewModel) {
     val contexto = LocalContext.current
     val permiso by vm.permiso.collectAsState()
     val faltan by vm.faltan.collectAsState()
+    val escuchando by vm.escuchandoAvion.collectAsState()
+    DisposableEffect(escuchando) {
+        if (escuchando) {
+            val receptor = ModoAvionReceiver { activo -> vm.alCambiarModoAvion(activo) }
+            ContextCompat.registerReceiver(
+                contexto, receptor, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED),
+                ContextCompat.RECEIVER_NOT_EXPORTED
+            )
+            onDispose { contexto.unregisterReceiver(receptor) }
+        } else {
+            onDispose { }
+        }
+    }
     val lanzador = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { concedido ->
         vm.permisoRespondido(concedido)
     }
@@ -100,9 +118,8 @@ fun PantallaAvisos(vm: AvisosViewModel) {
                 }
             }
             Tarjeta("Receptor de anuncios") {
-                // TODO Paso 6: conectar con escuchandoAvion y DisposableEffect.
                 Text("Escuchar el modo avión")
-                Switch(checked = false, onCheckedChange = null, enabled = false)
+                Switch(checked = escuchando, onCheckedChange = vm::cambiarEscucha)
             }
             Tarjeta("Historial") {
                 // TODO Paso 7: reemplazar con HistorialAvisos(vm.avisos.collectAsState().value).
